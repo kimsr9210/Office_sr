@@ -31,7 +31,7 @@
 	    			<div class="naviNo hoverColor" id="adminUpdate">
 	        			<div class="naviIcon"><i class="fas fa-user-friends"></i></div>
 	        			<span class="naviText">관리자 관리</span>
-	        			<div class="naviClick"><i class="iArrow fa fa-angle-right"></i></div>
+	        			<span class="naviClick"><i class="iArrow fa fa-angle-right"></i></span>
 	    			</div>
 				</a>
 			</li>
@@ -40,7 +40,7 @@
 					<div class="naviNo hoverColor" id="deleteSelect">
 						<div class="naviIcon"><i class="fas fa-folder-minus"></i></div>
 						<span class="naviText">삭제 조회</span>
-						<div class="naviClick"><i class="iArrow fa fa-angle-right"></i></div>
+						<span class="naviClick"><i class="iArrow fa fa-angle-right"></i></span>
 					</div>
 					<div class="accordion" id="deleteList">
 						<a href="/adminDeleteMemberPage.ho" class="aStyle"><p class="accordionList hoverColor">사원 조회</p></a>
@@ -54,7 +54,7 @@
 					<div class="naviNo hoverColor" id="dataList">
 						<div class="naviIcon"><i class="fas fa-folder-open"></i></div>
 						<span class="naviText">데이터 / 문서 관리</span>
-						<div class="naviClick"><i class="iArrow fa fa-angle-right"></i></div>
+						<span class="naviClick"><i class="iArrow fa fa-angle-right"></i></span>
 					</div>
 				</a>
 			</li>
@@ -63,7 +63,7 @@
 					<div class="naviNo hoverColor" id="error">
 						<div class="naviIcon"><i class="fas fa-question"></i></div>
 						<span class="naviText">오류 관리</span>
-						<div class="naviClick"><i class="iArrow fa fa-angle-right"></i></div>
+						<span class="naviClick"><i class="iArrow fa fa-angle-right"></i></span>
 					</div>
 					<div class="accordion" id="errorList">
 						<a href="/adminPasswordInitPage.ho" class="aStyle"><p class="accordionList hoverColor">비밀번호 초기화</p></a>

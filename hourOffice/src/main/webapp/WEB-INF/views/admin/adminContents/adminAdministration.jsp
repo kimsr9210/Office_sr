@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="kr.or.houroffice.member.model.vo.Member" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -19,6 +21,12 @@
 
 </head>
 <body>
+	<!--JSTL core Tag 사용 선언  -->
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+	
+	<!-- JSTL format Tag 사용 선언 -->
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 	<div id="wrap">
 		<%@ include file ="../adminForm/header.jsp" %>
 		
@@ -38,22 +46,26 @@
                             <span class="adminText">관리자 페이지 관리, 메뉴 관리 등을 관리합니다.</span>
                             
                             <div class="buttonSet">
-                                <button id="adminAgree" class="agreeButtonType">추가</button>
-                                <button class="refuseButtonType">삭제</button>
+                                <button class="agreeButtonType">추가</button>
+                                <button type="submit" class="refuseButtonType">삭제</button>
                             </div>
                             <table id="adminList" class="tblStyle">
                                 <tr>
-                                    <th><input type="checkbox"/></th>
+                                    <th><input type="checkbox" name="checkMem"/></th>
                                     <th>이름 (이메일)</th>
                                     <th>부서</th>
                                     <th>관리자 등록일</th>
-                                </tr>
-                                <tr>
-                                    <td><input type="checkbox"/></td>
-                                    <td>다주빈 (zoodabin@hourOffice.com)</td>
-                                    <td>전산팀</td>
-                                    <td>2020-02-02</td>
-                                </tr>
+                                </tr>                                
+                                <c:forEach items="${list}" var="li" varStatus="status">  
+                                	<c:if test="${li.memRightCode eq 'B'.charAt(0)}">	                                                                	  
+	                                	<tr>
+		                                    <td><input type="checkbox" name="checkMem" value="${admin.memNo}"/></td>
+		                                    <td>${li.memName} (${li.memEmail})</td>
+		                                    <td>${li.deptName}</td>
+		                                    <td><fmt:formatDate value="${li.memRightDate}" type="both" pattern="yyyy년 MM월 dd일"/></td>
+		                            	</tr>
+		                            </c:if>	
+		                       	</c:forEach>           	 								                             
                             </table>
                         </div>                     
                         <div class="adminSpace">
@@ -63,74 +75,80 @@
                             <span class="adminText">멤버, 부서, 직위 등 조직을 구성/관리합니다.</span>
                             <div class="buttonSet">
                                 <button class="agreeButtonType">추가</button>
-                                <button class="refuseButtonType">삭제</button>
+                                <button type="submit" class="refuseButtonType">삭제</button>
                             </div>
                             <table id="personnelList" class="tblStyle">
                                 <tr>
-                                    <th><input type="checkbox"/></th>
+                                    <th><input type="checkbox" name="checkMem"/></th>
                                     <th>이름 (이메일)</th>
                                     <th>부서</th>
                                     <th>관리자 등록일</th>
                                 </tr>
-                                <tr>
-                                    <td><input type="checkbox"/></td>
-                                    <td>안인사 (hello@hourOffice.com)</td>
-                                    <td>인사팀</td>
-                                    <td>2020-02-18</td>
-                                </tr>
+                                <c:forEach items="${list}" var="li" varStatus="status">  
+                                	<c:if test="${li.memRightCode eq 'C'.charAt(0)}">	                                                                	  
+	                                	<tr>
+		                                    <td><input type="checkbox" name="checkMem" value="${admin.memNo}"/></td>
+		                                    <td>${li.memName} (${li.memEmail})</td>
+		                                    <td>${li.deptName}</td>
+		                                    <td><fmt:formatDate value="${li.memRightDate}" type="both" pattern="yyyy년 MM월 dd일"/></td>
+		                            	</tr>
+		                            </c:if>	
+		                       	</c:forEach>
                             </table>
                         </div>                       
                        <div class="adminSpace">
                             <span class="adminName">총무관리자</span>
                             <hr class="adminLine"/>
-                            <span class="adminTitle">문서 관리</span>
+                            <span class="adminTitle">문서 관리</span> 	
                             <span class="adminText">사내 규정, 문서 등을 관리합니다.</span>
                             <div class="buttonSet">
                                 <button class="agreeButtonType">추가</button>
-                                <button class="refuseButtonType">삭제</button>
+                                <button type="submit" class="refuseButtonType">삭제</button>
                             </div>
                             <table id="generalList" class="tblStyle">
                                 <tr>
-                                    <th><input type="checkbox"/></th>
+                                    <th><input type="checkbox" name="checkMem"/></th>
                                     <th>이름 (이메일)</th>
                                     <th>부서</th>
                                     <th>관리자 등록일</th>
                                 </tr>
-                                <tr>
-                                    <td><input type="checkbox"/></td>
-                                    <td>정총무 (money@hourOffice.com)</td>
-                                    <td>총무팀</td>
-                                    <td>2018-12-12</td>
-                                </tr>
+                                <c:forEach items="${list}" var="li" varStatus="status">  
+                                	<c:if test="${li.memRightCode eq 'D'.charAt(0)}">	                                                                	  
+	                                	<tr>
+		                                    <td><input type="checkbox" name="checkMem" value="${admin.memNo}"/></td>
+		                                    <td>${li.memName} (${li.memEmail})</td>
+		                                    <td>${li.deptName}</td>
+		                                    <td><fmt:formatDate value="${li.memRightDate}" type="both" pattern="yyyy년 MM월 dd일"/></td>
+		                            	</tr>
+		                            </c:if>	
+		                       	</c:forEach>
                             </table>
                         </div>                       
                         <div id="modal">
 							<div class="modal-content">
-								<div class="exit-icon"><i class="iModal far fa-times-circle"></i></div>
+								<span class="exit-icon"><i class="fas fa-times"></i></span>
 								<div class="searchStyle">
-									<input type="text" name="#"/>
-									<button><i class="fas fa-search"></i></button>
+									<input type="text" id="keyword" name="keyword"/>
+									<button id="searchBtn"><i class="fas fa-search"></i></button>
 								</div>
 								<form>			
 									<table class="modal-table">
-										<tr>
-											<th></th>
-											<th>사번</th>
-											<th>이름</th>
-											<th>직위</th>
-										</tr>				
-										<tr>
-											<td><input type="checkbox" name="#"/></td>
-											<td>M1000</td>
-											<td>장진장</td>
-											<td>사원</td>	
-										</tr>        
+										<thead>
+											<tr>
+												<th></th>
+												<th>사번</th>
+												<th>이름</th>
+												<th>직위</th>
+											</tr>
+										</thead>				
+										<tbody id="tbody">
+										</tbody>        
 									</table>
 								</form>
 								<button class="agreeButtonType">저장</button>
 							</div>
 							<div class="modal-layer"></div>
-						</div>                                               
+						</div>						                                               
     				</div>
 				</div>
 			</div>
@@ -139,6 +157,7 @@
 		
 	<script type='text/javascript'>	
 		$(function(){
+			
 			// 전산관리자 checkbox 전부 누르기		
 			$('#adminList').find('input').first().click(function(){
 							
@@ -183,22 +202,75 @@
 			
 			// 모달 열기
 			$('.agreeButtonType').click(function(){
+				<% ArrayList<Member> list = (ArrayList<Member>)request.getAttribute("list"); %>
 				var modatop = $(this).offset().top;
+				$('#tbody').html('');
+			
 				if($(this).parents('.adminSpace').children().first().text()=='전산관리자') {
 					$('#modal').css('top',modatop);
+					<% for(Member m : list){%>
+							var deptCode = '<%=m.getDeptCode()%>';
+						if(deptCode.indexOf('D3')>-1){
+							var tr = $("<tr></tr>").appendTo("#tbody");
+							$("<td><input type='checkbox'></td>").appendTo(tr);
+							$("<td></td>").text('<%=m.getMemNo()%>').appendTo(tr);
+							$("<td></td>").text('<%=m.getMemName()%>').appendTo(tr);
+							$("<td></td>").text('<%=m.getMemPosition()%>').appendTo(tr);
+						}
+					<%}%>					
 				} else if ($(this).parents('.adminSpace').children().first().text()=='인사관리자') {
-					$('#modal').css('top',modatop);
+					$('#modal').css('top',modatop);					
+		           	<% for(Member m : list){%>
+		           		 	var deptCode = '<%=m.getDeptCode()%>';
+		           		if(deptCode.indexOf('D1')>-1){
+		           			var tr = $("<tr></tr>").appendTo("#tbody");
+							$("<td><input type='checkbox'></td>").appendTo(tr);
+							$("<td></td>").text('<%=m.getMemNo()%>').appendTo(tr);
+							$("<td></td>").text('<%=m.getMemName()%>').appendTo(tr);
+							$("<td></td>").text('<%=m.getMemPosition() %>').appendTo(tr);
+		           		}
+		           	<% } %>
 				} else if ($(this).parents('.adminSpace').children().first().text()=='총무관리자') {
 					$('#modal').css('top',modatop);
+					<% for(Member m : list){%>
+		           		 	var deptCode = '<%=m.getDeptCode()%>';
+		           		if(deptCode.indexOf('D2')>-1){
+		           			var tr = $("<tr></tr>").appendTo("#tbody");
+							$("<td><input type='checkbox'></td>").appendTo(tr);
+							$("<td></td>").text('<%=m.getMemNo()%>').appendTo(tr);
+							$("<td></td>").text('<%=m.getMemName()%>').appendTo(tr);
+							$("<td></td>").text('<%=m.getMemPosition() %>').appendTo(tr);
+		           		}
+		           	<% } %>
 				};
 				$('#modal').show();				
-			});			
+			});
+			
 			// 모달 닫기
-            $('#modal .iModal').click(function(){
+            $('#modal .exit-icon').click(function(){
                 $('#modal').hide();
                 $('#modal input').val('');
             });
 			
+		});
+		
+		$('#searchBtn').click(function(){
+			$.ajax({
+				url:"/adminSearchedList.ho",
+				type:"get",
+				data:{keyword:$("#keyword").val()},
+				success:function(data){
+					var len = $("input[name='checkMem']:checked").length;
+					if(len>1){	
+						$("input[name='checkMem']:checked").each(function(e){
+							console.log($(this).val())
+						})
+					}
+				},
+				error: function(){
+					alert('searchKeyword에서 에러 발생!');
+				}
+			})
 		});
 		
 		$(document).ready(function(){
@@ -206,10 +278,7 @@
 	        $adminUpdate.children().eq(2).children().addClass('fa-rotate-180');		
 			$adminUpdate.removeClass('hoverColor').addClass('click');
 	        $adminUpdate.children().eq(2).children().attr('class','iArrow fas fa-angle-left');		
-
 		});
-		
-
 	</script>
 </body>
 </html>

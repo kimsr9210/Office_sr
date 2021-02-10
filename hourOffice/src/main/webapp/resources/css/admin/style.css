@@ -76,13 +76,17 @@ a:active {
 	width: 95%;
 	margin: 25px auto;
 	line-height: 25px;
-	border-collapse: collapse;}
+	border-collapse: collapse;
+	border-bottom: 1px solid #dcdcdc;}
 	
 .tblStyle th {
 	border-top: 1px solid #dcdcdc;
-	border-bottom: 1px solid #dcdcdc;}
+	border-bottom: 1px solid #dcdcdc;
+	padding: 5px 0;}
 	
-.tblStyle td {text-align: center;}
+.tblStyle td {
+	text-align: center;
+	padding: 5px 0;}
 
 /*검색 스타일*/
 .searchStyle {
@@ -107,8 +111,7 @@ a:active {
 	color: white;
 	font-size: 20px;
 	border: 2px solid #22294A;
-	border-radius: 2px;
-}
+	border-radius: 2px;}
 	
 /*셀렉트 스타일*/	
 .selectStyle {
@@ -129,7 +132,7 @@ a:active {
 /*버튼 스타일*/
 .buttonSet {
 	float: right;
-	padding: 0 5px;}
+	padding: 5px;}
 	
 .buttonStyle {padding-right: 20px;}
 
@@ -155,6 +158,11 @@ a:active {
 	box-shadow: 1px 1px 3px #cccccc;
 	outline: 0;}
 	
+.page-link {
+	text-decoration:none;
+	color: black;
+}
+	
 /*모달 스타일*/
 #modal {
 	display: none;
@@ -168,7 +176,7 @@ a:active {
 	width: 250px;
 	padding: 20px;
 	background: #fff;
-	border: 1.5px solid #12776A;
+	border: 1.5px solid #22294A;
 	border-radius: 5px;
 	box-shadow: 3px 3px 5px rgba(63, 0, 153, 50%);}
 	
@@ -180,8 +188,6 @@ a:active {
 	height: 100%;
 	z-index: -1;}
 	
-#modal .exit-icon {text-align: right;}
-
 #modal .exit-icon>i {
 	font-size: 1.5rem;
 	cursor: pointer;}

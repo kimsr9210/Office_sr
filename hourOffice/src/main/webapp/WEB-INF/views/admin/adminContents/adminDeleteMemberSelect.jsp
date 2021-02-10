@@ -14,10 +14,14 @@
 	<!-- 관리자 페이지 공통 css -->
 	<link rel="stylesheet" type="text/css" href="/resources/css/admin/style.css" />
 
-<style>
-</style>
 </head>
 <body>
+	<!--JSTL core Tag 사용 선언  -->
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+	
+	<!-- JSTL format Tag 사용 선언 -->
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+	
 	<div id="wrap">
 		<%@ include file ="../adminForm/header.jsp" %>
 		
@@ -28,16 +32,18 @@
 				<div id="contentsDetail" class="clearfix">
 					<div id="TitleName">
 						삭제 조회
-						<span>사원 조회</span>
+						<span>사원 조회 ( ${countAll} )</span>
     				</div>
     				<div id="TitleContents">
     					<div class="searchStyle selectStyle">
-    						<select class="optionStyle">
-    							<option>사번</option>
-    							<option>이름</option>
-    							<option>직위</option>
-    							<option>부서</option>
-    						</select>
+    						<form action="#" method="get">
+	    						<select class="optionStyle">
+	    							<option value="memNo">사번</option>
+	    							<option value="memName">이름</option>
+	    							<option value="memPosition">직위</option>
+	    							<option value="deptName">부서</option>
+	    						</select>
+    						</form>
 							<input type="text" name="#"/>
 							<button><i class="fas fa-search"></i></button>
 						</div>
@@ -53,19 +59,21 @@
                                     <th>전화번호</th>
                                     <th>퇴사일</th>
                                 </tr>
-                                <tr>
-                                    <td><input type="checkbox"/></td>
-                                    <td>M-10000</td>
-                                    <td>다주빈</td>
-                                    <td>부장</td>
-                                    <td>전산팀</td>
-                                    <td>zoodabin@hourOffice.com</td>
-                                    <td>010-1234-5678</td>
-                                    <td>2021-02-01</td>
-                                </tr>
+                             	<c:forEach items="${list}" var="li" varStatus="status">
+		                                <tr>
+		                                    <td><input type="checkbox"/></td>
+		                                    <td>${li.memNo}</td>
+		                                    <td>${li.memName}</td>
+		                                    <td>${li.memPosition}</td>
+		                                    <td>${li.deptName}</td>
+		                                    <td>${li.memEmail}</td>
+		                                    <td>${li.memPhone}</td>
+		                                    <td><fmt:formatDate value="${li.memResignDate}" type="both" pattern="yyyy년 MM월 dd일"/></td>
+		                                </tr>
+                                </c:forEach>
                     	</table>
-                    	<center><span><< < 1 2 3 4 5 > >></span></center>
-    					<div class="buttonSet buttonStyle">
+						<center><div id="pageNavi">${pageNavi }</div></center>    					
+						<div class="buttonSet buttonStyle">
                         	<button class="agreeButtonType">복원</button>
                             <button class="refuseButtonType">삭제</button>
                         </div>
