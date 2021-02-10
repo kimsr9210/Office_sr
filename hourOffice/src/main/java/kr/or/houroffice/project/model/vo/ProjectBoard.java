@@ -9,11 +9,13 @@ public class ProjectBoard {
 	private Timestamp boardDate;
 	private char delYN;
 	private String boardText;
+	private String imgName;
 	public ProjectBoard() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public ProjectBoard(int boardNo, int proNo, int memNo, Timestamp boardDate, char delYN, String boardText) {
+	public ProjectBoard(int boardNo, int proNo, int memNo, Timestamp boardDate, char delYN, String boardText,
+			String imgName) {
 		super();
 		this.boardNo = boardNo;
 		this.proNo = proNo;
@@ -21,6 +23,7 @@ public class ProjectBoard {
 		this.boardDate = boardDate;
 		this.delYN = delYN;
 		this.boardText = boardText;
+		this.imgName = imgName;
 	}
 	public int getBoardNo() {
 		return boardNo;
@@ -58,11 +61,18 @@ public class ProjectBoard {
 	public void setBoardText(String boardText) {
 		this.boardText = boardText;
 	}
+	public String getImgName() {
+		return imgName;
+	}
+	public void setImgName(String imgName) {
+		this.imgName = imgName;
+	}
 	@Override
 	public String toString() {
 		return "ProjectBoard [boardNo=" + boardNo + ", proNo=" + proNo + ", memNo=" + memNo + ", boardDate=" + boardDate
-				+ ", delYN=" + delYN + ", boardText=" + boardText + "]";
+				+ ", delYN=" + delYN + ", boardText=" + boardText + ", imgName=" + imgName + "]";
 	}
+	
 	
 	
 }

@@ -8,13 +8,25 @@
     }
     .nc-img{
         display: block;
-        width: 80px;
-        height: 80px;
+        width: 90px;
+        height: 90px;
         border-radius: 50px;
-        background-color: white;
+        background-color: none;
         margin: 0 auto;
         margin-top:40px;
         margin-bottom: 10px;
+    }
+    .nc-icon{
+		display: block;
+        width: 80px;
+        height: 80px;
+        border-radius: 50px;
+        background-color: gray;
+        margin: 0 auto;
+        margin-top:40px;
+        margin-bottom: 10px;
+        font-size: 80px;
+        color: #F2F2F2;
     }
     .nameCard>span{
         display: block;

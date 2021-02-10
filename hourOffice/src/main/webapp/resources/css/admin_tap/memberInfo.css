@@ -63,16 +63,36 @@
             padding: 0 20px;
             font-size: 1rem
         }
-        /* img 태그 div */
-        #TitleContents #memProfile{
-            width: 200px; height: 230px;
-            margin: 0 auto;
-            margin-bottom: 50px;
+        /* 이미지 라벨 & input */
+        #TitleContents #img-btn-div{
+        	width:51%; height:40px; margin-top:20px; 
+        	display:inline-block; text-align:right;
         }
+		/* 이미지 input type file */
+		#TitleContents #profileImg{
+			display:none;
+		}
+		/* 이미지 label */
+		#TitleContents #profileImg-label{
+			min-width: 28px; height: 25px;
+			font-size: 1rem; font-weight: bold;
+			padding: 10px 15px;
+			color: white; background-color: #1D9F8E;
+			border-style: none;
+			border-radius: 5px;
+			box-shadow: 1px 1px 5px #cccccc;
+			cursor: pointer;
+		}
         /* 직위 & 부서 div */
         #TitleContents #position_dept{
             width: 326px;
             margin: 0 auto;
+        }
+        /* img 태그 div */
+        #TitleContents #memProfile{
+            width: 177px; height: 236px;
+            margin: 0 auto;
+            margin-bottom: 50px;
         }
         /* 직위 & 부서 각각의 div */
         #TitleContents .posi_deptDiv{

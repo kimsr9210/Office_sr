@@ -63,11 +63,12 @@
 	color: white;
 	font-weight: 500;
 	font-size: 1rem;
+	cursor: pointer;
 }
 
 #projectNavi>li>a:hover {
 	font-weight: 800;
-	color: #AFE1FF;
+	color: #2CF2D8;
 }
 
 #newBoard {
@@ -157,6 +158,7 @@
 	resize: none;
 	font-family: "맑은 고딕";
 	font-size: 0.875rem;
+	outline: none;
 }
 
 .commentCount {
@@ -228,9 +230,14 @@
 	padding-bottom: 1rem;
 	outline: none;
 }
+.commentInfo {
+	width: 93%;
+	float: left;
+	border-top: 1px solid #F2F2F2;
+}
 
 .commentUserImg{
-            width: 7%;
+           	width: 7%;
             font-size: 2rem;
             float: left;
             color: #999999;
@@ -342,10 +349,10 @@
 /* 프로젝트 옵션 */
 #projectOption {
 	width: 200px;
-	height: 220px;
+	height: auto;
 	margin-left: 530px;
 	border: 1px solid #BFBFBF;
-	background-color: white;;
+	background-color: white;
 	border-radius: 5px;
 	position: absolute;
 	z-index: 1;
@@ -1020,4 +1027,27 @@
 
 .commentModifyBtn:hover, .commentDeleteBtn:hover{
 	font-weight: bolder;
+}
+#projectFavor{
+	font-size: 1.5rem;
+	cursor: pointer;
+}
+.likeBtn{
+	color: yellow;
+}
+
+.textHide{
+	color: #B3B3B3;
+	cursor: pointer;
+	display: none;
+	float:left;
+}
+
+.textHide:hover{
+	font-weight: bolder;
+	color: #999999;
+}
+
+#projectComplate{
+	cursor: pointer;
 }

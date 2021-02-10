@@ -41,6 +41,7 @@
 			<tx:method name="select*" read-only="true"/>
 			<tx:method name="insert*" />
 			<tx:method name="update*" />
+			<tx:method name="delete*" />
 		</tx:attributes>
 	</tx:advice>
 

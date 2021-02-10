@@ -23,21 +23,6 @@
 	href="/resources/css/project/projectAllList.css" />
 </head>
 <body>
-<style>
-.projectLike {
-	margin-top: 60px;
-	padding: 3px;
-	width: 20%;
-	float: left;
-	font-size: 1.2rem;
-	color: white;
-	cursor: pointer;
-}
-
-.likeBtn {
-	color: yellow;
-}
-</style>
 <%
 	ArrayList<Project> myList = (ArrayList<Project>)request.getAttribute("myList");
 	ArrayList<Project> publicList = (ArrayList<Project>)request.getAttribute("publicList");
@@ -78,11 +63,10 @@
 								
 							%>
 								<%if(p.getCompYN()=='N'){ %>
-								<form action="/projectDetail.ho" method="get">
+								<form action="/projectDetail.ho" method="post">
 								<div class="projectBox">
 									<a>
 										<div class="projectSubject"><input class="projectDetailBtn" type="submit" value="<%=p.getProSubject() %>"/></div>
-										<input type="hidden" name="proNo" value="<%=p.getProNo() %>"/>
 										<div class="projectMember"><%=p.getMemCount() %>명 참가중</div>
 									</a>
 									<div class="projectLike">
@@ -94,6 +78,7 @@
 										<input type="hidden" name="proNo" value="<%=p.getProNo()%>"/>
 										<input type="hidden" name="memNo" value="<%=m.getMemNo()%>"/>
 										<input type="hidden" name="proSubject" value="<%=p.getProSubject()%>"/>
+    									<input type="hidden" name="boardType" value="post"/>
 									</div>
 								</div>
 								</form>
@@ -119,11 +104,10 @@
 								}
 								
 							%>
-								<form action="/projectDetail.ho" method="get">
+								<form action="/projectDetail.ho" method="post">
 								<div class="projectBox">
 									<a>
 										<div class="projectSubject"><input class="projectDetailBtn" type="submit" value="<%=p.getProSubject() %>"/></div>
-										<input type="hidden" name="proNo" value="<%=p.getProNo() %>"/>
 										<div class="projectMember"><%=p.getMemCount() %>명 참가중</div>
 									</a>
 									<div class="projectLike">
@@ -135,6 +119,7 @@
 										<input type="hidden" name="proNo" value="<%=p.getProNo()%>"/>
 										<input type="hidden" name="memNo" value="<%=m.getMemNo()%>"/>
 										<input type="hidden" name="proSubject" value="<%=p.getProSubject()%>"/>
+    									<input type="hidden" name="boardType" value="post"/>
 									</div>
 								</div>
 								</form>
@@ -166,8 +151,9 @@
 								<%if(p.getCompYN()=='Y'){ %>
 								<%count++; %>
 								<div class="projectBox">
+								<form action="/projectDetail.ho" method="post">
 									<a href="#">
-										<div class="projectSubject"><%=p.getProSubject() %></div>
+										<div class="projectSubject"><input class="projectDetailBtn" type="submit" value="<%=p.getProSubject() %>"/></div>
 										<div class="projectMember"><%=p.getMemCount() %>명 참가중</div>
 									</a>
 									<div class="projectLike">
@@ -179,7 +165,9 @@
 										<input type="hidden" name="proNo" value="<%=p.getProNo()%>"/>
 										<input type="hidden" name="memNo" value="<%=m.getMemNo()%>"/>
 										<input type="hidden" name="proSubject" value="<%=p.getProSubject()%>"/>
+    									<input type="hidden" name="boardType" value="post"/>
 									</div>
+								</form>
 								</div>
 								<%} %>
 							<%} %>
@@ -269,48 +257,6 @@
 	</div>
 	<!-- 자바 스크립트    -->
 	<script>
-	$(function(){
-		$('.projectLike').click(function(){
-            var proNo = $(this).children().eq(1).val();
-            var memNo = $(this).children().eq(2).val();
-            var proSubject = $(this).children().eq(3).val();
-            if($(this).children().eq(0).css('color')=='rgb(255, 255, 255)'){
-                $.ajax({
-                	url : "/insertProjectFavor.ho",
-                	data : {"proNo" : proNo, "memNo" : memNo},
-                	type : "get",
-                	success : function(result){
-                		if(result=="true"){
-                			alert("["+proSubject+"] 가 즐겨 찾기에 등록되었습니다");
-                		}else{
-                			alert("프로젝트 즐겨찾기 실패");
-                		}
-                	},
-                	error : function(){
-                		console.log("프로젝트 즐겨찾기 ajax 통신 실패");
-                	}
-                });
-                $(this).children().eq(0).attr('class','fas fa-star likeBtn');
-            }else{
-            	$.ajax({
-                	url : "/deleteProjectFavor.ho",
-                	data : {"proNo" : proNo, "memNo" : memNo},
-                	type : "get",
-                	success : function(result){
-                		if(result=="true"){
-                			alert("["+proSubject+"] 가 즐겨 찾기에 삭제되었습니다");
-                		}else{
-                			alert("프로젝트 즐겨찾기 실패");
-                		}
-                	},
-                	error : function(){
-                		console.log("프로젝트 즐겨찾기 ajax 통신 실패");
-                	}
-                });
-                $(this).children().eq(0).attr('class','far fa-star');
-            }
-        });
-	});
 	</script>
 	<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>
 	<script type="text/javascript" src="/resources/js/projectAllList.js"></script>

@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -18,6 +20,7 @@
 </head>
 <body>
 <div id="wrap">
+<c:if test="${sessionScope.member ==null }"><script>alert("로그인이 필요합니다."); location.href="/login.ho";</script></c:if>
 		<%@ include file="/WEB-INF/views/common/header.jsp"%>
 		<div id="contentsBox">
 			<%@ include file="/WEB-INF/views/common/sideNavi.jsp"%>
@@ -27,135 +30,60 @@
 					<div id="TitleName">
                         <span id="page-name">전자결재</span>
                         <span id="sub-name">부서문서함</span>
-                        <form action="" method="get" id="apr-search-form">
-                           <select name="search-option" id="search-option">
+                        <form action="/approvalList.ho" method="get" id="apr-search-form">
+                        <input name="listType" type="hidden" value="D"/>
+                           <select name="searchType" id="search-option">
                                <option value="title">제목</option>
-                               <option value="date">기안일</option>
                                <option value="member">기안자</option>
-                               <option value="type">결재양식</option>
                            </select>
-                            <input type="text" id="approval-search"><button type="submit" id="apr-search-btn">
+                            <input type="text" id="approval-search" name="keyword"><button type="submit" id="apr-search-btn">
                                 <i class="fas fa-search"></i>
                             </button>
                         </form>
                     </div>
                     <div id="TitleContents">
-                       <a href="/aprFormHol.ho" id="new-apr-btn">+ 새 결재문서</a>
+                       <a href="/approvalForm.ho?docuType=H" id="new-apr-btn">+ 새 결재문서</a>
                         <ul id="apr-list-filter">
-                            <li><a href="">전체목록</a></li>
-                            <li><a href="">진행중</a></li>
-                            <li><a href="">반려</a></li>
-                            <li><a href="">완료</a></li>
+                            <li><a href="/approvalList.ho?listType=D">전체목록</a></li>
+                            <li><a href="/approvalList.ho?listType=D&aprStatus=W">대기</a></li>
+                            <li><a href="/approvalList.ho?listType=D&aprStatus=I">진행중</a></li>
+                            <li><a href="/approvalList.ho?listType=D&aprStatus=R">반려</a></li>
+                            <li><a href="/approvalList.ho?listType=D&aprStatus=C">완료</a></li>
                         </ul>
                         
                         <table id="apr-docu-list">
                             <tr>
-                                <th>문서번호</th>
-                                <th>기안일</th>
-                                <th>결재양식</th>
-                                <th>제목</th>
-                                <th>기안자</th>
-                                <th>결재상태</th>
-                                <th>긴급여부</th>
+                                <th width="10%">문서번호</th>
+                                <th width="10%">기안일</th>
+                                <th width="20%">결재양식</th>
+                                <th width="30%">제목</th>
+                                <th width="10%">기안자</th>
+                                <th width="10%">결재상태</th>
+                                <th width="10%">긴급여부</th>
                             </tr>
-                            <tr>
-                                <td>11111111</td>
-                                <td>2021-01-23</td>
-                                <td>법인카드사용신청서</td>
-                                <td><a href="">2월 회식 신청을 위한 법인카드 사용 신청</a></td>
-                                <td>김말똥</td>
-                                <td><span class="apr-type type-ing">진행중</span></td>
-                                <td><span class="apr-type type-urg">긴급</span></td>
-                            </tr>
-                            <tr>
-                                <td>11111111</td>
-                                <td>2021-01-23</td>
-                                <td>법인카드사용신청서</td>
-                                <td><a href="">2월 회식 신청을 위한 법인카드 사용 신청</a></td>
-                                <td>김말똥</td>
-                                <td><span class="apr-type type-ing">진행중</span></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>11111111</td>
-                                <td>2021-01-23</td>
-                                <td>법인카드사용신청서</td>
-                                <td><a href="">2월 회식 신청을 위한 법인카드 사용 신청</a></td>
-                                <td>김말똥</td>
-                                <td><span class="apr-type type-ing">진행중</span></td>
-                                <td><span class="apr-type type-urg">긴급</span></td>
-                            </tr>
-                            <tr>
-                                <td>11111111</td>
-                                <td>2021-01-23</td>
-                                <td>법인카드사용신청서</td>
-                                <td><a href="">2월 회식 신청을 위한 법인카드 사용 신청</a></td>
-                                <td>김말똥</td>
-                                <td><span class="apr-type type-ing">진행중</span></td>
-                                <td><span class="apr-type type-urg">긴급</span></td>
-                            </tr>
-                            <tr>
-                                <td>11111111</td>
-                                <td>2021-01-23</td>
-                                <td>법인카드사용신청서</td>
-                                <td><a href="">2월 회식 신청을 위한 법인카드 사용 신청</a></td>
-                                <td>김말똥</td>
-                                <td><span class="apr-type type-ing">진행중</span></td>
-                                <td><span class="apr-type type-urg">긴급</span></td>
-                            </tr>
-                            <tr>
-                                <td>11111111</td>
-                                <td>2021-01-23</td>
-                                <td>법인카드사용신청서</td>
-                                <td><a href="">2월 회식 신청을 위한 법인카드 사용 신청</a></td>
-                                <td>김말똥</td>
-                                <td><span class="apr-type type-ing">진행중</span></td>
-                                <td><span class="apr-type type-urg">긴급</span></td>
-                            </tr>
-                            <tr>
-                                <td>11111111</td>
-                                <td>2021-01-23</td>
-                                <td>법인카드사용신청서</td>
-                                <td><a href="">2월 회식 신청을 위한 법인카드 사용 신청</a></td>
-                                <td>김말똥</td>
-                                <td><span class="apr-type type-ref">반려</span></td>
-                                <td><span class="apr-type type-urg">긴급</span></td>
-                            </tr>
-                            <tr>
-                                <td>11111111</td>
-                                <td>2021-01-23</td>
-                                <td>법인카드사용신청서</td>
-                                <td><a href="">2월 회식 신청을 위한 법인카드 사용 신청</a></td>
-                                <td>김말똥</td>
-                                <td><span class="apr-type type-ing">진행중</span></td>
-                                <td><span class="apr-type type-urg">긴급</span></td>
-                            </tr>
-                            <tr>
-                                <td>11111111</td>
-                                <td>2021-01-23</td>
-                                <td>법인카드사용신청서</td>
-                                <td><a href="">2월 회식 신청을 위한 법인카드 사용 신청</a></td>
-                                <td>김말똥</td>
-                                <td><span class="apr-type type-done">완료</span></td>
-                                <td><span class="apr-type type-urg">긴급</span></td>
-                            </tr>
-                            <tr>
-                                <td>11111111</td>
-                                <td>2021-01-23</td>
-                                <td>법인카드사용신청서</td>
-                                <td><a href="">2월 회식 신청을 위한 법인카드 사용 신청</a></td>
-                                <td>김말똥</td>
-                                <td><span class="apr-type type-done">완료</span></td>
-                                <td></td>
-                            </tr>
+                            <c:forEach var="apr" items="${requestScope.aprList.list }">
+                            	<tr>
+                                <td>${apr.docuNo}</td>
+                                <td><fmt:formatDate value="${apr.docuDate }" pattern="yyyy-MM-dd"/></td>
+                                <td><c:choose>
+                                	<c:when test="${apr.docuType eq 'H'.charAt(0)}">연차신청서</c:when>
+                                	<c:when test="${apr.docuType eq 'O'.charAt(0)}">연장근무신청서</c:when>
+                                	<c:when test="${apr.docuType eq 'L'.charAt(0)}">지각불참사유서</c:when>
+                                	<c:when test="${apr.docuType eq 'C'.charAt(0)}">법인카드사용신청서</c:when>
+                                </c:choose></td>
+                                <td><a href="/approval.ho?docuNo=${apr.docuNo}&docuType=${apr.docuType}">${apr.title } <c:if test="${apr.lockYN eq 'Y'.charAt(0)}"><i class="fas fa-lock"></i></c:if></a></td>
+                                <td>${apr.memName }</td>
+                                <td><c:choose>
+                                <c:when test="${apr.aprType eq 'W'.charAt(0)}"><span class="apr-type type-ing">대기</span></c:when>
+                                <c:when test="${apr.aprType eq 'I'.charAt(0)}"><span class="apr-type type-ing">진행중</span></c:when>
+                                <c:when test="${apr.aprType eq 'R'.charAt(0)}"><span class="apr-type type-ref">반려</span></c:when>
+                                <c:when test="${apr.aprType eq 'C'.charAt(0)}"><span class="apr-type type-done">완료</span></c:when>
+                                </c:choose></td>
+                                <td><c:if test="${apr.urgencyYN eq 'Y'.charAt(0)}"><span class="apr-type type-urg">긴급</span></c:if></td>
+                            	</tr>
+                            </c:forEach>
                         </table>
-                        <ul id="page-navi">
-                        <li class="page-list"><a href="" class="page-link">◀</a></li>
-                        <li class="page-list"><a href="" class="page-link">1</a></li>
-                        <li class="page-list"><a href="" class="page-link">2</a></li>
-                        <li class="page-list"><a href="" class="page-link">3</a></li>
-                        <li class="page-list"><a href="" class="page-link">▶</a></li>
-                    </ul>
+                        <ul id="page-navi">${requestScope.aprList.pageNavi}</ul>
                     </div>
 				</div>
 			</div>

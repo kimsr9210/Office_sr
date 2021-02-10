@@ -150,8 +150,9 @@ $(function() {
 		location.replace('/projectBoardWrite.ho');
 	});
 	
+	//이전 화면 누르기
 	$('#backward').click(function(){
-		history.back(-1);
+		location.replace('/projectAllList.ho');
 	});
 	
 	// 댓글 수정 
@@ -160,11 +161,12 @@ $(function() {
 			var $form = $(this).parent().next();
 		if($(this).text()=='수정'){
 			$(this).text('완료');
+			$(this).next().text('취소');
 	        $textBox.removeAttr('disabled');
 	        $textBox.removeAttr('readonly');
 	        $textBox.css('border','1px solid black');
 		}else{
-			var result = window.confirm("해당 수정을 삭제하시겠습니까?");
+			var result = window.confirm("해당 댓글을 수정하시겠습니까?");
 			if(result){
 				$form.submit();
 			}
@@ -173,27 +175,163 @@ $(function() {
 	
 	// 댓글 삭제
 	$('.commentDeleteBtn').click(function(){
-		var result = window.confirm("해당 댓글을 삭제하시겠습니까?");
-		var $commentBox = $(this).parent().parent().parent();
-		if(result){
-			var $commentNo = $(this).next().val();
-			var $proNo = $(this).next().next().val();
-			$.ajax({
-            	url : "/deleteProjectComment.ho",
-            	data : {"commentNo" : $commentNo},
+		if($(this).text()=='삭제'){
+			var result = window.confirm("해당 댓글을 삭제하시겠습니까?");
+			var $commentBox = $(this).parent().parent().parent();
+			if(result){
+				var $commentNo = $(this).next().val();
+				var $proNo = $(this).next().next().val();
+				$.ajax({
+	            	url : "/deleteProjectComment.ho",
+	            	data : {"commentNo" : $commentNo},
+	            	type : "get",
+	            	success : function(result){
+	            		if(result=="true"){
+	            			console.log("댓글이 삭제되었습니다");
+	            		}else{
+	            			console.log("프로젝트 즐겨찾기 실패");
+	            		}
+	            	},
+	            	error : function(){
+	            		console.log("프로젝트 즐겨찾기 ajax 통신 실패");
+	            	}
+	            });
+				$(this).parent().parent().parent().remove();
+			}
+		}else{
+			var result = window.confirm("해당 댓글 수정을 취소하시겠습니까?");
+			if(result){
+				location.reload();
+			}
+		}
+		
+	});
+	
+	$('#projectFavor').click(function(){
+        var proNo = $(this).next().val();
+        var memNo = $(this).next().next().val();
+        var proSubject = $(this).next().next().next().val();
+        
+        if($(this).children().css('color')=='rgb(255, 255, 255)'){
+            $.ajax({
+            	url : "/insertProjectFavor.ho",
+            	data : {"proNo" : proNo, "memNo" : memNo},
             	type : "get",
             	success : function(result){
             		if(result=="true"){
-            			console.log("댓글이 삭제되었습니다");
+            			alert("["+proSubject+"] 가 즐겨 찾기에 등록되었습니다");
             		}else{
-            			console.log("프로젝트 즐겨찾기 실패");
+            			alert("프로젝트 즐겨찾기 실패");
             		}
             	},
             	error : function(){
             		console.log("프로젝트 즐겨찾기 ajax 통신 실패");
             	}
             });
-			$(this).parent().parent().parent().remove();
+            $(this).children().attr('class','fas fa-star likeBtn');
+        }else{
+        	$.ajax({
+            	url : "/deleteProjectFavor.ho",
+            	data : {"proNo" : proNo, "memNo" : memNo},
+            	type : "get",
+            	success : function(result){
+            		if(result=="true"){
+            			alert("["+proSubject+"] 가 즐겨 찾기에 삭제되었습니다");
+            		}else{
+            			alert("프로젝트 즐겨찾기 실패");
+            		}
+            	},
+            	error : function(){
+            		console.log("프로젝트 즐겨찾기 ajax 통신 실패");
+            	}
+            });
+            $(this).children().attr('class','far fa-star');
+        }
+    });
+	
+	
+	$('#newProjectSubmitBtn').click(function() {
+		if ($('input:checkbox[id="public_check"]').is(':checked')) {
+			$('#public_check_hidden').attr('disabled', 'disabled');
+		}
+		return true;
+	});
+	
+	//게시물 수정 버튼 누를 시
+	$('.boardModify').click(function(){
+		var $textBox = $(this).parents('.boardInfo').next().children().children('.textarea');
+		var $modify = $(this).parents('.boardInfo').next().children().children('.textHide');
+        $textBox.removeAttr('disabled');
+        $textBox.removeAttr('readonly');
+        $textBox.css('border','1px solid black');
+        $modify.css('display','block');
+        $('.boardModifyBox').css('display','none');
+	});
+	
+	//게시물 수정 완료 누를 시
+	$('.boardModifyBtn').click(function(){
+		var $formBox = $(this).parent();
+        $('.boardModifyBox').css('display','none');
+		var result = window.confirm("정말로 게시물을 수정하시겠습니까?");
+		if(result){
+			$formBox.submit();
 		}
 	});
+	
+	//게시물 수정 취소 버튼 누를 시
+	$('.modifyCancelBtn').click(function(){
+        $('.boardModifyBox').css('display','none');
+		var result = window.confirm("게시물 수정을 취소하시겠습니까?");
+		if(result){
+			location.reload();
+		}
+	});
+	
+	//게시물 삭제
+	$('.boardDelete').click(function(){
+        $('.boardModifyBox').css('display','none');
+		var result = window.confirm("해당 게시물을 삭제하시겠습니까?");
+		var boardNo = $(this).next().val();
+		var boardType = $(this).next().next().val();
+		if(result){
+			$.ajax({
+            	url : "/deleteProjectBoard.ho",
+            	data : {"boardNo" : boardNo, "boardType" : boardType},
+            	type : "post",
+            	success : function(result){
+            		if(result=="true"){
+            			alert("해당 게시물이 삭제되었습니다");
+            		}else{
+            			alert("게시물 삭제에 실패하였습니다 \n지속적인 오류시 관리자에게 문의하세요");
+            		}
+            	},
+            	error : function(){
+            		console.log("게시물 삭제 ajax 통신 실패");
+            	}
+            });
+			
+			location.reload();
+		}
+	});
+	
+	
+	
+	//네비 색깔
+	$('#workNavi').click(function(){
+		$('#workListForm').submit();
+	});
+	$('#postNavi').click(function(){
+		$('#postListForm').submit();
+	});
+	$('#codeNavi').click(function(){
+		$('#codeListForm').submit();
+	});
+	$('#planNavi').click(function(){
+		$('#planListForm').submit();
+	});
+	$('#fileNavi').click(function(){
+		$('#fileListForm').submit();
+	});
+	
+	
 });

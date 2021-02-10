@@ -162,6 +162,7 @@
 	text-align: right;
 	float: left;
 	border: 0;
+		cursor:default;
 }
 
 .fileSize {
@@ -173,14 +174,15 @@
 	border: 0;
 	border-left: 1px solid #cccccc;
 	border-right: 1px solid #cccccc;
+		cursor:default;
 }
 
-.boardUpload {
-	width: 25%;
-	height: 100%;
-	float: right;
-	line-height: 50px;
-}
+	.boardUpload{
+		width:15%;
+		height: 100%;
+		float: right;
+		padding-top: 5px;
+	}
 
 .publicYN {
 	width: 80px;
@@ -198,6 +200,11 @@
 	color: white;
 	font-weight: 800;
 	font-size: 1rem;
+}
+#codeBox {
+	display: none;
+	width: 100%;
+	height: auto;
 }
 
 /* -----------------projectRight---------------------- */
@@ -298,7 +305,7 @@
 /* --------------------------프로젝트 옵션 ---------------------------*/
 #projectOption {
 	width: 200px;
-	height: 220px;
+	height: auto;
 	margin-left: 530px;
 	border: 1px solid #BFBFBF;
 	background-color: white;;
@@ -307,7 +314,9 @@
 	z-index: 1;
 	display: none;
 }
-
+#projectComplate{
+	cursor: pointer;
+}
 .optionRegular {
 	padding-left: 10px;
 	padding-top: 3px;
@@ -960,6 +969,9 @@
 	border: 0;
 	outline: none;
 }
+
+
+
 /* ------------------ 일정 작성일 때----------------------*/
 #scheduleBox {
 	width: 100%;
@@ -1072,15 +1084,6 @@
 }
 
 /* ------------------ 할일 작성일 때----------------------*/
-.boardWriteText {
-	width: 100%;
-	padding: 30px;
-	font-family: "맑은 고딕";
-	font-size: 0.875rem;
-	resize: none;
-	border: 0;
-	outline: none;
-}
 
 #workBox {
 	width: 100%;
@@ -1151,4 +1154,25 @@
 
 #workHidden {
 	display: none;
+}
+
+#projectName {
+	color: white;
+	font-size: 1.50rem;
+	font-weight: 800;
+}
+
+.imgUp{
+		max-width: 90%;
+		margin: 0px 30px 0px 30px;
+		height: auto;
+	}
+	
+.likeBtn{
+	color: yellow;
+}
+
+#projectFavor{
+	font-size: 1.5rem;
+	cursor: pointer;
 }

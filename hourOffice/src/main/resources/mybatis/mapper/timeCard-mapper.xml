@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="timeCard">
+
+	<select id="selectHoliday" resultType="Holiday">
+		SELECT
+			L.LIST_NO AS listNo,
+            L.MEM_NO AS memNo,       
+			L.HOL_TYPE AS holType,
+            L.AFTERNOON_OFF AS afternoonOff,
+			TO_DATE(TO_CHAR(START_DATE,'yyyy-MM-dd')) AS "start",
+			TO_DATE(TO_CHAR(END_DATE,'yyyy-MM-dd')) AS "end",
+            L.HOL_COUNT AS holCount,
+        	(M.MEM_NAME || ' ' || DECODE(L.AFTERNOON_OFF,'A','반차','연차')) AS title
+        FROM HOLIDAY_LIST L
+        INNER JOIN MEMBER M
+        ON L.MEM_NO = M.MEM_NO
+	</select>
+
+</mapper>

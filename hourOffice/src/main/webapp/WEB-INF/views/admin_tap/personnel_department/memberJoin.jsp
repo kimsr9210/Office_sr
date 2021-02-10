@@ -1,5 +1,8 @@
+<%@page import="kr.or.houroffice.member.model.vo.Department"%>
+<%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="C" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -11,13 +14,16 @@
     <!--jQuery CDN-->
     <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 	
+	<!-- 주소찾기 다음 API -->
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	
 	<!-- 헤더 & 네비 CSS -->
 	<link rel="stylesheet" type="text/css" href="/resources/css/header&sideNavi.css" />
 	<!-- 관리자 탭 공통 CSS -->
 	<link rel="stylesheet" type="text/css" href="/resources/css/admin_tap/adminTapCommon.css" />
 	<!-- CSS -->
 	<link rel="stylesheet" type="text/css" href="/resources/css/admin_tap/memberInfo.css" />
-	
+
 </head>
 <body>
 	<div id="wrap">
@@ -39,7 +45,10 @@
 						<div id="contWrapper">
                     <form action="/memberSingUp.ho" method="post" enctype="multipart/form-data">
                         <div class="floatDiv">
-                            <div id="memProfile"><img border="1px" src=""/><br></div>
+                        	<div>
+                                <div id="img-btn-div"><input type="file" name="memProfile" id="profileImg"/><label for="profileImg" id="profileImg-label">이미지 선택</label></div>
+                            </div>
+                            <div id="memProfile"><img src="/resources/images/profile/default_profile.png"/><br></div>
                             <div id="position_dept">
                                 <div class="posi_deptDiv">직위<br>
                                     <select id="memPosition" name="memPosition" class="posi_deptSelect">
@@ -57,18 +66,14 @@
                                 <div class="posi_deptDiv">부서<br>
                                     <select name="deptCode" class="posi_deptSelect">
                                         <option value=""></option>
-                                        <option value="D1">인 &nbsp;&nbsp;사&nbsp;&nbsp;부</option>
-                                        <option value="D2">총 &nbsp;&nbsp;무&nbsp;&nbsp;부</option>
-                                        <option value="D3">전 &nbsp;&nbsp;산&nbsp;&nbsp;부</option>
-                                        <option value="D4">개 &nbsp;&nbsp;발&nbsp;&nbsp;부</option>
-                                        <option value="D5">디 자 인</option>
+                                <% ArrayList<Department> deptList = (ArrayList<Department>)request.getAttribute("deptList"); %>
+                                <% for(Department dept : deptList){ %>
+                                        <option value="<%=dept.getDeptCode() %>"><%=dept.getDeptName() %></option>
+                                <% } %>
                                     </select>
-                                    <!--<div class="select__arrow"></div>-->
                                 </div>
                             </div>
-                            <div>
-                                <div style="width:63%; margin-top:20px; display:inline-block; text-align:right;"><input type="file" name="memProfile" id="profileImg"/></div>
-                            </div>
+                            
                         </div>
                         <div id="rightCont" class="floatDiv">
                            <div>이름<br>
@@ -84,12 +89,12 @@
                                     </select>
                                 </div>
                                 <div id="genderDiv">성별<br>
-                                    <input type="radio" name="memGender" class="genderInput" value="M" checked/> 남 <input type="radio" name="memGender" class="genderInput" value="F"/> 여
+                                    <input type="radio" name="memGender" class="genderInput" value="M" checked/> <span>남</span> <input type="radio" name="memGender" class="genderInput" value="F"/> <span>여</span>
                                 </div>
                            </div>
                            <hr color="white">
                            <div class="infoRespective">현주소<br>
-                               <input type="text" name="memAddress1" id="addrInput"/> <button type="button">검색</button><br>
+                               <input type="text" name="memAddress1" id="addrInput" readonly/> <button type="button" onclick="searchAddr()">검색</button><br>
                                <input type="text" name="memAddress2" class="inputStyle"/>
                            </div>
                            <div class="infoRespective">연락처<br>
@@ -131,7 +136,6 @@
                                 병역<br>
                                 <hr class="innerHr">
                                 <div id="milInfor" class="float">복무여부 <select name="milServiceType" id="milTypeSelect">
-                                    <option value=""></option>
                                     <option value="군필">군필</option>
                                     <option value="미필">미필</option>
                                     <option value="면제">면제</option>
@@ -237,7 +241,10 @@
                               }
 
                             }
-                            
+                            // 성별 글자 눌러도 체크 되게
+                            $('.genderInput').next().click(function(){
+                            	$(this).prev().prop('checked',true);
+                            });
                             
                             $('#submit-btn').click(function(){
                         		// submit 전에 거르기
@@ -278,9 +285,63 @@
 	                        		$('#contWrapper > form').submit();
                         		}
                         	});
+                            // 취소 btn 클릭 이벤트
+                            $('.delBtn').click(function(){
+                            	history.go(-1);
+                            });
                             
-                            
-                        </script>
+                            // 우편 API
+                            function searchAddr(){
+                            	new daum.Postcode({
+    						        oncomplete: function(data) {
+    						            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
+
+    						        	// 각 주소의 노출 규칙에 따라 주소를 조합한다.
+    					                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+    					                var addr = ''; // 주소 변수
+    					                var extraAddr = ''; // 참고항목 변수
+
+    					                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+    					                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+    					                    addr = data.roadAddress;
+    					                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+    					                    addr = data.jibunAddress;
+    					                }
+
+    					                // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+    					                if(data.userSelectedType === 'R'){
+    					                    // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+    					                    // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+    					                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+    					                        extraAddr += data.bname;
+    					                    }
+    					                    // 건물명이 있고, 공동주택일 경우 추가한다.
+    					                    if(data.buildingName !== '' && data.apartment === 'Y'){
+    					                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+    					                    }
+    					                    // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+    					                    if(extraAddr !== ''){
+    					                        extraAddr = ' (' + extraAddr + ')';
+    					                    }
+    					                    // 조합된 참고항목을 해당 필드에 넣는다.
+    					                    //document.getElementById("sample6_extraAddress").value = extraAddr;
+    					                
+    					                } else {
+    					                    //document.getElementById("sample6_extraAddress").value = '';
+    					                }
+
+    					                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+    					                //document.getElementById('addrInput').value = data.zonecode;
+    					                $('#addrInput').val(data.zonecode);
+    					                //document.getElementById("sample6_address").value = addr;
+                            			$('#addrInput').siblings('input').val(addr+extraAddr);
+    					                // 커서를 상세주소 필드로 이동한다.
+    					                //document.getElementById("sample6_detailAddress").focus();
+    						        }
+    						    }).open();
+                            }
+						    
+						</script>
 						
 						
 						<!----------------------------------->

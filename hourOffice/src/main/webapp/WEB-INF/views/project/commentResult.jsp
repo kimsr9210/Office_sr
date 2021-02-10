@@ -11,6 +11,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 <form id="form" action="/projectDetail.ho" method="get">
 <input type="hidden" name="proNo" value="${requestScope.proNo }"/>
+<input type="hidden" name="boardType" value="${requestScope.boardType }"/>
 </form>
 
 

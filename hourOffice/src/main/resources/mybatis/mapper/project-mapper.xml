@@ -92,7 +92,7 @@
 	
 	<!-- 프로젝트 게시물 생성 -->
 	<insert id="insertProjectBoard" parameterType="ProjectBoard">
-		INSERT INTO PRO_BOARD VALUES(PRO_BOARD_SEQ.NEXTVAL, #{proNo}, #{memNo}, SYSTIMESTAMP, 'N', #{boardText})
+		INSERT INTO PRO_BOARD VALUES(PRO_BOARD_SEQ.NEXTVAL, #{proNo}, #{memNo}, SYSTIMESTAMP, 'N', #{boardText}, #{imgName})
 	</insert>
 	
 	<!-- 해당 프로젝트 게시물 가져오기 -->
@@ -103,7 +103,8 @@
 			MEM_NO as memNo,
 			BOARD_DATE as boardDate,
 			DEL_YN as delYN,
-			BOARD_TEXT as boardText
+			BOARD_TEXT as boardText,
+			IMG_NAME as imgName
 		FROM PRO_BOARD
 		WHERE DEL_YN='N' AND PRO_NO=#{proNo}
 		ORDER by BOARD_NO DESC
@@ -122,8 +123,8 @@
 			COMP_DATE as compDate,
 			MEM_COUNT as memCount
 		FROM PROJECT
-		WHERE PRO_NO IN
-        (SELECT PRO_NO FROM PRO_MEMBER WHERE MEM_NO=#{MEM_NO})
+		WHERE DEL_YN='N' AND PRO_NO IN
+        (SELECT PRO_NO FROM PRO_MEMBER WHERE MEM_NO=#{MEM_NO} AND DEL_YN='N')
 	</select>
 	
 	<!-- 프로젝트 즐겨찾기 등록 -->
@@ -181,4 +182,107 @@
 	<update id="deleteProjectComment">
 		UPDATE PRO_COMMENT SET DEL_YN='Y' WHERE COMMENT_NO=#{commentNo}
 	</update>
+	
+	<!-- 프로젝트 수정하기 -->
+	<update id="updateProject" parameterType="Project">
+		UPDATE PROJECT SET 
+			PRO_SUBJECT=#{proSubject},
+			PRO_EXP=#{proExp},
+			PUBLIC_YN=#{publicYN}
+		WHERE PRO_NO=#{proNo}
+	</update>
+	
+	<!-- 프로젝트 게시물 내용 수정 -->
+	<update id="updateProjectBoard" parameterType="ProjectBoard">
+		UPDATE PRO_Board SET 
+			BOARD_TEXT=#{boardText}
+		WHERE BOARD_NO=#{boardNo}
+	</update>
+	
+	<!-- 프로젝트 게시물 삭제 -->
+	<update id="deleteProjectBoard">
+		UPDATE PRO_BOARD SET 
+			DEL_YN='Y'
+		WHERE BOARD_NO=#{boardNo}
+	</update>
+	
+	<!-- 프로젝트 나가기 -->
+	<update id="updateProjectMemberExit" parameterType="ProjectMember">
+		UPDATE PRO_MEMBER SET 
+			DEL_YN='Y'
+		WHERE PRO_NO=#{proNo} AND MEM_NO=#{memNo}
+	</update>
+	
+	<!-- 프로젝트 삭제 -->
+	<update id="deleteProject" parameterType="Project">
+		UPDATE PROJECT SET 
+			DEL_YN='Y'
+		WHERE PRO_NO=#{proNo}
+	</update>
+	
+	<!-- 관리자 지정 -->
+	<update id="updateProjectMgrSet" parameterType="ProjectMember">
+		UPDATE PRO_MEMBER SET 
+			MGR_YN='Y'
+		WHERE PRO_NO=#{proNo} AND MEM_NO=#{memNo}
+	</update>
+	
+	<!-- 관리자 지정 해제 -->
+	<update id="updateProjectMgrCancel" parameterType="ProjectMember">
+		UPDATE PRO_MEMBER SET 
+			MGR_YN='N'
+		WHERE PRO_NO=#{proNo} AND MEM_NO=#{memNo}
+	</update>
+	
+	<!-- 일정 게시물 올리기 -->
+	<insert id="insertProjectPlan" parameterType="ProjectPlan">
+		INSERT INTO PRO_PLAN VALUES(PRO_BOARD_SEQ.NEXTVAL, #{proNo}, #{memNo}, #{subject}, #{memo}, #{startDate}, #{endDate}, 'N')
+	</insert>
+	<!-- 프로젝트 완료 미완료 처리 -->
+	<update id="updateProjectComplate" parameterType="Project">
+		UPDATE PROJECT SET 
+			COMP_YN=#{compYN}
+		WHERE PRO_NO=#{proNo}
+	</update>
+	
+
+	<!-- BY 진원 - 한 게시물에 대한 댓글 목록 -->
+	<select id="selectOneBoardComment" resultType="ProjectComment">
+		SELECT 
+		    COMMENT_NO as commentNo,
+		    BOARD_NO as boardNo,
+		    MEM_NO as memNo,
+		    COMMENT_CON as commentCon,
+		    COMMENT_DATE as commentDate,
+		    DEL_YN as delYN
+		FROM PRO_COMMENT
+		WHERE DEL_YN='N' AND BOARD_NO =#{boardNo}
+		ORDER BY COMMENT_DATE DESC
+	</select>
+  
+	<!-- 프로젝트 게시물에 사진 올릴 시 -->
+	<insert id="insertProjectBoardFile" parameterType="ProjectFileData">
+		INSERT INTO PRO_FILE VALUES(PRO_FILE_SEQ.NEXTVAL, #{proNo}, #{memNo}, #{originalFileName}, #{changedFileName}, #{filePath}, #{fileSize}, #{uploadTime}, 'N')
+	</insert>
+	
+	<!-- 프로젝트 게시물에 사진 올릴 시 -->
+	<insert id="insertProjectCode" parameterType="ProjectCode">
+		INSERT INTO PRO_CODE VALUES(PRO_BOARD_SEQ.NEXTVAL, #{proNo}, #{memNo}, SYSTIMESTAMP, #{codeText}, #{boardText}, 'N', #{imgName})
+	</insert>
+	
+	<!-- 프로젝트 코드 목록 가져오기 -->
+	<select id="selectProjectCodeList" resultType="ProjectCode">
+		SELECT 
+		    CODE_NO as codeNo,
+		    PRO_NO as proNo,
+		    MEM_NO as memNo,
+		    CODE_DATE as codeDate,
+		    CODE_TEXT as codeText,
+		    BOARD_TEXT as boardText,
+		    DEL_YN as delYN,
+		    IMG_NAME as imgName
+		FROM PRO_CODE
+		WHERE DEL_YN='N' AND PRO_NO=#{proNo}
+		ORDER by CODE_NO DESC
+	</select>
 </mapper>

@@ -77,12 +77,28 @@ select {
 <script>
 	$(function() {
 		var dialog, form;
-
 		function addUser() {
+			
+			// Class = addName
+			//$(".addName")
+			
+			// Id = addName
+			//$("#addName")
+			
+			var addName = $("#addName").val();
+			var addCompany = $("#addCompany").val();
+			var addPosition = $("#addPosition").val();
+			var addTell = $("#addTell").val();
+			var addPh = $("#addPh").val();
+			var addEmail = $("#addEmail").val();
+
+			var object = {"name":addName,"company":addCompany,"position":addPosition,"tell":addTell,"ph":addPh,"email":addEmail};
 			// ajax 이벤트 추가
-				$.ajax({
-				url : "/",
-				data : {"name":myName},
+			$.ajax({
+				url : "/myaddbook.ho",
+				dataType: 'json',
+		        data: JSON.stringify(object), //리스트(object)를 json 형식으로 저장하기 -> 키 벨류
+		        contentType:'application/json; charset=utf-8',
 				type : "post",
 				success : function(){
 					console.log("서버 호출을 정상적으로 완료 하였습니다.");
@@ -99,7 +115,7 @@ select {
 
 		dialog = $("#dialog-form").dialog({
 			autoOpen : false,
-			height : 350,
+			height : 400,
 			width : 350,
 			modal : true,
 			buttons : {
@@ -113,6 +129,7 @@ select {
 			}
 		});
 
+		//여기가 잘못된거같은데 모르겠네
 		form = dialog.find("form").on("submit", function(event) {
 			event.preventDefault();
 			addUser();
@@ -126,12 +143,16 @@ select {
 
 <body>
 
+
 	<div id="dialog-form" title="연락처등록"><br>
-			<div class="addname">이름</div><input class="textbox" type="text" class="text" /><br><br><br>
-			<div class="addname">직책</div><input class="textbox" type="text" class="text" /><br><br><br>
-			<div class="addname">내선번호</div><input class="textbox" type="text" class="text" /><br><br><br>
-			<div class="addname">휴대폰</div><input class="textbox" type="text" class="text" /><br><br><br>
-			<div class="addname">이메일</div><input class="textbox" type="text" class="text" /><br><br>
+	<form>
+			<div class="addname" >이름</div><input  id="addName" class="textbox" type="text" class="text" /><br><br><br>
+			<div class="addname" >회사</div><input id="addCompany" class="textbox" type="text" class="text" /><br><br><br>
+			<div class="addname" >직급</div><input id="addPosition" class="textbox" type="text" class="text" /><br><br><br>
+			<div class="addname" >내선번호</div><input id="addTell" class="textbox" type="text" class="text" /><br><br><br>
+			<div class="addname" >휴대폰</div><input id="addPh" class="textbox" type="text" class="text" /><br><br><br>
+			<div class="addname" >이메일</div><input id="addEmail" class="textbox" type="text" class="text" /><br><br>
+	</form>
 	</div>
 
 	<div id="wrap">
@@ -191,8 +212,8 @@ select {
 									<form>
 										<select>
 											<option>이름</option>
-											<option>부서</option>
-											<option>직책</option>
+											<option>회사</option>
+											<option>직급</option>
 										</select> <input type="text" id="search" name="search" /> <input
 											type="submit" id="sbbtn" value="검색" />
 									</form>
@@ -209,7 +230,8 @@ select {
 							<tr style="background-color: #1D9F8E; color: white;">
 								<th><input type="checkbox" class="ckall"></th>
 								<th>이름</th>
-								<th>소속부서</th>
+								<th>회사</th>
+								<th>직위</th>
 								<th>내선번호</th>
 								<th>휴대폰</th>
 								<th>이메일</th>
@@ -219,9 +241,10 @@ select {
 							<tr>
 								<td><input type="checkbox" class="ck"></td>
 								<td>김소련</td>
-								<td>개발1팀</td>
+								<td>삼성</td>
 								<td>팀장</td>
 								<td>02)2049-3618</td>
+								<td>010-1111-2222</td>
 								<td>kim@kr.or.iei.kh</td>
 							</tr>
 

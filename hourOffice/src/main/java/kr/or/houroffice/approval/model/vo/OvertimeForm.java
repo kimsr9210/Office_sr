@@ -11,7 +11,7 @@ public class OvertimeForm {
 	private int startMinute; //시작분
 	private int endHour; //종료시
 	private int endMinute; //종료분
-	private int totalHour; //총근무시간
+	private double totalHour; //총근무시간
 	private String reasons; //신청사유
 
 	public OvertimeForm() {
@@ -20,7 +20,7 @@ public class OvertimeForm {
 	}
 
 	public OvertimeForm(int formNo, int docuNo, char ovtType, Timestamp ovtDate, int startHour, int startMinute,
-			int endHour, int endMinute, int totalHour, String reasons) {
+			int endHour, int endMinute, double totalHour, String reasons) {
 		super();
 		this.formNo = formNo;
 		this.docuNo = docuNo;
@@ -98,11 +98,11 @@ public class OvertimeForm {
 		this.endMinute = endMinute;
 	}
 
-	public int getTotalHour() {
+	public double getTotalHour() {
 		return totalHour;
 	}
 
-	public void setTotalHour(int totalHour) {
+	public void setTotalHour(double totalHour) {
 		this.totalHour = totalHour;
 	}
 

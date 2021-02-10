@@ -4,14 +4,44 @@
         width: 75%;
         height: 100%;
     }
+    
+    
+    /* 참여중인 프로젝트가 없을경우 */
+    .in-pro-none{
+    	width: 100%;
+    	height: 100%;
+    	display: flex;
+    	background-color: white;
+    	align-items: center;
+    }
+    .attendBtn{
+    	margin: 0px auto;
+    	width: 250px;
+    	height: 80px;
+    	text-align: center;
+    	line-height: 60px;
+    	border: 10px #0D3C36 solid;
+    	border-radius:20px;
+    	outline: none;
+    	cursor: pointer;
+    	color: #0D3C36;
+    	font-size: 20px;
+    	font-weight: bold;
+    	background-color: #F7F4BC;
+    	opacity: 0.9;
+    }
+    .attendBtn:active{
+    	opacity: 1.0;
+    }
+
+
+    /* 참여중인 프로젝트가 있을경우 */
     .in-pro-top{
         height: 50px;
         padding: 7px 10px;
         background-color: #7E93E9;
     }
-    .in-pro-top:hover{
-        opacity: 0.9;
-    }
+
     .in-pro-top>a{
         font-size: 16px;
         font-weight: bold;
@@ -21,15 +51,30 @@
         color: white;
     }
     .in-pro-top>.fa-star{
-        color: white;
         margin-top: 10px;
+        float: right;
+        font-size: 20px;
+        margin-right: 5px;
+        cursor: pointer;
     }
-    /*게시물*/
     .in-pro-post{
         height: 230px;
         background-color: white;
         padding: 10px;
     }
+    
+        
+	/* 게시물이 없을 경우 */
+    .post-none{
+    	padding: 10px;
+    	height: calc(100% / 6 * 5);
+    	font-size: 18px;
+    	font-weight: 600;
+    	color: darkgray;
+    }
+    
+
+    /*게시물이 있을 경우*/
     .post-info{
         height: calc(100% / 3);
         padding-top: 10px;
@@ -53,7 +98,7 @@
     .post-info>div>span:nth-child(3){
         color: darkgray;
     }
-    #proNavi{
+    #boardMenu{
         float: right;
         font-size: 20px;
         color: darkgray;
@@ -66,24 +111,29 @@
         padding: 0 10px 10px 10px;
     }
     .post-comment{
-        height: calc(100% / 3);
+        height: calc(100% / 6);
         padding: 10px;
     }
     .comment-count{
-        height: 50%;
+        height: 100%;
         margin-bottom: 5px;
     }
     .comment-count>span{
         float: right;
         color: darkgray;
     }
-    .comment-write{
+
+    
+    /* 바로가기 */
+    .shortcutsBtn{
         display: block;
+        width: 140px;
         color: darkgray;
         font-size: 14px;
         font-weight: 600;
         margin-top: 10px;
+        cursor: pointer;
     }
-    .comment-write:hover{
+    .shortcutsBtn:hover{
         opacity: 0.9;
     }

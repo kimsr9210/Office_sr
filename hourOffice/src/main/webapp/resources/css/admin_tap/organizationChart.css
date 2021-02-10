@@ -146,3 +146,13 @@
             bottom: 5px;
             right: 3px;
         }
+        
+        /* span 부서이름 변경 */
+        #dept-update{
+        	position: relative;
+        	z-index: 97;
+        }
+        .dept-btn-div{
+        	position: relative;;
+        	z-index: 99;
+        }

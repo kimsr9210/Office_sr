@@ -9,7 +9,7 @@
 <body>
 	<div id="header">
 		<div id="headerLogo">
-			<a href="#"><img id="logoImg"
+			<a href="/index.jsp"><img id="logoImg"
 				src="resources/images/logo_white.png" /></a>
 		</div>
 		<form action="/search" method="post">

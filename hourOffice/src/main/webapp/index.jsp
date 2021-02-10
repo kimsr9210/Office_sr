@@ -22,7 +22,7 @@
 	<br>
 	<a href="/allPartBoardPage.ho">부서별 게시판 전체 list</a><br>
 	<a href="/partBoard.ho">부서별 게시판 게시글</a><br>
-	<a href="/partBoardAdd.ho">부서별 게시판 새글쓰기</a><br>
+	<a href="/writePostPartBoard.ho">부서별 게시판 새글쓰기</a><br>
 	<a href="/partBoardModify.ho">부서별 게시판 수정하기</a><br>
 	<br>
 	<a href="/admin_tap_allListMember.ho">관리자탭 - 사원 전체 list</a><br>

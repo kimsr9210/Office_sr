@@ -1,25 +1,44 @@
 $(function() {
 	/* textarea 키를 누를 때 마다 자동 높이 조절*/
 	function adjustHeight() {
-		var textEle = $('textarea');
+		var textEle = $('#postTextarea');
 		textEle[0].style.height = 'auto';
 		var textEleHeight = textEle.prop('scrollHeight');
 		textEle.css('height', textEleHeight);
 	}
 	;
-	var textEle = $('textarea');
+	var textEle = $('#postTextarea');
 	textEle.on('keyup', function() {
 		adjustHeight();
 	});
 	/* TextArea 자동 높이 조절 CDN */
 	autosize($('textarea'));
 
-	/* 파일 올릴 시 이름 보여주기 */
-	$('#fileUpload').change(function() {
-		$('#fileName').val($(this)[0].files[0].name);
-		$('#fileSize').val($(this)[0].files[0].size + ' KB');
+	function adjustHeight() {
+		var textEle = $('#codeTextarea');
+		textEle[0].style.height = 'auto';
+		var textEleHeight = textEle.prop('scrollHeight');
+		textEle.css('height', textEleHeight);
+	}
+	;
+	var textEle = $('#codeTextarea');
+	textEle.on('keyup', function() {
+		adjustHeight();
 	});
-
+	
+	
+	function adjustHeight() {
+		var textEle = $('#codeText');
+		textEle[0].style.height = 'auto';
+		var textEleHeight = textEle.prop('scrollHeight');
+		textEle.css('height', textEleHeight);
+	}
+	;
+	var textEle = $('#codeText');
+	textEle.on('keyup', function() {
+		adjustHeight();
+	});
+	
 	/* 프로젝트 옵션 선택 시 박스 나타내기 */
 	$('#projectSetting').click(function() {
 		console.log(this);
@@ -164,6 +183,8 @@ $(function() {
 			$('#writeBox').css('display', 'block');
 		} else if ($(this).text() == " 할일") {
 			$('#workBox').css('display', 'block');
+		} else if ($(this).text() == " 코드") {
+			$('#codeBox').css('display', 'block');
 		}
 	});
 
@@ -180,4 +201,61 @@ $(function() {
 		console.log($(this).parent());
 		$(this).parent().remove();
 	});
+	
+	//이전화면 누르기
+	$('#backward').click(function(){
+		location.replace('/projectAllList.ho');
+	});
+	
+	//게시물 즐겨찾기 추가버튼
+	$('#projectFavor').click(function(){
+        var proNo = $(this).next().val();
+        var memNo = $(this).next().next().val();
+        var proSubject = $(this).next().next().next().val();
+        
+        if($(this).children().css('color')=='rgb(255, 255, 255)'){
+            $.ajax({
+            	url : "/insertProjectFavor.ho",
+            	data : {"proNo" : proNo, "memNo" : memNo},
+            	type : "get",
+            	success : function(result){
+            		if(result=="true"){
+            			alert("["+proSubject+"] 가 즐겨 찾기에 등록되었습니다");
+            		}else{
+            			alert("프로젝트 즐겨찾기 실패");
+            		}
+            	},
+            	error : function(){
+            		console.log("프로젝트 즐겨찾기 ajax 통신 실패");
+            	}
+            });
+            $(this).children().attr('class','fas fa-star likeBtn');
+        }else{
+        	$.ajax({
+            	url : "/deleteProjectFavor.ho",
+            	data : {"proNo" : proNo, "memNo" : memNo},
+            	type : "get",
+            	success : function(result){
+            		if(result=="true"){
+            			alert("["+proSubject+"] 가 즐겨 찾기에 삭제되었습니다");
+            		}else{
+            			alert("프로젝트 즐겨찾기 실패");
+            		}
+            	},
+            	error : function(){
+            		console.log("프로젝트 즐겨찾기 ajax 통신 실패");
+            	}
+            });
+            $(this).children().attr('class','far fa-star');
+        }
+    });
+	
+	//프로젝트 수정 시
+	$('#newProjectSubmitBtn').click(function() {
+		if ($('input:checkbox[id="public_check"]').is(':checked')) {
+			$('#public_check_hidden').attr('disabled', 'disabled');
+		}
+		return true;
+	});
+	
 });

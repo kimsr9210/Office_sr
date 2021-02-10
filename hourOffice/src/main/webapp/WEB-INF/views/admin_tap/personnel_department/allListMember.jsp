@@ -62,8 +62,6 @@ $(function(){
         if(checkMem.length==1){
             $('.positionChangePlace').hide();
             $('#change'+checkMem).show();
-            //$('#change'+checkMem).children().slideDown();
-            //$('#change'+checkMem).slideDown();
         }else{
             alert('하나의 사원을 선택해주세요');
         }
@@ -71,35 +69,66 @@ $(function(){
     
     // 직위 변경 저장 버튼 -> update
     $('.positionChangeSaveBtn').click(function(){
+    	var $memPositionTd = $(this).parents('tr').prev().children(':nth-child(4)'); // 현재 직위가 있는 td
         var memNo = $(this).parents('tr').attr('id').substr(6); // 사번
         var position = $(this).prev().val(); // 변경할 직위
         if(position!=''){
             var result = confirm('['+memNo+'] 해당 사번의 직위를 '+position+'(으)로 변경하시겠습니까?');
             if(result){
                 // $.ajax 처리
+                $.ajax({
+                	url: '/admin_tap_changePosition.ho',
+                	type: 'post',
+                	data: {'memNo':memNo,'position':position},
+                	success: function(data){
+                		if(data){
+                			alert('직위를 변경하였습니다.');
+                			$memPositionTd.text(position);
+                		}else{
+                			alert('직위 변경을 실패하였습니다. \n지속적인 오류시 관리자에 문의하세요.');
+                		}
+                	},
+                	error: function(){
+                		alert('직위 변경을 실패하였습니다. \n지속적인 오류시 관리자에 문의주세요.');
+                	}
+                });
+                $(this).prev().val('');
             }
         }else{
             alert('변경할 직위를 선택해주세요.');
         }
-        
     });
     
     // 직위 변경 취소 버튼 누르면 td가 안 보이게 변경 
     $('.positionChangeResetBtn').click(function(){
         $(this).parents('.positionChangePlace').hide();
-        //$(this).parents('.positionChangePlace').slideUp();
-        //$(this).parents('.positionChangePlace').children().hide();
+        $(this).prev().prev().val('');
     });
     
     // 사원삭제 -> update
-    $('#dropMemBtn').click(function(){
+    $('#dropMemBtn').click(function(){ 
         if(checkMem.length>0){
             if(checkMem[0]=='all'){
                 checkMem.splice(checkMem.indexOf(checkMem[0]),1);
             }
             if(confirm('정말 삭제하시겠습니까?')){
-                // $.ajax();
-                // 삭제로직~   
+            	
+                $.ajax({
+                	url : '/admin_tap_resignMember.ho',
+                	data : {'memNoList':checkMem},
+                	type : 'post',
+                	success : function(result){
+                		if(result){
+                			alert('사원 삭제를 성공하였습니다.');
+                			history.go(0);
+                		}else{
+                			alert('사원 삭제를 실패하였습니다. \n지속적인 오류시 관리자에 문의하세요.');
+                		}
+                	},
+                	error:function(){
+                		alert('사원 삭제를 실패하였습니다. \n지속적인 오류시 관리자에 문의주세요.');
+                	}
+                });
             }
         }else{
             alert('삭제할 사원을 선택해주세요');
@@ -133,7 +162,7 @@ $(function(){
                         <div id="btnPlace" class="float"><a href="/admin_tap_memberJoin.ho"><button type="button">+ 사원생성</button></a><button type="button" id="positionChangeBtn">직위변경</button><button type="button" id="dropMemBtn" class="delBtn">- 사원삭제</button></div>
                         
                         <div id="search-div" class="float">
-                            <form action="#" method="get">
+                            <form action="/admin_tap_search_allListMember.ho" method="get">
                             <select name="searchType">
                                 <option value="memNo">사번</option>
                                 <option value="memName">이름</option>
@@ -166,7 +195,7 @@ $(function(){
                            		<% if(member.getDeptCode() != null){ %>
                                     <td><%=member.getDeptCode() %></td>
                                 <% }else { %>
-                                    <td>없음</td>
+                                    <td>미정</td>
                                 <% } %>
                               	<% if(member.getMemEmail() != null){ %>
                                     <td><%=member.getDeptName() %></td>

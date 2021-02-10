@@ -83,11 +83,11 @@
 		</div>
 		<ui class="categoryBox">
 		<li class="categoryName">결재하기</li>
-		<li class="categoryList"><a href="/aprListRequest.ho">결재 요청함</a></li>
-		<li class="categoryList"><a href="/aprListWait.ho">결재 대기함</a></li>
+		<li class="categoryList"><a href="/approvalList.ho?listType=R">결재 요청함</a></li>
+		<li class="categoryList"><a href="/approvalList.ho?listType=W">결재 대기함</a></li>
 		<li class="categoryName">문서함</li>
-		<li class="categoryList"><a href="/aprListRef.ho">참조 문서함</a></li>
-		<li class="categoryList"><a href="/aprListDept.ho">부서 문서함</a></li>
+		<li class="categoryList"><a href="/approvalList.ho?listType=F">참조 문서함</a></li>
+		<li class="categoryList"><a href="/approvalList.ho?listType=D">부서 문서함</a></li>
 		</ui>
 
 		<div id="categoryBoard" class="sideNaviClick">
@@ -105,7 +105,7 @@
 		<li class="categoryList"><a href="#">공지사항 게시판</a></li>
 		<li class="categoryList"><a href="#">문의사항 게시판</a></li>
 		<li class="categoryName">부서 게시판</li>
-		<li class="categoryList"><a href="#">부서별 게시판</a></li>
+		<li class="categoryList"><a href="/allPartBoardPage.ho">부서별 게시판</a></li>
 		</ui>
 
 		<div id="categoryProject" class="sideNaviClick">
@@ -149,8 +149,8 @@
 
 		<ui class="categoryBox">
 		<li class="categoryName">인사 관리자</li>
-		<li class="categoryList"><a href="#">통합사원 관리</a></li>
-		<li class="categoryList"><a href="#">조직도 관리</a></li>
+		<li class="categoryList"><a href="/admin_tap_allListMember.ho">통합사원 관리</a></li>
+		<li class="categoryList"><a href="/admin_tap_organizationChart.ho">조직도 관리</a></li>
 		<li class="categoryName">총무 관리자</li>
 		<li class="categoryList"><a href="#">공지사항 관리</a></li>
 		<li class="categoryList"><a href="#">사내규정 관리</a></li>
@@ -161,4 +161,10 @@
 	</div>
 
 </body>
+<script>
+	$('.fa-home').parents('.sideNaviClick').click(function(){
+		
+		location.replace('/main.ho');
+	});
+</script>
 </html>

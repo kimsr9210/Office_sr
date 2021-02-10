@@ -1,3 +1,4 @@
+<%@page import="kr.or.houroffice.personnel.model.vo.MemDept"%>
 <%@page import="kr.or.houroffice.member.model.vo.Member"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
@@ -50,6 +51,8 @@ th {
 <body>
 
 	<%Member m = (Member)session.getAttribute("member");%>
+	<%MemDept md = (MemDept)session.getAttribute("MemDept");%>
+	
 	
 	<div id="wrap">
 		<%@ include file="/WEB-INF/views/common/header.jsp"%>
@@ -121,7 +124,7 @@ th {
             <td>1</td>
             <td>1</td>
             <td>1</td>
-            <td>1</td>
+            <td></td>
         </tr>
     </table><br><br>
 

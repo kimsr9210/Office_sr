@@ -7,12 +7,17 @@
 <title>H:our Office</title>
 	<!-- 폰트어썸 -->
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
     
     <!--jQuery CDN-->
     <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 	
 	<!-- JSTL:C -->
 	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+	<!-- JSTL:fmt -->
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+	<!-- JSTL:fn -->
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 	
 	<!-- CSS -->
 	<link rel="stylesheet" type="text/css" href="/resources/css/header&sideNavi.css" />
@@ -53,6 +58,10 @@
     #columnchart_values{
         width: 75%;
     }
+    /* 즐겨찾기 색상 */
+	.favor{
+		color: yellow;
+	}
 </style>
 <body>
     <div id="wrap">
@@ -76,51 +85,41 @@
                                 <span>1월 29일 Front 마무리 점검이 있습니다.</span>
                             </a>
                             
-                            <div><!-- img -->
-                                <i id="notice-icon" class="fas fa-user-circle"></i><span>이름 직급 작성시간</span>
+                            <div>
+                                <span>작성 날짜</span><span>조회수</span>
                             </div>
                         </div>
                     </div>
                     
                     <div class="public-pro">
-                        <a href="#">최근 공개 프로젝트</a>
+                        <a href="/projectAllList.ho">최근 공개 프로젝트</a>
                         <div class="public-list">
                             
                             <c:forEach items="${publicList }" var="pl" varStatus="status" begin="0" end="3">
-	                            <div id="pro${status.count }" class="proStyle">
-	                                <a href="#" class="pro-title">${pl.proSubject }</a>
-	                                <div class="pro-info">
-	                                    <a href="#">0명 참여중</a>
-	                                    <i class="far fa-star"></i>
-	                                </div>
-	                            </div>	
+	                            
+	                       		<div id="pro${status.count }" class="proStyle count-${pl.memCount }">
+		                             <a class="pro-title">
+		                             	<c:choose>
+		                             		<c:when test="${pl.memCount eq 0 }">
+		                             			<span>빈 프로젝트</span>
+		                             		</c:when>
+		                             		<c:otherwise>
+		                             			<form action="/projectDetail.ho" method="post">
+			                             			<span class="pro-subject">${pl.proSubject }</span>
+			                             			<input type="hidden" name="proNo" value="${pl.proNo }"/>
+													<input type="hidden" name="memNo" value="${sessionScope.member.memNo }"/>
+													<input type="hidden" name="proSubject" value="${pl.proSubject }"/>
+													<input type="hidden" name="boardType" value="post"/>
+		                             			</form>
+		                             		</c:otherwise>
+		                             	</c:choose>
+		                             </a>
+		                             <div class="pro-info">
+		                                 <a>${pl.memCount }명 참여중</a>
+		                                 <i class="fas fa-star favor"></i>
+		                             </div>
+		                         </div>
                             </c:forEach>
-                            
-
-
-                            <!-- <div id="pro2" class="proStyle">
-                                <a href="#" class="pro-title">프로젝트 이름</a>
-                                <div class="pro-info">
-                                    <a href="#">0명 참여중</a>
-                                    <i class="far fa-star"></i>
-                                </div>
-                            </div>
-
-                            <div id="pro3" class="proStyle">
-                                <a href="#" class="pro-title">프로젝트 이름</a>
-                                <div class="pro-info">
-                                    <a href="#">0명 참여중</a>
-                                    <i class="far fa-star"></i>
-                                </div>
-                            </div>
-
-                            <div id="pro4" class="proStyle">
-                                <a href="#" class="pro-title">프로젝트 이름</a>
-                                <div class="pro-info">
-                                    <a href="#">0명 참여중</a>
-                                    <i class="far fa-star"></i>
-                                </div>
-                            </div> -->
                                 
                         </div>
                     </div>
@@ -128,40 +127,67 @@
                     <div class="proAmail">
                        
                         <div id="proIn" class="in-pro">
-                            <div class="in-pro-top">
-                                <a href="#">
-	                                <c:choose>
-	                                	<c:when test="${empty myList }">
-	                                		참여중인 프로젝트
-	                                	</c:when>
-	                                	<c:otherwise>
-	                                		${myList[0].proSubject }
-	                                	</c:otherwise>
-	                                </c:choose>
-                                </a>
-                                <i class="far fa-star"></i><br>
-                                <span>0명 참여중</span>
-                            </div>
-                            <div class="in-pro-post">
-                                <div class="post-info">
-                                    <img>
-                                    <div>
-                                        <span>이름</span><br>
-                                        <span>작성일</span>
-                                    </div>
-                                    <i id="proNavi" class="fas fa-ellipsis-v"></i>
-                                </div>
-                                <div class="post-content">
-                                    테스트!
-                                </div>
-                                <div class="post-comment">
-                                    <div class="comment-count">
-                                        <span>댓글 0 개</span>
-                                    </div>
-                                    <hr size="1" color="lightgray">
-                                    <a href="#" class="comment-write"><i class="fas fa-location-arrow"></i> 프로젝트 바로가기</a>
-                                </div>
-                            </div>
+                        	<c:choose>
+                            	<c:when test="${empty myProject }">
+                            		<div class="in-pro-none">
+                            			<button class="attendBtn">프로젝트 참여하기</button>
+                            		</div>
+                            	</c:when>
+                            	
+                            	<c:otherwise>
+                            	
+                            		<div class="in-pro-top">
+		                                <a>${myProject[0].proSubject }</a>
+		                                <i class="fas fa-star favor"></i><br>
+		                                <span>${myProject[0].memCount }명 참여중</span>
+		                            </div>
+		                            <div class="in-pro-post">
+		                            
+		                            <c:choose>
+		                            	<c:when test="${empty boardList }">
+		                            		<div class="post-none">
+		                            			등록된 게시물이 없습니다..
+		                            		</div>
+		                            	</c:when>
+		                            	<c:otherwise>
+		                            	
+		                            	<div class="post-info">
+		                                    <img>
+		                                    <div>
+		                                        <span>${boardWirter.memName }</span><br>
+		                                        <span><fmt:formatDate value="${boardList[0].boardDate }" pattern="yyyy-MM-dd HH:mm:ss"/></span>
+		                                    </div>
+		                                    <c:if test="${boardWirter.memName eq sessionScope.member.memName}">
+		                                    	<i id="boardMenu" class="fas fa-ellipsis-v"></i>
+		                                    </c:if>
+		                                </div>
+		                                <div class="post-content">
+		                                    ${boardList[0].boardText }
+		                                </div>
+		                                <div class="post-comment">
+		                                    <div class="comment-count">
+		                                        <span>댓글 ${fn:length(commentList)} 개</span>
+		                                    </div>
+		                                </div>
+		                                
+		                            	</c:otherwise>
+		                            </c:choose>
+		                                
+		                                <hr size="1" color="lightgray">
+		                                <form action="/projectDetail.ho" method="post">
+	                             			<a class="shortcutsBtn"><i class="fas fa-location-arrow"></i> 프로젝트 바로가기</a>
+	                             			<input type="hidden" name="proNo" value="${myProject[0].proNo }"/>
+											<input type="hidden" name="memNo" value="${sessionScope.member.memNo }"/>
+											<input type="hidden" name="proSubject" value="${myProject[0].proSubject }"/>
+											<input type="hidden" name="boardType" value="post"/>
+                             			</form>
+		                                
+		                                
+		                            </div>
+                            
+                            	</c:otherwise>
+                            </c:choose>
+                            
                         </div>
                         
                         <div id="myMail">
@@ -242,7 +268,8 @@
                 <div class="content-r">
                    
                     <div class="nameCard">
-                        <img class="nc-img">
+                        <img class="nc-img" src="/resources/images/profile/${sessionScope.member.memProfile }">
+                        <!-- <i class="fas fa-user-circle nc-icon"></i> -->
                         <span class="nc-name">${sessionScope.member.memName } ${sessionScope.member.memPosition }</span>
                         <span class="nc-dept">
 	                        <c:choose>
@@ -257,11 +284,11 @@
                         
                         <div>
                             <a href="#" class="nc-state">결재할 문서</a>
-                            <a href="#" class="nc-cont">0</a>
+                            <a href="#" class="nc-cont">${alCount }</a>
                         </div>
                         <div>
-                            <a href="#" class="nc-state">참여중 프로젝트</a>
-                            <a href="#" class="nc-cont">0</a>
+                            <a href="/projectAllList.ho" class="nc-state">참여중 프로젝트</a>
+                            <a href="/projectAllList.ho" class="nc-cont">${fn:length(myProject)}</a>
                         </div>
                         
                     </div>
@@ -272,18 +299,59 @@
                         <div class="work-today">오늘 근무시간</div>
                         
                         <div class="work-record">
-                            <span id="work-hour">0</span> 시간
-                            <span id="work-minute">0</span> 분
+                            <span id="work-hour">
+                            	<c:choose>
+                            		<c:when test="${empty atten.todayWork }">
+                            			0
+                            		</c:when>
+                            		<c:otherwise>
+                            		<c:set var="workHour" value="${fn:indexOf(atten.todayWork,'h') }"></c:set>
+                            			${fn:substring(atten.todayWork,0,workHour) }
+                            		</c:otherwise>
+                            	</c:choose>
+                            </span> 시간
+                            <span id="work-minute">
+                            	<c:choose>
+                            		<c:when test="${empty atten.todayWork }">
+                            			0
+                            		</c:when>
+                            		<c:otherwise>
+                            		<c:set var="workMin" value="${fn:indexOf(atten.todayWork,'m') }"></c:set>
+                            			${fn:substring(atten.todayWork,(workHour+1),workMin) }
+                            		</c:otherwise>
+                            	</c:choose>
+                            </span> 분
+                            <input type="hidden" id="workTime" name="todayWork">
                         </div>
                         
                         <div class="record">
                             <span class="record-name">출근시간</span>
-                            <span id="go-clock" class="record-clock">미등록</span>
+                            <span id="go-clock" class="record-clock">
+                            	<c:choose>
+                            		<c:when test="${empty atten.startDate }">
+                            			미등록
+                            		</c:when>
+                            		<c:otherwise>
+                            			<fmt:formatDate value="${atten.startDate }" pattern="M/d HH:mm:ss"/>
+                            		</c:otherwise>
+                            	</c:choose>
+                            </span>
+                            <input type="hidden" id="startTime" name="startDate" value="${atten.startDate }">
                         </div>
                         
                         <div class="record">
                             <span class="record-name">퇴근시간</span>
-                            <span id="back-clock" class="record-clock">미등록</span>
+                            <span id="back-clock" class="record-clock">
+                            	<c:choose>
+                            		<c:when test="${empty atten.endDate }">
+                            			미등록
+                            		</c:when>
+                            		<c:otherwise>
+                            			<fmt:formatDate value="${atten.endDate }" pattern="M/d HH:mm:ss"/>
+                            		</c:otherwise>
+                            	</c:choose>
+                            </span>
+                            <input type="hidden" name="endDate" value="${atten.endDate }">
                         </div>
                         
                         <hr size="1" color="lightgray">
@@ -327,58 +395,37 @@
                             <li>
                                 <input type="checkbox" id="root">
                                 <label id="root" for="root">칠판그룹</label>
+                                
                                 <ul id="treeMenu">
-                                    <li><span>백두진 사장</span></li>
-                                    <li><span>조선애 전무</span></li>
-                                    <li>
-                                        <input type="checkbox" id="node1">
-                                        <label class="deptName" for="node1">영업본부</label>
-                                        <ul>
-                                            <li><span>김말똥 대리</span></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <input type="checkbox" id="node2">
-                                        <label class="deptName" for="node2">개발본부</label>
-                                        <ul>
-                                            <li><span>주다빈 상무</span></li>
-                                            <li><span>김소련 부회장</span></li>
-                                            <li><span>장효진 감사</span></li>
-                                            <li><span>이진원 차장</span></li>
-                                            <li>
-                                                <input type="checkbox" id="node21">
-                                                <label class="deptName" for="node21">기획팀</label>
-                                                <ul>
-                                                    <li><span>홍길동 차장</span></li>
-                                                    <li><span>홍길동 차장</span></li>
-                                                    <li><span>홍길동 차장</span></li>
-                                                    <li><span>홍길동 차장</span></li>
-                                                    <li><span>홍길동 차장</span></li>
-                                                    <li><span>홍길동 차장</span></li>
-                                                    <li><span>홍길동 차장</span></li>
-                                                    <li><span>홍길동 차장</span></li>
-                                                    <li><span>홍길동 차장</span></li>
-                                                    <li><span>홍길동 차장</span></li>
-                                                    <li><span>홍길동 차장</span></li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <input type="checkbox" id="node3">
-                                        <label class="deptName" for="node3">경영지원 본부</label>
-                                        <ul>
-                                            <li><span>박영희 과장</span></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <input type="checkbox" id="node4">
-                                        <label class="deptName" for="node4">서비스 본부</label>
-                                        <ul>
-                                            <li><span>김철수 과장</span></li>
-                                        </ul>
-                                    </li>
+                                    <c:forEach items="${companyOC }" var="memberOC">
+                                   		<c:if test="${empty memberOC.deptCode }">
+                                   			<li><span>${memberOC.memName } ${memberOC.memPosition }</span></li>
+                                   		</c:if>
+                                   	</c:forEach>
+                                    
+                                    <c:forEach items="${deptList }" var="dept" varStatus="d">
+                                    	<li>
+	                                        <input type="checkbox" id="node${d.count }" checked="checked">
+	                                        <label class="deptName" for="node${d.count }">${dept.deptName }</label>
+	                                        <ul>
+	                                        	<c:forEach items="${companyOC }" var="member">
+	                                      			<c:choose>
+	                                      				<c:when test="${empty member.memName }">
+	                                      					
+	                                      				</c:when>
+	                                      				<c:otherwise>
+		                                      				<c:if test="${member.deptCode eq dept.deptCode}">
+			                                        			<li><span>${member.memName } ${member.memPosition }</span></li>
+			                                        		</c:if>
+	                                      				</c:otherwise>
+	                                      			</c:choose>
+	                                        		
+	                                        	</c:forEach>
+	                                        </ul>
+                                    	</li>
+                                    </c:forEach>
                                 </ul>
+                                
                             </li>
                         </ul>
                     </div>

@@ -11,10 +11,34 @@
 		<typeAlias type="kr.or.houroffice.project.model.vo.Project" alias="Project"/>
 		<typeAlias type="kr.or.houroffice.project.model.vo.ProjectMember" alias="ProjectMember"/>
 		<typeAlias type="kr.or.houroffice.project.model.vo.ProjectBoard" alias="ProjectBoard"/>
-		<typeAlias type="kr.or.houroffice.approval.model.vo.Approval" alias="Approval"/>
-		<typeAlias type="kr.or.houroffice.approval.model.vo.AprLineMember" alias="AprLineMember"/>
 		<typeAlias type="kr.or.houroffice.project.model.vo.ProjectFavorite" alias="ProjectFavorite"/>
 		<typeAlias type="kr.or.houroffice.project.model.vo.ProjectComment" alias="ProjectComment"/>
+		<typeAlias type="kr.or.houroffice.project.model.vo.ProjectPlan" alias="ProjectPlan"/>
+		<typeAlias type="kr.or.houroffice.project.model.vo.ProjectFileData" alias="ProjectFileData"/>
+		<typeAlias type="kr.or.houroffice.project.model.vo.ProjectCode" alias="ProjectCode"/>
+		<typeAlias type="kr.or.houroffice.timecard.model.vo.Holiday" alias="Holiday"/> <!-- 연차내역(켈린더) --> 
+		<typeAlias type="kr.or.houroffice.personnel.model.vo.MemDept" alias="MemDept"/> <!-- 인사정보 --> 
+		<typeAlias type="kr.or.houroffice.personnel.model.vo.Contact" alias="Contact"/> <!-- 개인주소록 -->
+				<typeAlias type="kr.or.houroffice.member.model.vo.Attendance" alias="Attendance"/><!-- 근태기록 -->
+		<typeAlias type="kr.or.houroffice.board.model.vo.PartBoard" alias="PartBoard"/> <!-- 부서별 게시판 -->
+		<typeAlias type="kr.or.houroffice.board.model.vo.PartComments" alias="PartComments"/> <!-- 부서별 게시판 댓글 -->
+		<typeAlias type="kr.or.houroffice.board.model.vo.BoardFile" alias="BoardFile"/> <!-- 게시판 파일 -->
+
+		<typeAlias type="kr.or.houroffice.approval.model.vo.Approval" alias="Approval"/>
+		<typeAlias type="kr.or.houroffice.approval.model.vo.ApprovalLine" alias="ApprovalLine"/>
+		<typeAlias type="kr.or.houroffice.approval.model.vo.ApprovalRef" alias="ApprovalRef"/>
+		<typeAlias type="kr.or.houroffice.approval.model.vo.AprLineMember" alias="AprLineMember"/>
+		<typeAlias type="kr.or.houroffice.approval.model.vo.AprForm" alias="AprForm"/>
+		<typeAlias type="kr.or.houroffice.approval.model.vo.AprFormHol" alias="AprFormHol"/>
+		<typeAlias type="kr.or.houroffice.approval.model.vo.AprFormLazy" alias="AprFormLazy"/>
+		<typeAlias type="kr.or.houroffice.approval.model.vo.AprFormCCC" alias="AprFormCCC"/>
+		<typeAlias type="kr.or.houroffice.approval.model.vo.AprFormOvt" alias="AprFormOvt"/>
+		<typeAlias type="kr.or.houroffice.approval.model.vo.HolidayForm" alias="HolidayForm"/>
+		<typeAlias type="kr.or.houroffice.approval.model.vo.CCCForm" alias="CCCForm"/>
+		<typeAlias type="kr.or.houroffice.approval.model.vo.LazinessForm" alias="LazinessForm"/>
+		<typeAlias type="kr.or.houroffice.approval.model.vo.OvertimeForm" alias="OvertimeForm"/>
+		<typeAlias type="kr.or.houroffice.approval.model.vo.AprListPage" alias="AprListPage"/>
+
 	</typeAliases>
 </configuration>
 

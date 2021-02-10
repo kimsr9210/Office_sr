@@ -1,0 +1,72 @@
+@ 추가 어노테이션
+- 우리가 사용하는 비즈니스 로직에 대한 어노테이션이 존재함
+- Controller, Service, DAO를 우리는 그동안 new를 통하여 객체를 만들었고, 매번 요청할 때마다 new를 통하여 객체를 만들었기 때문에 리소스 낭비가 심했음
+- 아래의 비즈니스 전용 어노테이션을 사용하게 되면 객체를 매번 개발자가 new라는 키워드로 생성할 필요가 없어짐
+- 비즈니스 로직에 사용하는 클래스(Controller, Service, DAO)는 @Component를 통하여 객체를 만들 수도 있지만 별도로 구분을 짓기 위한 @Controller , @Service, @Repository라는 어노테이션을 사용함
+
+# @Controller
+- 사용자 요청을 제어하는 Controller 클래스
+
+# @Service
+- 비즈니스 로직을 처리하는 Service 클래스
+
+# @Repository
+- 데이터 베이스 연동을 처리하는 DAO 클래스
+
+
+----------------------------------------------------------------------------------------------------
+--------------------------Spring MVC ------------------------------
+
+@ Spring MVC
+-> 기존 MVC의 흐름
+	- 사용자 -> View -> Controller(○○.do) -> Service -> DAO -> DB -> DAO -> Service -> Controller -> View
+-> Spring MVC는 View, Controller, Model 부분을 유지 보수 및 확장성을 고려하여 설계 되었음
+-> Spting MVC 구조
+	- DispatcherSerlvet
+	- HandlerMapping
+	- Controller
+	- ViewResolver
+	- View
+	- Model
+
+## DispatcherServlet ##
+-> 유일한 서블릿 클래스로서 Servlet Container에서 HTTP 프로토콜을 통해 들어오는 모든 요청을 가장 먼저 처리하는 Front Controller
+
+## HandlerMapping ##
+-> 클라이언트의 요청을 처리할 Controller 매핑 값을 가지고 있음
+
+## Controller ##
+-> 실질적인 클라이언트의 요청을 처리함
+-> Front Controller (DispatcherServlet)가 HandlerMapping을 보고 Controller를 호출 함
+
+## ViewResolver ##
+-> Controller가 리턴한 View 이름으로 실행될 JSP 경로를 가지고 있음
+
+## View ##
+-> 실제 클라이언트들에게 보여질 Page
+
+## Model ##
+-> 기존 Service, DAO와 동일
+
+
+스프링 MVC 동작 구조 예시
+ex) login.do 로 설명
+1. 클라이언트가 로그인 하기 위하여 login.do 를 요청 (user1/1234)
+  클라이언트가 요청한 것을 가장 앞에서 받아주는 Servlet이 존재
+	- DispatcherServlet (Front-Controller)
+2. DispatcherServlet은 클라이언트가 요청한 Controller(login.do)가 있는지 확인하기 위하여
+   Handler Mapping에게 해당 Controller를 요청 함
+   Handler Mapping은 해당 Controller가 존재하는지를 확인한 뒤 있으면 해당 Controller 위치를 리턴 함
+3. DispatcherServlet은 실직적인 업무를 수행할 Controller를 호출 (login.do)
+	Controller를 호출하면서 필요한 정보를 보내줌 (Request.Response 객체들)
+4. Controller는 비즈니스 로직 처리를 위한 Service를 호출
+5. Service는 DataBase 접근하여 Query문 처리를 위한 DAO를 호출
+6. DAO는 Query문을 통하여 DB에 접근하여 결과를 가져옴
+	- 이후 비즈니스 로직은 결과를 가지고 리턴 처리 함
+	- DAO -> Service -> Controller
+7. Controller는 결과처리에 따라서 동작할 페이지의 이름을 DispatcherServlet에게 전달 함 (ex. loginSuccess)
+8. DispatcherServlet은 Controller에서 리턴한 페이지 이름을 바탕으로 ViewResolver에게 전달 함
+   ViewResolver는 전달된 페이지 이름을 가지고 최종적인 페이지 경로 + 확장자를 붙여서 페이지를 구성하고
+   DispatcherServlet에게 돌려줌
+9. DispatcherServlet은 완성된 페이지를 가지고 Client에게 응답 처리 (Response)
+
