@@ -101,7 +101,7 @@ public class AdminMemberController {
 	public String searchMember(@RequestParam("searchType") String searchType, @RequestParam("keyword") String keyword, HttpServletRequest request, Model model){
 		if(searchType.equals("memNo")){ searchType = "MEM_NO"; // 사번으로 검색
 		}else if(searchType.equals("memName")){ searchType = "MEM_NAME"; } // 이름으로 검색
-		keyword = "%"+keyword+"%"; // 키워드 LIKE 처리
+		keyword = "%"+keyword+"%"; //키워드 LIKE 처리
 		
 		int countAll = mService.selectCountAllMember();
 		

@@ -124,7 +124,6 @@
 	</div>
 	
 	<script type='text/javascript'>	      
-	   $(document).ready(function(){
 	      var $errorList = $('#errorList');         
 	      var $error = $('#error');
 	      
@@ -136,8 +135,6 @@
 	      $errorList.removeClass('accordion');
 	      $errorList.addClass('click');
 	      $errorList.children().eq(0).children(":first").removeClass('hoverColor');
-          $error.children().eq(2).children().attr('class','iArrow fas fa-angle-left');
-	   });
 	</script>
 </body>
 </html>

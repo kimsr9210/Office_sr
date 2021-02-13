@@ -18,6 +18,13 @@ public class AdminDAO {
 		return (ArrayList<Member>)list;
 	}//selectAllMember
 	
+	//관리자 관리 - 모달 - 사원 검색 (ajax)
+	public ArrayList<Member> adminSearchModal(SqlSessionTemplate sqlSession, String keyword) {
+		System.out.println("dao : "+keyword);
+		List list = sqlSession.selectList("admin.adminSearchModal",keyword);
+		return (ArrayList<Member>)list;
+	}//adminSearchModal
+	
 	//삭제 조회 - 삭제된 사원 조회
 	public ArrayList<Member> selectDeleteMember(SqlSessionTemplate sqlSession, int currentPage,
 			int recordCountPerPage) {
@@ -71,9 +78,77 @@ public class AdminDAO {
 		
 			//만약 첫번째 pageNavi가 아니라면 '<' 모양을 추가해라
 			if(startNavi != 1) {
-				sb.append("<a class='page-link' href='/adminDeleteMemberPage.ho?currentPage="+(startNavi-1)+"'><</a>");
+				sb.append("<a class='page-link' href='/adminSearchDeleteMember.ho?currentPage="+(startNavi-1)+"'><</a>");
 			}
 			
+			for(int i=startNavi; i<=endNavi; i++) {
+				if(i==currentPage) {
+					sb.append("<a class='page-link' href='/adminSearchDeleteMember.ho?currentPage="+i+"'><B>"+i+"</B></a>");
+				} else {
+					sb.append("<a class='page-link' href='/adminSearchDeleteMember.ho?currentPage="+i+"'>"+i+"</a>");
+				}
+			}
+			
+			//만약 마지막 pageNavi가 아니라면 '>' 모양을 추가해라
+			if(endNavi != pageTotalCount) {
+				sb.append("<a class='page-link' href='/adminSearchDeleteMember.ho?currentPage="+(startNavi+1)+"'>></a>");
+			}
+			
+		return sb+"";
+	}//getPageNavi
+
+	//삭제 조회 - 삭제된 사원 조회 - 검색
+	public List selectSearchDeleteMember(SqlSessionTemplate sqlSession, String searchType, String keyword,
+			int currentPage, int recordCountPerPage) {
+		
+		//페이징 처리
+		int start = currentPage * recordCountPerPage - (recordCountPerPage-1);
+		int end = currentPage * recordCountPerPage;
+				
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("searchType", searchType);
+		map.put("keyword", keyword);
+		map.put("start", start);
+		map.put("end", end);
+		List list = sqlSession.selectList("admin.selectSearchDeleteMember", map);
+		
+		return list;
+	}//selectSearchDeleteMember
+
+	//삭제 조회 - 삭제된 사원 조회 - 검색 - 페이징 처리
+	public String searchGetPageNavi(SqlSessionTemplate sqlSession, int currentPage, int recordCountPerPage,
+			int naviCountPerPage, int searchCount) {
+		// 현재 변수
+		// currentPage			: 현재 페이지
+		// recordCountPerPage	: 1 페이지당 보여질 게시물의 개수
+		// naviCountPerPage		: pageNavi가 몇개씩 보여질 것인지에 대한 변수
+				
+		//생성될 페이지 개수
+		int pageTotalCount; //전체 페이지
+			if(searchCount % recordCountPerPage > 0) { //마지막 페이지 숫자
+				pageTotalCount = searchCount / recordCountPerPage +1;
+			} else {
+				pageTotalCount = searchCount / recordCountPerPage +0;
+			}
+				
+		//현재 페이지 번호
+		int startNavi = ((currentPage -1) / naviCountPerPage) * naviCountPerPage +1;
+				
+		//마지막 페이지 번호
+		int endNavi = startNavi + naviCountPerPage -1;
+			//마지막 페이지 번호가 총 페이지 수보다 높을 때
+			if(endNavi > pageTotalCount) {
+				endNavi = pageTotalCount;
+			}
+				
+		//pageNavi 모양 구성
+		StringBuilder sb = new StringBuilder();
+				
+			//만약 첫번째 pageNavi가 아니라면 '<' 모양을 추가해라
+			if(startNavi != 1) {
+				sb.append("<a class='page-link' href='/adminDeleteMemberPage.ho?currentPage="+(startNavi-1)+"'><</a>");
+			}
+					
 			for(int i=startNavi; i<=endNavi; i++) {
 				if(i==currentPage) {
 					sb.append("<a class='page-link' href='/adminDeleteMemberPage.ho?currentPage="+i+"'><B>"+i+"</B></a>");
@@ -81,13 +156,29 @@ public class AdminDAO {
 					sb.append("<a class='page-link' href='/adminDeleteMemberPage.ho?currentPage="+i+"'>"+i+"</a>");
 				}
 			}
-			
+					
 			//만약 마지막 pageNavi가 아니라면 '>' 모양을 추가해라
 			if(endNavi != pageTotalCount) {
 				sb.append("<a class='page-link' href='/adminDeleteMemberPage.ho?currentPage="+(startNavi+1)+"'>></a>");
 			}
-			
+					
 		return sb+"";
-	}//getPageNavi
+	}//searchGetPageNavi
+
+	//삭제 조회 - 삭제된 사원 복원 (ajax)
+	public int deleteMemberCancel(SqlSessionTemplate sqlSession, List<String> memNoList) {
+		return sqlSession.update("admin.deleteMemberCancel",memNoList);
+	}//deleteMemberCancel
+
+	//삭제 조회 - 삭제된 사원 영구 삭제 (ajax)
+	public int deleteMember(SqlSessionTemplate sqlSession, List<String> memNoList) {
+		return sqlSession.delete("admin.deleteMember",memNoList);
+	}//deleteMember
+
+	//데이터/문서 관리 - 사원 기록 삭제
+	public int selectDeleteMember(SqlSessionTemplate sqlSession) {
+		return sqlSession.selectOne("admin.selectDeleteMember");
+	}//selectDeleteMember
+
 
 }//AdminDAO

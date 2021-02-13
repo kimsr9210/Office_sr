@@ -47,7 +47,7 @@
                             
                             <div class="buttonSet">
                                 <button class="agreeButtonType">추가</button>
-                                <button type="submit" class="refuseButtonType">삭제</button>
+                                <button class="refuseButtonType">삭제</button>
                             </div>
                             <table id="adminList" class="tblStyle">
                                 <tr>
@@ -75,7 +75,7 @@
                             <span class="adminText">멤버, 부서, 직위 등 조직을 구성/관리합니다.</span>
                             <div class="buttonSet">
                                 <button class="agreeButtonType">추가</button>
-                                <button type="submit" class="refuseButtonType">삭제</button>
+                                <button class="refuseButtonType">삭제</button>
                             </div>
                             <table id="personnelList" class="tblStyle">
                                 <tr>
@@ -103,7 +103,7 @@
                             <span class="adminText">사내 규정, 문서 등을 관리합니다.</span>
                             <div class="buttonSet">
                                 <button class="agreeButtonType">추가</button>
-                                <button type="submit" class="refuseButtonType">삭제</button>
+                                <button class="refuseButtonType">삭제</button>
                             </div>
                             <table id="generalList" class="tblStyle">
                                 <tr>
@@ -126,25 +126,23 @@
                         </div>                       
                         <div id="modal">
 							<div class="modal-content">
-								<span class="exit-icon"><i class="fas fa-times"></i></span>
-								<div class="searchStyle">
+								<center><span class="exit-icon"><i class="fas fa-times"></i></span></center><br/>
+								<div class="searchStyle selectStyle formStyle">
 									<input type="text" id="keyword" name="keyword"/>
-									<button id="searchBtn"><i class="fas fa-search"></i></button>
-								</div>
-								<form>			
-									<table class="modal-table">
-										<thead>
-											<tr>
-												<th></th>
-												<th>사번</th>
-												<th>이름</th>
-												<th>직위</th>
-											</tr>
-										</thead>				
-										<tbody id="tbody">
-										</tbody>        
-									</table>
-								</form>
+									<button><i class="fas fa-search"></i></button>
+								</div><br/><br/>		
+								<table class="modal-table">
+									<thead>
+										<tr>
+											<th></th>
+											<th>사번</th>
+											<th>이름</th>
+											<th>직위</th>
+										</tr>
+									</thead>				
+									<tbody id="tbody">
+									</tbody>        
+								</table><br/>
 								<button class="agreeButtonType">저장</button>
 							</div>
 							<div class="modal-layer"></div>
@@ -208,6 +206,25 @@
 			
 				if($(this).parents('.adminSpace').children().first().text()=='전산관리자') {
 					$('#modal').css('top',modatop);
+					$('#keyword').next().children().click(function(){
+						var keyword = $('#keyword').val();
+						$.ajax({
+							url : '/adminSearchModal.ho',
+							data : {'keyword':keyword},
+							type : 'post',
+							success : function(data) {
+								list = data;
+								for(var i=0; i<list.length; i++){
+									alert(list[i].memNo);
+								}
+								alert(list+"기");
+							},
+							error : function(){
+								alert('안 나온다');
+							}
+						});
+					});
+										
 					<% for(Member m : list){%>
 							var deptCode = '<%=m.getDeptCode()%>';
 						if(deptCode.indexOf('D3')>-1){
@@ -272,13 +289,12 @@
 				}
 			})
 		});
-		
-		$(document).ready(function(){
+
 			$adminUpdate = $('#adminUpdate');
 	        $adminUpdate.children().eq(2).children().addClass('fa-rotate-180');		
 			$adminUpdate.removeClass('hoverColor').addClass('click');
 	        $adminUpdate.children().eq(2).children().attr('class','iArrow fas fa-angle-left');		
-		});
+
 	</script>
 </body>
 </html>

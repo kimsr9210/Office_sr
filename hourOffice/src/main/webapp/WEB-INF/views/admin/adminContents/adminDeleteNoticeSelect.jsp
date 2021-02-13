@@ -69,7 +69,6 @@
 	</div>
 	
 	<script type='text/javascript'>	   		
-		$(document).ready(function(){
 			var $deleteList = $('#deleteList');			
 			var $deleteSelect = $('#deleteSelect');
 
@@ -81,8 +80,6 @@
 			$deleteList.removeClass('accordion');
 			$deleteList.addClass('click');
 			$deleteList.children().eq(1).children(":first").removeClass('hoverColor');
-            $deleteSelect.children().eq(2).children().attr('class','iArrow fas fa-angle-left');
-		});
 		
 		$(function(){
 			// 게시글 조회 checkbox 전부 누르기		

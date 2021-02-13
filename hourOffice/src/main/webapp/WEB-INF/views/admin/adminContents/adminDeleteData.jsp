@@ -38,8 +38,12 @@
 						<div id="record-div">
 							<div id="memberRecord" class="float">
 								<div>사원 기록 삭제</div>
-								<table><tr><td>삭제 대기 기간 경과 문서</td><td>0 건</td></tr></table>
-								<table><tr><td>보존기간(3년) 경과 문서</td><td>2 건</td></tr></table>
+								<table>
+									<tr>
+										<td style="height: 110px;">보존기간(1년) 경과 문서</td>
+										<td>${deleteMemberCount}건</td>
+									</tr>
+								</table>
 								<div>
 									<div id="myChart1" class="graph-div"></div>
 									<div>
@@ -117,12 +121,9 @@
 	
 	<script type='text/javascript'>	    
 		// 네비 화살표 돌리기	
-		$(document).ready(function(){
 			$dataList = $('#dataList');
 	        $dataList.children().eq(2).children().attr('class','iArrow fas fa-angle-left');		
 			$dataList.removeClass('hoverColor').addClass('click');
-	        $dataList.children().eq(2).children().attr('class','iArrow fas fa-angle-left');		
-		});
 	</script>
 </body>
 </html>
