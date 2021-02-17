@@ -1,21 +1,29 @@
 package kr.or.houroffice.main.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+import com.google.gson.Gson;
+
 import kr.or.houroffice.approval.model.service.ApprovalServiceImpl;
+import kr.or.houroffice.common.Page;
 import kr.or.houroffice.main.model.service.MainServiceImpl;
 import kr.or.houroffice.main.model.vo.AllNotice;
 import kr.or.houroffice.main.model.vo.CompanyRule;
+import kr.or.houroffice.main.model.vo.MainMailGetter;
+import kr.or.houroffice.main.model.vo.MainMailPage;
 import kr.or.houroffice.member.model.service.AdminMemberService;
 import kr.or.houroffice.member.model.service.MemberService;
 import kr.or.houroffice.member.model.vo.Attendance;
@@ -132,12 +140,23 @@ public class MainController {
 		}
 		
 		//사내규정
-		ArrayList<CompanyRule> ruleList = mainS.selectAllRule();
+		Page ruleP = new Page();
+		ruleP.setCurrentPage(1);
+		ruleP.setRecordCountPerPage(4);
+		ArrayList<CompanyRule> ruleList = mainS.selectAllRule(ruleP);
+		
+		//메일 목록
+		MainMailPage mmp = new MainMailPage();
+		mmp.setMemNo(m.getMemNo());
+		mmp.setCurrentPage(1);
+		mmp.setRecordCountPerPage(3);
+		ArrayList<MainMailGetter> mailList = mainS.selectAllMail(mmp);
 		
 		int alCount = approvalS.selectMyAprLineCount(m.getMemNo()); // 결재할 문서 개수
 		Attendance atten = memberS.selectAttendanceMember(m.getMemNo()); // 근태 조회
 		ArrayList<Member> companyOC = adminMemberS.selectOrganizationChart(); // 조직도 리스트
 		ArrayList<Department> deptList = adminMemberS.selectAllDepartment(); // 부서 목록
+		
 		
 		
 		model.addAttribute("noticeList", noticeList);
@@ -146,6 +165,7 @@ public class MainController {
 		model.addAttribute("favorList", favorList);
 		model.addAttribute("monthlyList", monthlyList);
 		model.addAttribute("ruleList", ruleList);
+		model.addAttribute("mailList", mailList);
 		
 		model.addAttribute("atten", atten);
 		model.addAttribute("alCount", alCount);
@@ -153,6 +173,44 @@ public class MainController {
 		model.addAttribute("deptList", deptList);
 		
 		return "memberMain";
+	}
+	
+	@RequestMapping("/moveRulePage.ho")
+	public void moveRulePage(@RequestParam("rulePage") String rulePage, HttpServletResponse response) throws IOException{
+		int currentPage = Integer.parseInt(rulePage);
+		
+		Page page = new Page();
+		
+		page.setCurrentPage(currentPage);
+		page.setRecordCountPerPage(4);
+		
+		ArrayList<CompanyRule> ajaxRule = mainS.selectAllRule(page);
+		
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		
+		PrintWriter out = response.getWriter();
+		
+		new Gson().toJson(ajaxRule,out);
+	}
+	
+	@RequestMapping("/moveMailPage.ho")
+	public void moveMailPage(@SessionAttribute("member") Member m, @RequestParam("mailPage") String mailPage, HttpServletResponse response) throws IOException{
+		int currentPage = Integer.parseInt(mailPage);
+		
+		MainMailPage mmp = new MainMailPage();
+		mmp.setMemNo(m.getMemNo());
+		mmp.setCurrentPage(currentPage);
+		mmp.setRecordCountPerPage(3);
+		
+		ArrayList<MainMailGetter> ajaxMail = mainS.selectAllMail(mmp);
+		
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		
+		PrintWriter out = response.getWriter();
+		
+		new Gson().toJson(ajaxMail,out);
 	}
 	
 }

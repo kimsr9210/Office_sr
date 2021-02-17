@@ -45,11 +45,8 @@ public class MailServiceImpl {
 
 	public PageList selectMailList(MailListPage mlp) {
 		ArrayList<MailGetter> list = null;
-		if(mlp.getListType()=='S'){//보낸 메일
-			list = mailDAO.selectSendMailList(sqlSession, mlp);
-		}else{//R,F,K,D
-			list = mailDAO.selectMailList(sqlSession,mlp);
-		}
+		if(mlp.getListType()=='S') list = mailDAO.selectSendMailList(sqlSession, mlp);
+		else list = mailDAO.selectMailList(sqlSession,mlp);//R,F,K,D
 		
 		String pageNavi = mailDAO.getPageNavi(sqlSession,mlp); //페이지 네비
 		PageList pl = new PageList();

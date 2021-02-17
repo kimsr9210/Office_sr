@@ -189,6 +189,7 @@ a:active {
 #logoImg {
 	width: 90%;
 	margin: 10px;
+	cursor:pointer;
 }
 
 /* ------------------로그인 후 헤더------------------ */
@@ -369,6 +370,21 @@ a:active {
 	top: 40px;
 	margin-left: -30px;
 	width: 60px;
+	height: 30px;
+	line-height: 30px;
+	border-radius: 5px;
+	font-size: 0.8rem;
+	color: white;
+	opacity: 0.6;
+	visibility: hidden;
+}
+
+#myInfoTooltip {
+	background-color: black;
+	position: absolute;
+	top: 40px;
+	margin-left: -30px;
+	width: 53px;
 	height: 30px;
 	line-height: 30px;
 	border-radius: 5px;

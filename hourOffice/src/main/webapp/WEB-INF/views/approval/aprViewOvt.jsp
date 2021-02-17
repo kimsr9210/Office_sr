@@ -20,7 +20,7 @@
 </head>
 <body>
 <div id="wrap">
-	<c:if test="${sessionScope.member ==null }"><script>alert("로그인이 필요합니다."); location.href="/login.ho";</script></c:if>
+<c:if test="${sessionScope.member ==null }"><script>alert("로그인이 필요합니다."); location.href="/login.ho";</script></c:if>
 	<c:choose>
 	<c:when test="${docu.lockYN eq 'Y'.charAt(0) }"><!-- 비공개일때, 작성자도 아니고, 결재선도 아니고, 참조도 아니면 비공개 알람.  -->
 		<c:choose>
@@ -164,9 +164,22 @@
 	<!-- 자바 스크립트    -->
 	<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>
 	<script>
+	$('#categoryElecAppr').next().css('display', 'block');
+	$('#categoryElecAppr').next().css('height', '150px');
+	$('#categoryElecAppr').children().last().children().attr('class',
+			'fas fa-chevron-left');
 		function listPage(){
 			history.back(-1);
 		}
+		$(function(){
+			//삭제전 확인
+	        $('#apr_del_btn').click(function(){
+	            var answer = window.confirm('정말로 삭제하시겠습니까?');
+	            if(answer){
+	                return true;
+	            }return false;
+	        });
+		});
 	</script>
 	</c:when>
 	<c:otherwise><script>alert("비공개입니다."); history.back(-1);</script></c:otherwise>

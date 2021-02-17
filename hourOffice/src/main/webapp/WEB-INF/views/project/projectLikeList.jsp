@@ -25,6 +25,34 @@
 </head>
 <body>
 <style>
+	@font-face {
+    font-family: 'GongGothicMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+	@font-face {
+    font-family: 'GongGothicLight';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicLight.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+	.progressBox{
+		background-color: #F5A887;
+	}
+	.publicBox{
+		background-color: #86B0BF;
+	}
+	.complateBox{
+		background-color: #9F9DA6;
+	}
+	#TitleName{
+		font-family: GongGothicMedium;
+	}
+	.pro_font{
+		font-family: GongGothicLight;
+		font-size: 1rem;
+	}
 	.requestBox{
 		width: 180px;
 		height: 150px;
@@ -108,7 +136,7 @@
 					</div>
 					<div id="TitleContents">
 						<!--여기서 각자 id 만드시면 됩니다-->
-						<div>프로젝트 즐겨찾기</div>
+						<div class="pro_font">프로젝트 즐겨찾기</div>
 						<div id="newProjectBtn">+ 새 프로젝트</div>
 
 						<div class="projectList">
@@ -125,9 +153,15 @@
 								}
 								
 							%>
-								<%if(p.getCompYN()=='N'){ %>
+								
 								<form action="/projectDetail.ho" method="post">
-								<div class="projectBox">
+								<%if(p.getCompYN()=='Y'){ %>
+								<div class="projectBox complateBox">
+								<%} else if(p.getPublicYN()=='Y'){%>
+								<div class="projectBox publicBox">
+								<%}else{ %>
+								<div class="projectBox progressBox">
+								<%} %>
 									<a>
 										<div class="projectSubject"><input class="projectDetailBtn" type="submit" value="<%=p.getProSubject() %>"/></div>
 										<div class="projectMember"><%=p.getMemCount() %>명 참가중</div>
@@ -145,7 +179,6 @@
 									</div>
 								</div>
 								</form>
-								<%} %>
 							<%} %>
 						<%}else{ %>
 							<div class="noneProject">즐겨찾기에 등록된 프로젝트가 없습니다</div>

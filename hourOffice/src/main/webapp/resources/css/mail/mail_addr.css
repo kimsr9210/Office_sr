@@ -1,5 +1,19 @@
 @charset "UTF-8";
 
+@font-face {
+    font-family: 'GongGothicMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'GongGothicLight';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicLight.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
 * {
     margin: 0;
     padding: 0;
@@ -21,6 +35,7 @@ a:active{ text-decoration: none;}
 #title {
     font-size: 1.5rem;
     padding: 20px;
+    font-family : GongGothicMedium;
 }
 
 #dept-list {

@@ -19,7 +19,6 @@
 
 </head>
 <body>
-<c:if test="${sessionScope.member ==null }"><script>alert("로그인이 필요합니다."); location.href="/login.ho";</script></c:if>
 <c:choose>
 	<c:when test="${sessionScope.member.memNo == docu.memNo }">
 	<div id="wrap">

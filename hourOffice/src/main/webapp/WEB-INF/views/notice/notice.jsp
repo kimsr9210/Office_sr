@@ -1,10 +1,12 @@
+<%@page import="kr.or.houroffice.board.model.vo.BoardPost"%>
+<%@page import="java.text.SimpleDateFormat"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>H:our Office</title>
 	<!-- 폰트어썸 -->
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
     
@@ -20,6 +22,10 @@
 	
 	<style>
         #TitleContents #title span,  #TitleContents #board-content > div:first-child{ /* 글쓰기 */ color: white; cursor: default; }
+    	#TitleContents img{
+			width:100%; height: 100%;
+			border-radius:100%;
+		}
     </style>
 </head>
 <body>
@@ -38,29 +44,51 @@
 					<div id="TitleContents">
 						<!--여기서 각자 id 만드시면 됩니다-->
 						
+						<div id="title"><span><i class="fas fa-feather-alt"></i></span><a href="/allNoticePage.ho"><button type="button">목록</button></a>
+					<% if((Integer)request.getAttribute("prevPost")>0){ %>
+						<a href="/notice.ho?notNo=${prevPost }"><i class="fas fa-arrow-down i-icon"></i> 아랫글</a>
+					<% }else{ %>
+						<a style="color:lightgray;"><i class="fas fa-arrow-down i-icon" style="color:lightgray; cursor:default;"></i> 아랫글</a>
+					<% } %>
+					<% if((Integer)request.getAttribute("nextPost")>0){ %>
+						<a href="/notice.ho?notNo=${nextPost }"><i class="fas fa-arrow-up i-icon"></i> 윗글</a></div>
+					<% }else{ %>
+						<a style="color:lightgray;"><i class="fas fa-arrow-up i-icon" style="color:lightgray; cursor:default;"></i> 윗글</a></div>
+					<% } %>	
 						
-						<div id="title"><span><i class="fas fa-feather-alt"></i></span><a href="#"><button type="button">목록</button></a><a href="#"><i class="fas fa-arrow-down i-icon"></i> 아랫글</a><a href="#"><i class="fas fa-arrow-up i-icon"></i> 윗글</a></div>
                         <hr>
                         <div id="board-content">
                             <div><span><i class="fas fa-feather-alt"></i></span></div>
-                            <div>[01월] 이번주 식단 ver.1.2</div>
+                            <div>${bp.title }</div>
                             <div>
-                                <div class="float"><img src=""/></div>
+                                <div class="float"><img src="/resources/images/profile/${bp.memProfile }"/></div>
                                 <div class="float">
-                                    <div>주다빈 사원</div>
-                                    <div>2021/01/29 10:33:29</div>
+                                    <div>${bp.writer } ${bp.memPosition }</div>
+                     	<% SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss"); %>
+                                    <div><%=format.format(((BoardPost)request.getAttribute("bp")).getPostingDate()) %></div>
                                 </div>
                             </div>
-                            <div>
-                               	내용
+                            <div>${bp.content }</div>
+                            <div><span>조회수 ${bp.hits } </span><span class="wall"></span><span id="filePlace"><i class="fas fa-paperclip i-icon" style="cursor:default;"></i> 첨부파일 <% if(((BoardPost)request.getAttribute("bp")).getFileNo()>0){ %>[ <span id="fileName-sapn">${bp.origName }</span> ]<% } %></span>
+                            	<form action="/downloadFileNotice.ho" method="post" style="display:none;"></form>
                             </div>
-                            <div><span>조회수 0 </span><span class="wall"></span><span><i class="fas fa-paperclip i-icon"></i> 첨부파일</span></div>
                         </div>
                         <hr>
-
-
-
-
+		<script>
+			$(function(){
+				// 첨부파일
+	            $('#filePlace').hover(function(){
+	            	$('#fileName-sapn').css('color','blue').css('text-decoration','underline');
+	            },function(){
+	            	$('#fileName-sapn').css('color','').css('text-decoration','');
+	            });
+	            // 첨부파일 다운로드
+	            $('#fileName-sapn').click(function(){
+	            	var $frm = $('#filePlace').next();
+	            	$frm.html('<input type="text" name="notNo" value="${bp.postNo}"/><input type="text" name="fileNo" value="${bp.fileNo}"/>').submit();
+	            });
+			})
+		</script>
 
 						<!----------------------------------->
 					</div>

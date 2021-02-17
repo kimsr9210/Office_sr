@@ -10,7 +10,7 @@
 	    		alert('이미 출근하였습니다.');
 	    	}else{
 	    		var goClock = new Date();
-	    		$('#startDate').val(goClock);
+	    		$('#startTime').val(goClock);
 	    		
 	            $.ajax({ // 출근 기록 ajax
 	            	url : "/startWork.ho",
@@ -52,7 +52,7 @@
 		            $minute.html(minute);
 		            
 		            $('#workTime').val(hour+'h'+minute+'m');
-		            console.log($('#workTime').val());
+		            /*console.log($('#workTime').val());*/
 		            $.ajax({ // 퇴근 기록 ajax
 		            	url : "/endWork.ho",
 		            	data : {"todayWork" : $('#workTime').val() },

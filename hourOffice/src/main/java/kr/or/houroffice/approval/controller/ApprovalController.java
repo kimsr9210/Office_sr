@@ -51,9 +51,7 @@ public class ApprovalController {
 		alp.setRecordCountPerPage(10);//한페이지에 10개
 		alp.setNaviCountPerPage(5);//네비에는 5개씩
 		
-		if(!aprStatus.isEmpty()){
-			alp.setAprStatus(aprStatus); //결재 상태에 따른 필터링 정보
-		} 
+		if(!aprStatus.isEmpty()) alp.setAprStatus(aprStatus); //결재 상태에 따른 필터링 정보
 		
 		if(!keyword.isEmpty()){//검색할 내용이 있으면
 			alp.setSearchType(searchType);
@@ -127,12 +125,8 @@ public class ApprovalController {
 		
 		int result = aprService.insertAprForm(afc);
 		
-		if(result>0){
-			model.addAttribute("msg", "전자결재 등록 성공");
-		}else{
-			model.addAttribute("msg", "전자결재 등록 실패");
-		}
-		
+		if(result>0) model.addAttribute("msg", "전자결재 등록 성공");
+		else model.addAttribute("msg", "전자결재 등록 실패");
 		model.addAttribute("location", "/approvalList.ho");
 		
 		return "approval/aprResult";
@@ -149,12 +143,8 @@ public class ApprovalController {
 
 		int result = aprService.insertAprForm(afh);
 		
-		if(result>0){
-			model.addAttribute("msg", "전자결재 등록 성공");
-		}else{
-			model.addAttribute("msg", "전자결재 등록 실패");
-		}
-		
+		if(result>0) model.addAttribute("msg", "전자결재 등록 성공");
+		else model.addAttribute("msg", "전자결재 등록 실패");
 		model.addAttribute("location", "/approvalList.ho");
 		
 		return "approval/aprResult";
@@ -171,12 +161,8 @@ public class ApprovalController {
 		
 		int result = aprService.insertAprForm(afl);
 		
-		if(result>0){
-			model.addAttribute("msg", "전자결재 등록 성공");
-		}else{
-			model.addAttribute("msg", "전자결재 등록 실패");
-		}
-		
+		if(result>0) model.addAttribute("msg", "전자결재 등록 성공");
+		else model.addAttribute("msg", "전자결재 등록 실패");
 		model.addAttribute("location", "/approvalList.ho");
 		
 		return "approval/aprResult";
@@ -193,12 +179,8 @@ public class ApprovalController {
 
 		int result = aprService.insertAprForm(afo);
 		
-		if(result>0){
-			model.addAttribute("msg", "전자결재 등록 성공");
-		}else{
-			model.addAttribute("msg", "전자결재 등록 실패");
-		}
-		
+		if(result>0) model.addAttribute("msg", "전자결재 등록 성공");
+		else model.addAttribute("msg", "전자결재 등록 실패");
 		model.addAttribute("location", "/approvalList.ho");
 		
 		return "approval/aprResult";
@@ -211,12 +193,8 @@ public class ApprovalController {
 
 		int result = aprService.updateAprForm(afc);
 		
-		if(result>0){
-			model.addAttribute("msg", "전자결재 문서 수정 성공");
-		}else{
-			model.addAttribute("msg", "전자결재 문서 수정 실패");
-		}
-		
+		if(result>0)model.addAttribute("msg", "전자결재 문서 수정 성공");
+		else model.addAttribute("msg", "전자결재 문서 수정 실패");
 		model.addAttribute("location", "/approvalList.ho");
 		
 		return "approval/aprResult";
@@ -227,12 +205,8 @@ public class ApprovalController {
 		afh.setMemNo(m.getMemNo());
 		int result = aprService.updateAprForm(afh);
 		
-		if(result>0){
-			model.addAttribute("msg", "전자결재 문서 수정 성공");
-		}else{
-			model.addAttribute("msg", "전자결재 문서 수정 실패");
-		}
-		
+		if(result>0)model.addAttribute("msg", "전자결재 문서 수정 성공");
+		else model.addAttribute("msg", "전자결재 문서 수정 실패");
 		model.addAttribute("location", "/approvalList.ho");
 		
 		return "approval/aprResult";
@@ -244,12 +218,8 @@ public class ApprovalController {
 
 		int result = aprService.updateAprForm(afl);
 		
-		if(result>0){
-			model.addAttribute("msg", "전자결재 문서 수정 성공");
-		}else{
-			model.addAttribute("msg", "전자결재 문서 수정 실패");
-		}
-		
+		if(result>0)model.addAttribute("msg", "전자결재 문서 수정 성공");
+		else model.addAttribute("msg", "전자결재 문서 수정 실패");
 		model.addAttribute("location", "/approvalList.ho");
 		
 		return "approval/aprResult";
@@ -261,12 +231,8 @@ public class ApprovalController {
 
 		int result = aprService.updateAprForm(afo);
 		
-		if(result>0){
-			model.addAttribute("msg", "전자결재 문서 수정 성공");
-		}else{
-			model.addAttribute("msg", "전자결재 문서 수정 실패");
-		}
-		
+		if(result>0)model.addAttribute("msg", "전자결재 문서 수정 성공");
+		else model.addAttribute("msg", "전자결재 문서 수정 실패");
 		model.addAttribute("location", "/approvalList.ho");
 		
 		return "approval/aprResult";
@@ -301,12 +267,9 @@ public class ApprovalController {
 		mav.addObject("aprLine", al);
 		ArrayList<ApprovalRef> af = aprService.selectOneAprRef(docuNo); 
 		ArrayList<Integer> aprNoList = new ArrayList<Integer>(); //결재선과 결재참조 사번 확보
-		for(ApprovalLine apr : al){
-			aprNoList.add(apr.getMemNo());
-		}
-		for(ApprovalRef apr : af){
-			aprNoList.add(apr.getMemNo());
-		}
+
+		for(ApprovalLine apr : al) aprNoList.add(apr.getMemNo());
+		for(ApprovalRef apr : af) aprNoList.add(apr.getMemNo());
 		mav.addObject("aprNoList", aprNoList);
 		
 		return mav;
@@ -323,16 +286,12 @@ public class ApprovalController {
 			CCCForm cf = new CCCForm();
 			cf.setDocuNo(al.getDocuNo());
 			cf.setCardType(cardType);
-			int cardResult = aprService.updateCardType(cf); //결재시 카드를 선택한 경우만
+			aprService.updateCardType(cf); //결재시 카드를 선택한 경우만
 		}
 		
 		int result = aprService.insertAprMark(al, docuType.charAt(0));
-		if(result>0){
-			model.addAttribute("msg", "전자결재 처리 성공");
-		}else{
-			model.addAttribute("msg", "전자결재 처리 실패");
-		}
-		
+		if(result>0) model.addAttribute("msg", "전자결재 처리 성공");
+		else model.addAttribute("msg", "전자결재 처리 실패");
 		model.addAttribute("location", "/approvalList.ho?listType=W");
 		
 		return "approval/aprResult";
@@ -370,12 +329,9 @@ public class ApprovalController {
 		mav.addObject("aprLine", al);
 		ArrayList<ApprovalRef> af = aprService.selectOneAprRef(docuNo); 
 		ArrayList<Integer> aprNoList = new ArrayList<Integer>(); //결재선과 결재참조 사번 확보
-		for(ApprovalLine apr : al){
-			aprNoList.add(apr.getMemNo());
-		}
-		for(ApprovalRef apr : af){
-			aprNoList.add(apr.getMemNo());
-		}
+
+		for(ApprovalLine apr : al) aprNoList.add(apr.getMemNo());
+		for(ApprovalRef apr : af) aprNoList.add(apr.getMemNo());
 		mav.addObject("aprNoList", aprNoList);
 		
 		return mav;
@@ -391,12 +347,9 @@ public class ApprovalController {
 		apr.setDocuNo(docuNo);
 		
 		int result = aprService.deleteApproval(apr);
-		if(result>0){
-			model.addAttribute("msg", "전자결재 문서 삭제 성공");
-		}else{
-			model.addAttribute("msg", "전자결재 문서 삭제 실패");
-		}
-		
+
+		if(result>0) model.addAttribute("msg", "전자결재 문서 삭제 성공");
+		else model.addAttribute("msg", "전자결재 문서 삭제 실패");
 		model.addAttribute("location", "/approvalList.ho");
 		
 		return "approval/aprResult";

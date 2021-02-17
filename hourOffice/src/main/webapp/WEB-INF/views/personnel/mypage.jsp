@@ -410,7 +410,14 @@ font-family: GongGothicLight;
 
 		
 		<script> //다음 api
+		$('#categoryMypage').next().css('display','block');
+		$('#categoryMypage').next().css('height','150px');
+		$('#categoryMypage').children().last().children().attr('class','fas fa-chevron-left');
+		
+		$('#categoryMypage').next().children().eq(1).children().css('font-weight','800');
+		$('#categoryMypage').next().children().eq(1).children().css('color','#ffcc29');
 		function searchAddr(){
+			
         	new daum.Postcode({
 		        oncomplete: function(data) {
 		            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
@@ -460,16 +467,11 @@ font-family: GongGothicLight;
 		    }).open();
         }
 		</script>
-
+	
 		<!-- 자바 스크립트    -->
 		<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>
 
 	</div>
-
-	</div>
-</body>
-</html>
-
 
 </body>
 </html>

@@ -62,16 +62,14 @@ public class MailController {
 	}
 	
 	@RequestMapping("/deptAddress.ho")
-	public void loadDeptAddress(@RequestParam("deptCode") String deptCode, HttpServletResponse response) throws IOException{
+	public void loadDeptAddress(@RequestParam("deptCode") String deptCode, HttpServletResponse res) throws IOException{
 		if(deptCode.length()==0) deptCode = null;
 		ArrayList<Member> memList = mailService.selectDeptMember(deptCode);
 		
-		response.setContentType("application/json");
-		response.setCharacterEncoding("UTF-8");
+		res.setContentType("application/json");
+		res.setCharacterEncoding("UTF-8");
 		
-		PrintWriter out = response.getWriter();
-		
-		new Gson().toJson(memList,out);
+		new Gson().toJson(memList,res.getWriter());
 	}
 
 	@RequestMapping("/mailWritePage.ho")
@@ -86,11 +84,8 @@ public class MailController {
 		sm.setSender(m.getMemNo());
 		int result = mailService.insertMail(sm);
 		
-		if(result>0){
-			model.addAttribute("msg", "메일 발송 성공");
-		}else{
-			model.addAttribute("msg", "메일 발송 실패");
-		}
+		if(result>0) model.addAttribute("msg", "메일 발송 성공");
+		else model.addAttribute("msg", "메일 발송 실패");
 		model.addAttribute("location", "/mailList.ho");
 		
 		return "mail/mailResult";
@@ -154,16 +149,15 @@ public class MailController {
 		MailReceive mr = new MailReceive();
 		mr.setMailNo(mailNo);
 		mr.setMemNo(memNo);
-		if(listType.length()==2){
-			System.out.println(listType.charAt(0));
-			mr.setListType(listType.charAt(0));
-		}else{
-			mr.setListType(listType.charAt(0));
-		}
-		if(readYN.charAt(0)=='N'){
+		
+		if(listType.length()==2){ mr.setListType(listType.charAt(0));
+		}else{ mr.setListType(listType.charAt(0)); }
+		
+		if(readYN.charAt(0)=='N'){//읽음 처리
 			mr.setReadYN('Y');
 			mailService.updateReadYN(mr);
 		}
+		
 		MailGetter mg = mailService.selectOneMail(mr);
 		model.addAttribute("mail", mg);
 		model.addAttribute("listType",listType); 
@@ -172,7 +166,7 @@ public class MailController {
 	
 	@RequestMapping("/changeReadYN.ho")
 	public void chagngeReadYN(@SessionAttribute("member") Member m, @RequestParam("readYN") String readYN, @RequestParam("mailNo") int mailNo, 
-			@RequestParam(value="listType", defaultValue="R") String listType, HttpServletResponse response) throws IOException{
+			@RequestParam(value="listType", defaultValue="R") String listType, HttpServletResponse res) throws IOException{
 		MailReceive mr = new MailReceive();
 		mr.setMemNo(m.getMemNo());
 		mr.setMailNo(mailNo);
@@ -180,17 +174,13 @@ public class MailController {
 		mr.setListType(listType.charAt(0)); //참조인지 수신인지 구분
 		int result = mailService.updateReadYN(mr);
 
-		response.setCharacterEncoding("UTF-8");
-		if(result>0){
-			response.getWriter().print(true);
-		}else{
-			response.getWriter().print(false);
-		}
+		if(result>0) res.getWriter().print(true);
+		else res.getWriter().print(false); 
 	}
 	
 	@RequestMapping("/changeKeepYN.ho")
 	public void chagngeKeepYN(@SessionAttribute("member") Member m, @RequestParam("keepYN") String keepYN, @RequestParam("mailNo") int mailNo, 
-			@RequestParam(value="listType", defaultValue="R") String listType, HttpServletResponse response) throws IOException{
+			@RequestParam(value="listType", defaultValue="R") String listType, HttpServletResponse res) throws IOException{
 		MailReceive mr = new MailReceive();
 		mr.setMemNo(m.getMemNo());
 		mr.setMailNo(mailNo);
@@ -198,29 +188,23 @@ public class MailController {
 		mr.setListType(listType.charAt(0)); //참조인지 수신인지 구분
 		
 		int result = mailService.updateKeepYN(mr);
-		response.setCharacterEncoding("UTF-8");
-		if(result>0){
-			response.getWriter().print(true);
-		}else{
-			response.getWriter().print(false);
-		}
+
+		if(result>0) res.getWriter().print(true);
+		else res.getWriter().print(false); 
 	}
 	
-	@RequestMapping("/deleteMail.ho")
+	@RequestMapping("/deleteMail.ho") //메일 삭제 - 수신함/참조함/발신함만(단일 테이블 or 1개 처리)
 	public void deleteMail(@SessionAttribute("member") Member m, @RequestParam("mailNoList") int[] mailNoList,  
-			@RequestParam(value="listType", defaultValue="R") String listType, HttpServletResponse response) throws IOException{
+			@RequestParam(value="listType", defaultValue="R") String listType, HttpServletResponse res) throws IOException{
 		MailInfo mi = new MailInfo();
 		mi.setMemNo(m.getMemNo());
 		mi.setMailNoList(mailNoList);
 		mi.setListType(listType.charAt(0));
 		
 		int result = mailService.deleteMail(mi);
-		if(result>0){
-			response.getWriter().print(true);
-		}else{
-			response.getWriter().print(false);
-		}
 		
+		if(result>0) res.getWriter().print(true);
+		else res.getWriter().print(false); 
 	}
 	
 	@RequestMapping("/sendToOne.ho") //메일 답장
@@ -239,6 +223,19 @@ public class MailController {
 		return "mail/mailTransfer";
 	}
 	
+	@RequestMapping("/resendMail.ho") //재발송
+	public void resendMail(@SessionAttribute("member") Member m, 
+			@RequestParam("mailNoList") int[] mailNoList, HttpServletResponse res) throws IOException{
+		MailInfo mi = new MailInfo();
+		mi.setMemNo(m.getMemNo());
+		mi.setMailNoList(mailNoList);
+		
+		int result = mailService.insertResendMail(mi);
+		
+		if(result>0){ res.getWriter().print(true);
+		}else{ res.getWriter().print(false); }
+	}
+	
 	@RequestMapping("/fileDownload.ho")
 	public void fileDownload(@SessionAttribute("member") Member m, @RequestParam("attachNo") int attachNo,
 			HttpServletResponse response) throws IOException{
@@ -246,206 +243,85 @@ public class MailController {
 		
 		if(mf!=null) {
 			String realUploadPath = resourceLoader.getResource("/").getURI().getPath(); //webapp까지의 실제 위치
-			
-			//파일 경로를 가져와서 물리적으로 접근함
-			File file = new File(realUploadPath + mf.getFilePath()); //파일 경로를 상대적으로 처리
-			
-			//웹브라우저를 통해서 데이터를 Binary타입으로 처리
-			response.setContentType("application/octet-stream");
-			
-			//파일의 사이즈를 전달해줌
-			response.setContentLengthLong(mf.getFileSize());
-			
-			//사용자에게 전달할 파일의 이름을 인코딩해주어야 함
-			String fileName = new String(mf.getOriginalFilename().getBytes(),"ISO-8859-1");
-			
-			//파일이름을 http header를 통해서 전달
-			response.setHeader("Content-Disposition", "attachment;filename="+fileName);
-			
-			//위의 코드는 파일이름+파일 전송을 위한 웹환경 셋팅
-			//아래 코드는 실제 파일이 가지고 있는 데이터를 보내는 작업
-			
-			//파일 데이터를 가져올 수 있는 Stream 생성. input // 일단 자바 코드로 가져와야 보내므로 input
-			FileInputStream fileIn = new FileInputStream(file);
-			
-			//클라이언트에게 전달할 통로 생성. outputStream.
-			OutputStream out = response.getOutputStream();
-			
-			//4KB씩 처리
-			byte[] outputByte = new byte[4096];
+
+			//파일이름+파일 전송을 위한 웹환경 셋팅			
+			File file = new File(realUploadPath + mf.getFilePath()); //파일 경로를 가져와서(상대경로) 물리적으로 접근함
+			response.setContentType("application/octet-stream");//웹브라우저를 통해서 데이터를 Binary타입으로 처리
+			response.setContentLengthLong(mf.getFileSize());//파일의 사이즈
+			String fileName = new String(mf.getOriginalFilename().getBytes(),"ISO-8859-1");//파일 이름 인코딩
+			response.setHeader("Content-Disposition", "attachment;filename="+fileName);//파일이름을 http header를 통해서 전달
+
+			//실제 파일이 가지고 있는 데이터를 보내는 작업
+			FileInputStream fileIn = new FileInputStream(file);//파일 데이터를 가져올 수 있는 Stream 생성.
+			OutputStream out = response.getOutputStream();//클라이언트에게 전달할 통로 생성
+			byte[] outputByte = new byte[4096];//4KB씩 처리
 			
 			//inputStream으로 데이터를 읽어다가 output스트림으로 전송하기
-			while(fileIn.read(outputByte,0,4096)!=-1) {
-				//read(outputByte,0,4096) : 0부터 4096까지 읽어와라
-				//파일의 끝(EOF:end of file)을 만나면 -1을 반환
+			while(fileIn.read(outputByte,0,4096)!=-1) {	//4kb 읽어서 처리
 				out.write(outputByte,0,4096);
 			}
 			
 			fileIn.close();
 			out.close();
 			
-		}else {
-			response.getWriter().print("<script>alert('파일을 다운받을 수 없습니다.');</script>");
-		}
+		}else {	response.getWriter().print("<script>alert('파일을 다운받을 수 없습니다.');</script>"); }
 		
 	}
 	
-	@RequestMapping("/resendMail.ho") //재발송
-	public void resendMail(@SessionAttribute("member") Member m, @RequestParam("mailNoList") int[] mailNoList, HttpServletResponse res) throws IOException{
-		MailInfo mi = new MailInfo();
-		mi.setMemNo(m.getMemNo());
-		mi.setMailNoList(mailNoList);
-		
-		int result = mailService.insertResendMail(mi);
-		
-		if(result>0){
-			res.getWriter().print(true);
-		}else{
-			res.getWriter().print(false);
-		}
-	}
-	
-	@RequestMapping("/deleteMailList.ho") //일괄 삭제
-	public void deleteMailList(@SessionAttribute("member") Member m, @RequestParam("listType") String[] listType, 
-			@RequestParam("mailNoList") int[] mailNoList, HttpServletResponse res) throws IOException{
+	//일괄 처리 기능
+	@RequestMapping("/allChange.ho")
+	public void allChangeMailList(@SessionAttribute("member") Member m, @RequestParam("listType") String[] listType, 
+			@RequestParam("mailNoList") int[] mailNoList, @RequestParam("ptype") String ptype, HttpServletResponse res) throws IOException{
 
-		MailList ml = new MailList();
-		ml.setMemNo(m.getMemNo());
+		//수신 메일과 참조메일 분리 처리
+		MailList mlc = new MailList();
+		MailList mlf = new MailList();
+		mlc.setMemNo(m.getMemNo());
+		mlf.setMemNo(m.getMemNo());
+		mlc.setListType('R');
+		mlf.setListType('F');
+		
 		ArrayList<Integer> recMailNoList = new ArrayList<Integer>();
 		ArrayList<Integer> refMailNoList = new ArrayList<Integer>();
 		
-		System.out.println(listType);
-		System.out.println(recMailNoList);
-		System.out.println(refMailNoList);
-		
-		for(int i=0; i<listType.length; i++){
-			if(listType[i].charAt(0)=='R'){
-				recMailNoList.add(mailNoList[i]);
-			}else if(listType[i].charAt(0)=='F'){
-				refMailNoList.add(mailNoList[i]);
-			}
-		}
-		
-		ml.setRecMailNoList(recMailNoList);
-		ml.setRefMailNoList(refMailNoList);
-		
-		int result = mailService.deleteMailList(ml);
-		if(result>0){
-			res.getWriter().print(true);
-		}else{
-			res.getWriter().print(false);
-		}
-	}
-	
-	@RequestMapping("/restoreMailList.ho") //메일 일괄 복원
-	public void restoreMailList(@SessionAttribute("member") Member m, @RequestParam("listType") String[] listType, 
-			@RequestParam("mailNoList") int[] mailNoList, HttpServletResponse res) throws IOException{
-		
-		MailList ml = new MailList();
-		ml.setMemNo(m.getMemNo());
-		ArrayList<Integer> recMailNoList = new ArrayList<Integer>();
-		ArrayList<Integer> refMailNoList = new ArrayList<Integer>();
-		
-		System.out.println(listType);
-		System.out.println(recMailNoList);
-		System.out.println(refMailNoList);
-		
-		for(int i=0; i<listType.length; i++){
-			if(listType[i].charAt(0)=='R'){
-				recMailNoList.add(mailNoList[i]);
-			}else if(listType[i].charAt(0)=='F'){
-				refMailNoList.add(mailNoList[i]);
-			}
-		}
-		
-		ml.setRecMailNoList(recMailNoList);
-		ml.setRefMailNoList(refMailNoList);
-		
-		int result = mailService.updateRestoreMailList(ml);
-		if(result>0){
-			res.getWriter().print(true);
-		}else{
-			res.getWriter().print(false);
-		}
-		
-	}
-	
-	@RequestMapping("/deletePermMailList.ho") //일괄 영구 삭제
-	public void deletePermMailList(@SessionAttribute("member") Member m, @RequestParam("listType") String[] listType, 
-			@RequestParam("mailNoList") int[] mailNoList, HttpServletResponse res) throws IOException{
-
-		MailList ml = new MailList();
-		ml.setMemNo(m.getMemNo());
-		ArrayList<Integer> recMailNoList = new ArrayList<Integer>();
-		ArrayList<Integer> refMailNoList = new ArrayList<Integer>();
-		
-		System.out.println(listType);
-		System.out.println(recMailNoList);
-		System.out.println(refMailNoList);
-		
-		for(int i=0; i<listType.length; i++){
-			if(listType[i].charAt(0)=='R'){
-				recMailNoList.add(mailNoList[i]);
-			}else if(listType[i].charAt(0)=='F'){
-				refMailNoList.add(mailNoList[i]);
-			}
-		}
-		
-		ml.setRecMailNoList(recMailNoList);
-		ml.setRefMailNoList(refMailNoList);
-		
-		int result = mailService.deletePermMailList(ml);
-		if(result>0){
-			res.getWriter().print(true);
-		}else{
-			res.getWriter().print(false);
-		}
-	}
-	
-	@RequestMapping("/changeReadMailList.ho") //일괄 읽음 처리
-	public void changeReadMailList(@SessionAttribute("member") Member m, @RequestParam("listType") String[] listType, 
-			@RequestParam("mailNoList") int[] mailNoList, HttpServletResponse res) throws IOException{
-		
-		MailList ml = new MailList();
-		ml.setMemNo(m.getMemNo());
-		ArrayList<Integer> recMailNoList = new ArrayList<Integer>();
-		ArrayList<Integer> refMailNoList = new ArrayList<Integer>();
-		
-		System.out.println(listType);
-		System.out.println(recMailNoList);
-		System.out.println(refMailNoList);
-		
-		if(listType.length==1){//수신메일함이나 참조메일함의 경우
+		if(listType.length==1){//수신메일함이나 참조메일함의 경우, 일괄 등록
 			if(listType[0].charAt(0)=='R'){
-				for(int num : mailNoList){
-					recMailNoList.add(num);
-				}
+				for(int num : mailNoList) recMailNoList.add(num);
 			}else if(listType[0].charAt(0)=='F'){
-				for(int num : mailNoList){
-					refMailNoList.add(num);
-				}
+				for(int num : mailNoList) refMailNoList.add(num);
 			}
-		}else{
+		}else{//그외 메일함의 경우 리스트 타입을 개별 확인해서 처리
 			for(int i=0; i<listType.length; i++){
-				if(listType[i].charAt(0)=='R'){
-					recMailNoList.add(mailNoList[i]);
-				}else if(listType[i].charAt(0)=='F'){
-					refMailNoList.add(mailNoList[i]);
-				}
+				if(listType[i].charAt(0)=='R')	recMailNoList.add(mailNoList[i]);
+				else if(listType[i].charAt(0)=='F') refMailNoList.add(mailNoList[i]);
 			}
 		}
 		
+		mlc.setMailNoList(recMailNoList);
+		mlf.setMailNoList(refMailNoList);
 		
-		ml.setRecMailNoList(recMailNoList);
-		ml.setRefMailNoList(refMailNoList);
+		int result1 = 0;
+		int result2 = 0;
 		
-		int result = mailService.updateReadMailList(ml);
-		if(result>0){
-			res.getWriter().print(true);
-		}else{
-			res.getWriter().print(false);
+		switch(ptype.charAt(0)){
+		case 'D' : 
+			if(recMailNoList.size()>0) result1 = mailService.deleteMailList(mlc); //일괄 삭제
+			if(refMailNoList.size()>0) result2 = mailService.deleteMailList(mlf); //일괄 삭제
+			break;
+		case 'T' : 
+			if(recMailNoList.size()>0) result1 = mailService.updateRestoreMailList(mlc); //일괄 복구
+			if(refMailNoList.size()>0) result2 = mailService.updateRestoreMailList(mlf); //일괄 복구
+			break;
+		case 'P' : 
+			if(recMailNoList.size()>0) result1 = mailService.deletePermMailList(mlc); //일괄 영구 삭제
+			if(refMailNoList.size()>0) result2 = mailService.deletePermMailList(mlf); //일괄 영구 삭제
+			break;
+		case 'R' : 
+			if(recMailNoList.size()>0) result1 = mailService.updateReadMailList(mlc); //일괄 읽음 처리
+			if(refMailNoList.size()>0) result2 = mailService.updateReadMailList(mlf); //일괄 읽음 처리
 		}
 		
+		if(result1+result2>0) res.getWriter().print(true);
+		else res.getWriter().print(false); 
 	}
-	
 }

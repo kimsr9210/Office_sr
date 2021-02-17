@@ -5,8 +5,9 @@
   <!-- 공통 파일 DB 저장 매퍼 -->
   
   <!-- BY 다빈  부서별 게시판 - 게시판 select -->
-  <select id="allPartBoardList" parameterType="String" resultType="PartBoard">
+  <select id="allPartBoardList" parameterType="hashmap" resultType="PartBoard">
   	SELECT 
+        ROW_NUM AS boardNumber,
 		PART_NO AS partNo,
 		PART_TITLE AS partTitle,
 		DEPT_CODE AS deptCode,
@@ -19,20 +20,124 @@
 		PART_DEL_DATE AS partDelDate,
 		DEPT_NAME AS deptName
 	FROM (
+    	SELECT 
+    		ROW_NUMBER() OVER (ORDER BY ROW_NUM DESC) AS NUM,A.* 
+    	FROM (
+	    	SELECT 
+				ROW_NUMBER() OVER (ORDER BY PART_DATE) AS ROW_NUM,
+				P.*,
+				D.DEPT_NAME
+			FROM PART_BOARD P LEFT JOIN DEPARTMENT D ON P.DEPT_CODE=D.DEPT_CODE 
+			WHERE P.PART_DEL_YN='N' AND P.DEPT_CODE=#{deptCode} 
+			<choose>
+				<when test="searchType != null">
+					<choose>
+						<when test="searchTypeOrg == 'both'">AND (PART_TITLE LIKE #{keyword} OR DBMS_LOB.INSTR(PART_CONTENT, #{keywordOrg} ) > 0)</when>
+						<when test="searchTypeOrg == 'content'">AND (DBMS_LOB.INSTR(${searchType}, #{keywordOrg} ) > 0)</when>
+						<otherwise>AND ${searchType} LIKE #{keyword}</otherwise>
+					</choose>
+				</when>
+			</choose>
+		) A 
+	) WHERE NUM BETWEEN #{start} AND #{end}
+  </select>
+  <!-- BY 다빈  부서별 게시판 - 게시글 one select -->
+  <select id="getOnePostPartBoard" parameterType="hashmap" resultType="PartBoard">
+  	SELECT 
+        A.PART_NO AS partNo,
+		A.PART_TITLE AS partTitle,
+		A.DEPT_CODE AS deptCode,
+		A.PART_DATE AS partDate,
+		A.MEM_NO AS memNo,
+		A.PART_WRITER AS partWriter,
+		A.PART_CONTENT AS partContent,
+		A.PART_HITS AS partHits,
+		A.PART_DEL_YN AS partDelYN,
+		A.PART_DEL_DATE AS partDelDate,
+		D.DEPT_NAME AS deptName,
+		M.MEM_POSITION AS memPosition,
+        M.MEM_PROFILE AS memProfile,
+        F.PART_FILE_NO AS fileNo,
+        F.PART_ORIG_NAME AS origName,
+        F.PART_CHG_NAME AS chgName,
+        F.PART_PATH AS filePath,
+        F.PART_SIZE AS fileSize,
+        F.PART_UPLOAD_DATE AS uploadDate
+	FROM PART_BOARD A LEFT JOIN DEPARTMENT D ON A.DEPT_CODE=D.DEPT_CODE LEFT JOIN MEMBER M ON A.MEM_NO=M.MEM_NO LEFT JOIN PART_FILE F ON A.PART_NO=F.PART_NO  
+	WHERE PART_DEL_YN='N' 
+	<choose>
+		<when test="deptCode != null">AND A.DEPT_CODE=#{deptCode} </when>
+	</choose>
+	AND A.PART_NO=#{postNo}
+  </select>
+  
+  <select id="getPostFile" parameterType="hashmap" resultType="BoardFile">
+  	SELECT 
+		${type}FILE_NO AS fileNo,
+		${type}NO AS postNo,
+		${type}ORIG_NAME AS origName,
+		${type}CHG_NAME AS chgName,
+		${type}PATH AS filePath,
+		${type}SIZE AS fileSize,
+		${type}UPLOAD_DATE AS uploadDate
+	FROM 
+	<choose>
+		<when test="type eq 'NOT_'">NOTICE_FILE WHERE</when>
+		<otherwise>${type}FILE WHERE</otherwise>
+	</choose>
+	${type}NO=#{postNo} AND ${type}FILE_NO=#{fileNo}
+  </select>
+  
+  
+  <!-- BY 다빈  부서별 게시판 - 게시글의 댓글 List select -->
+  <select id="getPostComntList" parameterType="hashmap" resultType="PartComments">
+  	SELECT 
+		PART_COMNT_NO AS partComntNo,
+		PART_NO AS partNo,
+		A.MEM_NO AS memNo,
+		PART_COMNT_WRITER AS partComntWriter,
+		PART_COMNT_EMAIL AS partComntEmail,
+		PART_COMNT_DATE AS partComntDate,
+		PART_COMNT AS partComnt,
+		MEM_POSITION AS memPosition,
+		MEM_PROFILE AS memProfile
+	FROM (
 		SELECT 
-			ROW_NUMBER() OVER (ORDER BY A.PART_DATE DESC) AS NUM,
-			A.*,
-			D.DEPT_NAME
-		FROM PART_BOARD A LEFT JOIN DEPARTMENT D ON A.DEPT_CODE=D.DEPT_CODE 
-		WHERE A.PART_DEL_YN='N' AND A.DEPT_CODE='D2'
-	) WHERE NUM BETWEEN 1 AND 10
+			ROW_NUMBER() OVER(ORDER BY A.PART_COMNT_DATE DESC) AS NUM,A.* 
+		FROM PART_COMMENTS A 
+		WHERE PART_NO=#{postNo}
+		) A  LEFT JOIN MEMBER M ON A.MEM_NO=M.MEM_NO 
+	WHERE NUM BETWEEN #{start} AND #{end}
   </select>
+  <!-- BY 다빈  부서별 게시판 - 게시글의 댓글 insert -->
+  <insert id="addComnt" parameterType="PartComments">
+  	INSERT INTO PART_COMMENTS VALUES(
+  		PART_COMMENTS_SEQ.NEXTVAL,
+  		#{partNo},
+  		#{memNo},
+  		#{partComntWriter},
+  		<choose>
+  			<when test="partComntEmail != null">#{partComntEmail},</when>
+  			<otherwise>'.',</otherwise>
+  		</choose>
+  		DEFAULT,
+  		#{partComnt})
+  </insert>
+  
+  <update id="updateComnt" parameterType="PartComments">
+  	UPDATE PART_COMMENTS SET PART_COMNT=#{partComnt} WHERE PART_COMNT_NO=#{partComntNo}
+  </update>
+  
+  <delete id="deleteComnt" parameterType="int">
+  	DELETE FROM PART_COMMENTS WHERE PART_COMNT_NO=#{comntNo}
+  </delete>
+  
   <!-- BY 다빈  부서별 게시판 - 게시판 insert - 게시판번호 채번 -->
-  <select id="selectNumber" resultType="int">
-  	SELECT PART_BOARD_SEQ.NEXTVAL FROM DUAL
+  <select id="selectNumber" parameterType="hashmap" resultType="int">
+  	SELECT ${boardType}SEQ.NEXTVAL FROM DUAL
   </select>
-  <!-- BY 다빈  부서별 게시판 - 게시판 insert-->
-  <insert id="addPost" parameterType="PartBoard">
+  <!-- BY 다빈  부서별 게시판 - 게시판 insert -->
+  <insert id="addPostPartBoard" parameterType="PartBoard">
   	INSERT INTO PART_BOARD VALUES(
   		#{partNo},
   		#{partTitle},
@@ -46,16 +151,208 @@
   		NULL
   	)
   </insert>
-  <insert id="insertPartFile" parameterType="BoardFile">
-  	INSERT INTO PART_FILE VALUES(
-  		PART_BOARD_FILE_SEQ.NEXTVAL,
-  		#{postNo},
-  		#{origName},
-  		#{chgName},
-  		#{path},
-  		#{size},
+  <!-- BY 다빈  부서별 게시판 - 게시판 insert file -->
+  <insert id="insertPostFile" parameterType="hashmap">
+  	INSERT INTO ${type}FILE VALUES(
+  		${typeBoard}FILE_SEQ.NEXTVAL,
+  		#{pf.postNo},
+  		#{pf.origName},
+  		#{pf.chgName},
+  		#{pf.filePath},
+  		#{pf.fileSize},
   		DEFAULT
   	)
   </insert>
+  
+  <!-- 게시글 삭제 update -->
+  <update id="deletePost" parameterType="hashmap">
+  	UPDATE ${boardType} SET ${ynType}='Y', ${dateType}=SYSTIMESTAMP 
+  	<choose>
+  		<when test="postNo != null">
+  			<foreach collection="postNo" item="item" index="i" open="WHERE" separator="OR">
+  				${noType}=#{item}
+  			</foreach>
+  		</when>
+  	</choose>
+  </update>
+  
+  
+  <!-- 게시글 수정 update -->
+  <update id="modifyPostPartBoard" parameterType="hashmap">
+  	UPDATE ${boardType} SET ${type}TITLE=#{pb.partTitle},${type}CONTENT=#{pb.partContent} WHERE ${type}NO=#{pb.partNo} 
+  	<choose>
+  		<when test="deptCode != null">AND DEPT_CODE=#{deptCode}</when>
+  	</choose>
+  </update>
+  <!-- 게시글 수정 파일 update-->
+  <update id="updatePostFile" parameterType="hashmap">
+  	UPDATE ${type}FILE SET 
+		${type}ORIG_NAME=#{bf.origName},
+		${type}CHG_NAME=#{bf.chgName},
+		${type}PATH=#{bf.filePath},
+		${type}SIZE=#{bf.fileSize},
+		${type}UPLOAD_DATE=SYSTIMESTAMP 
+	WHERE ${type}FILE_NO=#{bf.fileNo} AND ${type}NO=#{bf.postNo}
+  </update>
+  <!-- 게시글 수정 파일 delete -->
+  <delete id="deletePostFile" parameterType="hashmap">
+ 	DELETE FROM ${BoardType}FILE WHERE ${type}NO=#{postNo} AND ${type}FILE_NO=#{fileNo}
+  </delete>
+  
+  <!-- 전체 List 수 -->
+  <select id="countPostList" parameterType="hashmap" resultType="int">
+  	SELECT COUNT(*) FROM ${boardType} 
+  	<where>
+  		<if test="delType != null">AND ${delType}='N' </if>
+  		<if test="comntPostNo != null">AND PART_NO=${comntPostNo} </if>
+  		<if test="deptCode != null">AND DEPT_CODE=#{deptCode} </if>
+  		<if test="searchType != null">
+  			<choose>
+	  			<when test="searchType == 'both'">AND (${type}TITLE LIKE #{keyword} OR DBMS_LOB.INSTR(${type}CONTENT, #{keywordOrg} ) > 0)</when>
+				<otherwise>AND ${searchType} LIKE #{keyword}</otherwise>
+	  		</choose>
+  		</if>
+  	</where>
+  </select>
+  <!-- 조회수 +1 -->
+  <update id="countingHits" parameterType="hashmap">
+  	UPDATE ${boardType} SET ${hitsType}=${hitsType}+1 WHERE ${noType}=#{postNo} AND ${ynType}='N'
+  </update>
+  <!-- 다음글 -->
+  <select id="nextPost" parameterType="hashmap" resultType="int">
+  	SELECT MIN(${type}_NO) FROM (
+		SELECT 
+			ROW_NUMBER() OVER (ORDER BY A.${type}_DATE DESC) AS NUM,
+			A.*
+		FROM ${boardType} A
+		<where>
+			<if test="type != 'RULE'">AND ${type}_DEL_YN='N' </if>
+			<if test="deptCode != null">AND DEPT_CODE=#{deptCode} </if>
+		</where>
+	) WHERE ${type}_NO>#{postNo}
+  </select>
+  <!-- 이전글 -->
+  <select id="prevPost" parameterType="hashmap" resultType="int">
+  	SELECT MAX(${type}_NO) FROM (
+		SELECT 
+			ROW_NUMBER() OVER (ORDER BY A.${type}_DATE DESC) AS NUM,
+			A.*
+		FROM ${boardType} A
+		<where>
+			<if test="type != 'RULE'">AND ${type}_DEL_YN='N' </if>
+			<if test="deptCode != null">AND DEPT_CODE=#{deptCode} </if>
+		</where>
+	) WHERE #{postNo}>${type}_NO
+  </select>
+  
+  
+  
+  
+  
+  
+  <!-- 공지사항 - 목록 리스트 -->
+  <select id="allNoticeList" parameterType="hashmap" resultType="BoardPost">
+  	SELECT 
+		NOT_NO AS postNo,
+		NOT_TITLE AS title,
+		NOT_DATE AS postingDate,
+		NOT_WRITER AS writer,
+		MEM_POSITION AS memPosition
+		FROM(
+		SELECT 
+		ROW_NUMBER() OVER (ORDER BY A.NOT_DATE DESC) AS NUM,
+		A.*,
+		MEM_POSITION
+	FROM ALL_NOTICE A LEFT JOIN MEMBER M ON A.MEM_NO=M.MEM_NO
+	WHERE NOT_DEL_YN='N'
+		<choose>
+			<when test="searchType != null">
+				<choose>
+					<when test="searchTypeOrg == 'both'">AND (NOT_TITLE LIKE #{keyword} OR DBMS_LOB.INSTR(NOT_CONTENT, #{keywordOrg} ) > 0)</when>
+					<when test="searchTypeOrg == 'content'">AND (DBMS_LOB.INSTR(${searchType}, #{keywordOrg} ) > 0)</when>
+					<otherwise>AND ${searchType} LIKE #{keyword}</otherwise>
+				</choose>
+			</when>
+		</choose>
+	) WHERE NUM BETWEEN ${start} AND ${end}
+  </select>
+  <!-- 공지사항 - 게시글  -->
+  <select id="getOnePostNotice" parameterType="hashmap" resultType="BoardPost">
+  	SELECT 
+		A.NOT_NO AS postNo,
+		NOT_TITLE AS title,
+		NOT_DATE AS postingDate,
+		NOT_WRITER AS writer,
+		NOT_CONTENT AS content,
+		NOT_HITS AS hits,
+		MEM_POSITION AS memPosition,
+		MEM_PROFILE AS memProfile,
+        NOT_FILE_NO AS fileNo,
+        NOT_ORIG_NAME AS origName 
+	FROM ALL_NOTICE A LEFT JOIN MEMBER M ON A.MEM_NO=M.MEM_NO LEFT JOIN NOTICE_FILE F ON A.NOT_NO=F.NOT_NO 
+	WHERE NOT_DEL_YN='N' AND A.NOT_NO=#{postNo}
+  </select>
+  
+  <!-- 공지사항 - 새글쓰기 insert-->
+  <insert id="addPostNotice" parameterType="BoardPost">
+  	INSERT INTO ALL_NOTICE VALUES(
+		#{postNo},#{title},DEFAULT,#{memNo},#{writer},#{content},0,'N',NULL
+	)
+  </insert>
+  <!-- 공지사항 - 글 수정 update-->
+  <update id="modifyPost" parameterType="hashmap">
+  	UPDATE ${boardType} SET ${type}TITLE=#{bp.title},${type}CONTENT=#{bp.content} 
+  	WHERE ${type}NO=#{bp.postNo} 
+  	<choose>
+  		<when test="type != 'RULE_'">AND ${type}DEL_YN='N'</when>
+  	</choose>
+  </update>
+  
+  <!-- 사내규정 - 새글쓰기 insert -->
+  <insert id="addPostCompanyRule" parameterType="BoardPost">
+  	INSERT INTO COMPANY_RULE VALUES(COMPANY_RULE_SEQ.NEXTVAL,#{title},#{content},DEFAULT)
+  </insert>
+  <!-- 사내규정 - 목록 select -->
+  <select id="allCompanyRuleList" parameterType="hashmap" resultType="BoardPost">
+  	SELECT 
+		RULE_NO AS postNo,
+		RULE_TITLE AS title,
+		RULE_CONTENT AS content,
+		RULE_DATE AS postingDate
+	FROM (
+		SELECT ROW_NUMBER() OVER(ORDER BY RULE_DATE DESC) AS NUM, A.* 
+		FROM COMPANY_RULE A
+	<where>
+		<if test="searchType != null">
+			<choose>
+				<when test="searchTypeOrg == 'both'">AND (RULE_TITLE LIKE #{keyword} OR DBMS_LOB.INSTR(RULE_CONTENT, #{keywordOrg} ) > 0)</when>
+				<when test="searchTypeOrg == 'content'">AND (DBMS_LOB.INSTR(${searchType}, #{keywordOrg} ) > 0)</when>
+				<otherwise>AND ${searchType} LIKE #{keyword}</otherwise>
+			</choose>
+		</if>
+	</where>
+	) WHERE NUM BETWEEN #{start} AND #{end}
+  </select>
+  <!-- 사내규정 - 게시글 select -->
+  <select id="getOnePostCompanyRule" parameterType="hashmap" resultType="BoardPost">
+  	SELECT 
+		RULE_NO AS postNo,
+		RULE_TITLE AS title,
+		RULE_CONTENT AS content,
+		RULE_DATE AS postingDate
+	FROM COMPANY_RULE
+	WHERE RULE_NO=#{postNo}
+  </select>
+  <!-- 사내규정 - 게시글 삭제 delete -->
+  <delete id="deleteRule" parameterType="hashmap">
+  	DELETE FROM COMPANY_RULE 
+  	<where>
+  		<if test="postNo != null">
+  			<foreach collection="postNo" item="item" index="i" separator="OR">
+  				RULE_NO=#{item}
+  			</foreach>
+  		</if>
+  	</where>
+  </delete>
   
 </mapper>

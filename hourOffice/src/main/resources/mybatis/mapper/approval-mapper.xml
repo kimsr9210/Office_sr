@@ -186,14 +186,12 @@
   		ORDER BY DEPT_CODE
   	</select>
   	
-
   	<!-- BY 진원 - 자신이 결재해야할 문서개수 조회 -->
   	<select id="selectMyAprLineCount" resultType="int">
   		SELECT COUNT(AL.DOCU_NO)
   		FROM APPROVAL_LINE AL JOIN APPROVAL APR ON AL.DOCU_NO = APR.DOCU_NO
 		WHERE AL.MEM_NO = #{memNo} AND AL.APR_TYPE = 'W' AND APR.DEL_YN ='N'
   	</select>
-  	
   	
   	<insert id="insertApproval" parameterType="AprForm">
   		 <selectKey keyProperty="docuNo" resultType="Integer" order="BEFORE"> select (TO_CHAR(SYSDATE,'YYMM')||LPAD(APPROVAL_SEQ.NEXTVAL, 4,0)) from dual </selectKey>
@@ -362,6 +360,13 @@
   		WHERE DOCU_NO = #{docuNo} ORDER BY MEM_NO
   	</select>
   	
+  	<select id="selectOneAprRef" resultType="ApprovalRef">
+  		SELECT 
+  		DOCU_NO AS docuNo,
+  		MEM_NO AS memNo
+  		 FROM APPROVAL_REF WHERE DOCU_NO = #{docuNo} ORDER BY MEM_NO
+  	</select>
+  	
   	<update id="insertAprMark" parameterType="ApprovalLine">
   		<selectKey keyProperty="aprDate" resultType="java.sql.Timestamp" order="BEFORE">SELECT SYSTIMESTAMP FROM DUAL </selectKey>
   		UPDATE APPROVAL_LINE SET
@@ -407,13 +412,6 @@
   	<update id="deleteApproval" parameterType="Approval">
   		UPDATE APPROVAL SET DEL_YN = 'Y' WHERE DOCU_NO = #{docuNo} AND MEM_NO = #{memNo}
   	</update>
-  	
-  	<select id="selectOneAprRef" resultType="ApprovalRef">
-  		SELECT 
-  		DOCU_NO AS docuNo,
-  		MEM_NO AS memNo
-  		 FROM APPROVAL_REF WHERE DOCU_NO = #{docuNo} ORDER BY MEM_NO
-  	</select>
   	
   	<update id="updateAprFormHol" parameterType="AprFormHol">
   		UPDATE HOLIDAY_FORM SET

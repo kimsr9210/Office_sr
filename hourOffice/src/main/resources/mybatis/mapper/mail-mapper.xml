@@ -84,6 +84,7 @@
 	<choose>
 	<when test="searchType == 'title'">AND ML.TITLE LIKE '%'||#{keyword}||'%'</when>
 	<when test="searchType == 'sender'">AND M.MEM_NAME LIKE '%'||#{keyword}||'%'</when>
+	<when test="searchType == 'contents'">AND DBMS_LOB.INSTR(ML.CONTENT, #{keyword} ) > 0</when>
 	</choose>
 	AND <choose>
   		<when test="listType=='D'">MR.DEL_YN = 'Y'</when>
@@ -112,6 +113,7 @@
 	<choose>
 	<when test="searchType == 'title'">AND ML.TITLE LIKE '%'||#{keyword}||'%'</when>
 	<when test="searchType == 'receiver'">AND M.MEM_NAME LIKE '%'||#{keyword}||'%'</when>
+	<when test="searchType == 'contents'">AND DBMS_LOB.INSTR(ML.CONTENT, #{keyword} ) > 0</when>
 	</choose>
 	AND ML.DEL_YN = 'N')
 	WHERE ROW_NUM BETWEEN #{startPage} AND #{endPage}
@@ -129,6 +131,7 @@
   	<choose>
 	<when test="searchType == 'title'">AND ML.TITLE LIKE '%'||#{keyword}||'%'</when>
 	<when test="searchType == 'sender'">AND M.MEM_NAME LIKE '%'||#{keyword}||'%'</when>
+	<when test="searchType == 'contents'">AND DBMS_LOB.INSTR(ML.CONTENT, #{keyword} ) > 0</when>
 	</choose>
   	AND 
   	<choose>
@@ -249,7 +252,7 @@
   
   <insert id="insertResendMail" parameterType="MailInfo">
   	<selectKey keyProperty="rtMailNo" resultType="Integer" order="BEFORE"> select mail_seq.nextval from dual </selectKey>
-  	INSERT INTO MAIL (SELECT #{rtMailNo}, MEM_NO, TITLE, CONTENT, SEND_DATE, FILE_YN, DEL_YN FROM MAIL 
+  	INSERT INTO MAIL (SELECT #{rtMailNo}, MEM_NO, TITLE, CONTENT, SYSTIMESTAMP, FILE_YN, DEL_YN FROM MAIL 
   	WHERE MAIL_NO = #{sdMailNo} AND MEM_NO =#{memNo})
   </insert>
   
@@ -268,58 +271,50 @@
   	ORIGINAL_FILENAME, CHANGED_FILENAME, FILE_PATH, FILE_SIZE, UPLOAD_DATE FROM MAIL_FILE WHERE MAIL_NO = #{sdMailNo})
   </insert>
   
-  <update id="deleteRecMailList" parameterType="MailList">
-  	UPDATE MAIL_RECEIVE SET DEL_YN = 'Y' WHERE MEM_NO = #{memNo} AND MAIL_NO IN
-  	<foreach collection="recMailNoList" open="(" close=")" separator="," item="mailNo">
+  <update id="deleteMailList" parameterType="MailList">
+  	UPDATE 
+  	<choose>
+  	<when test="listType =='R'">MAIL_RECEIVE </when>
+  	<when test="listType =='F'">MAIL_REF </when>
+  	</choose>
+  	SET DEL_YN = 'Y' WHERE MEM_NO = #{memNo} AND MAIL_NO IN
+  	<foreach collection="mailNoList" open="(" close=")" separator="," item="mailNo">
   	#{mailNo}
   	</foreach>
   </update>
   
-  <update id="deleteRefMailList" parameterType="MailList">
-  	UPDATE MAIL_REF SET DEL_YN = 'Y' WHERE MEM_NO = #{memNo} AND MAIL_NO IN
-  	<foreach collection="refMailNoList" open="(" close=")" separator="," item="mailNo">
+  <update id="restoreMailList" parameterType="MailList">
+  	UPDATE 
+  	<choose>
+  	<when test="listType =='R'">MAIL_RECEIVE </when>
+  	<when test="listType =='F'">MAIL_REF </when>
+  	</choose>
+  	SET DEL_YN = 'N' WHERE MEM_NO = #{memNo} AND MAIL_NO IN
+  	<foreach collection="mailNoList" open="(" close=")" separator="," item="mailNo">
   	#{mailNo}
   	</foreach>
   </update>
   
-   <update id="restoreRecMailList" parameterType="MailList">
-  	UPDATE MAIL_RECEIVE SET DEL_YN = 'N' WHERE MEM_NO = #{memNo} AND MAIL_NO IN
-  	<foreach collection="recMailNoList" open="(" close=")" separator="," item="mailNo">
-  	#{mailNo}
-  	</foreach>
-  </update>
-  
-  <update id="restoreRefMailList" parameterType="MailList">
-  	UPDATE MAIL_REF SET DEL_YN = 'N' WHERE MEM_NO = #{memNo} AND MAIL_NO IN
-  	<foreach collection="refMailNoList" open="(" close=")" separator="," item="mailNo">
-  	#{mailNo}
-  	</foreach>
-  </update>
-  
-  <delete id="deletePermRecMailList" parameterType="MailList">
-  	DELETE FROM MAIL_RECEIVE WHERE MEM_NO = #{memNo} AND MAIL_NO IN
-  	<foreach collection="recMailNoList" open="(" close=")" separator="," item="mailNo">
+  <delete id="deletePermMailList" parameterType="MailList">
+  	DELETE FROM 
+  	<choose>
+  	<when test="listType =='R'">MAIL_RECEIVE </when>
+  	<when test="listType =='F'">MAIL_REF </when>
+  	</choose>
+  	WHERE MEM_NO = #{memNo} AND MAIL_NO IN
+  	<foreach collection="mailNoList" open="(" close=")" separator="," item="mailNo">
   	#{mailNo}
   	</foreach>
   </delete>
   
-  <delete id="deletePermRefMailList" parameterType="MailList">
-  	DELETE FROM MAIL_REF WHERE MEM_NO = #{memNo} AND MAIL_NO IN
-  	<foreach collection="refMailNoList" open="(" close=")" separator="," item="mailNo">
-  	#{mailNo}
-  	</foreach>
-  </delete>
-  
-  <update id="updateReadRecMailList" parameterType="MailList">
-  	UPDATE MAIL_RECEIVE SET READ_YN = 'Y' WHERE MEM_NO = #{memNo} AND MAIL_NO IN
-  	<foreach collection="recMailNoList" open="(" close=")" separator="," item="mailNo">
-  	#{mailNo}
-  	</foreach>
-  </update>
-  
-  <update id="updateReadRefMailList" parameterType="MailList">
-  	UPDATE MAIL_REF SET READ_YN = 'Y' WHERE MEM_NO = #{memNo} AND MAIL_NO IN
-  	<foreach collection="refMailNoList" open="(" close=")" separator="," item="mailNo">
+  <update id="updateReadMailList" parameterType="MailList">
+  	UPDATE 
+  	<choose>
+  	<when test="listType =='R'">MAIL_RECEIVE </when>
+  	<when test="listType =='F'">MAIL_REF </when>
+  	</choose>
+  	 SET READ_YN = 'Y' WHERE MEM_NO = #{memNo} AND MAIL_NO IN
+  	<foreach collection="mailNoList" open="(" close=")" separator="," item="mailNo">
   	#{mailNo}
   	</foreach>
   </update>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="resource">
+
+	<!-- 자료실 모든 파일 가져오기 -->
+	<select id="selectAllResource" resultType="ResourceData">
+		SELECT
+			FILE_NO as fileNo,
+			MEM_NO as memNo,
+			CATEGORY as category,
+			ORIGINALFILENAME as originalFileName,
+			CHANGEDFILENAME as changedFileName,
+			FILEPATH as filePath,
+			FILESIZE as fileSize,
+			UPLOADTIME as uploadTime,
+			DEL_YN as delYN
+		FROM FILETBL
+		WHERE DEL_YN = 'N'
+		ORDER by FILE_NO DESC
+	</select>
+	
+	<!-- 자료실 파일 업로드 -->
+	<insert id="insertResource" parameterType="ResourceData">
+		INSERT INTO FILETBL VALUES(FILETBL_SEQ.NEXTVAL, #{memNo}, #{category}, #{originalFileName}, #{changedFileName}, #{filePath}, #{fileSize}, #{uploadTime}, 'N')
+	</insert>
+	
+	<!-- 자료실 모든 파일 가져오기 -->
+	<select id="selectCategoryResource" resultType="ResourceData">
+		SELECT
+			FILE_NO as fileNo,
+			MEM_NO as memNo,
+			CATEGORY as category,
+			ORIGINALFILENAME as originalFileName,
+			CHANGEDFILENAME as changedFileName,
+			FILEPATH as filePath,
+			FILESIZE as fileSize,
+			UPLOADTIME as uploadTime,
+			DEL_YN as delYN
+		FROM FILETBL
+		WHERE DEL_YN = 'N' AND CATEGORY=#{resourceType}
+		ORDER by FILE_NO DESC
+	</select>
+	
+	
+	<!-- 자료실 모든 파일 갯수 -->
+	<select id="postTotalCount" resultType="Integer">
+		SELECT COUNT(*) AS TOTALCOUNT
+		FROM FILETBL WHERE DEL_YN='N'
+	</select>
+
+	<!-- 자료실 모든 파일 페이징 -->
+	<select id="selectAllResourcePage" parameterType="ResourcePage" resultType="ResourceData">
+		SELECT 
+			FILE_NO as fileNo,
+			MEM_NO as memNo,
+			CATEGORY as category,
+			ORIGINALFILENAME as originalFileName,
+			CHANGEDFILENAME as changedFileName,
+			FILEPATH as filePath,
+			FILESIZE as fileSize,
+			UPLOADTIME as uploadTime,
+			DEL_YN as delYN
+		FROM (SELECT ROW_NUMBER() OVER(ORDER BY FILE_NO DESC) 
+		AS ROW_NUM, FILETBL.* FROM FILETBL WHERE DEL_YN='N')
+		WHERE ROW_NUM between #{startPage} and #{endPage}
+	</select>
+	
+	<!-- 자료실 카테고리별 파일 갯수 -->
+	<select id="postCategoryCount" resultType="Integer">
+		SELECT COUNT(*) AS TOTALCOUNT
+		FROM FILETBL WHERE DEL_YN='N' AND CATEGORY=#{resourceType}
+	</select>
+	
+	<!-- 자료실 카테고리별 페이징 -->
+	<select id="selectCategoryResourcePage" parameterType="ResourcePage" resultType="ResourceData">
+		SELECT 
+			FILE_NO as fileNo,
+			MEM_NO as memNo,
+			CATEGORY as category,
+			ORIGINALFILENAME as originalFileName,
+			CHANGEDFILENAME as changedFileName,
+			FILEPATH as filePath,
+			FILESIZE as fileSize,
+			UPLOADTIME as uploadTime,
+			DEL_YN as delYN
+		FROM (SELECT ROW_NUMBER() OVER(ORDER BY FILE_NO DESC) 
+		AS ROW_NUM, FILETBL.* FROM FILETBL WHERE DEL_YN='N' AND CATEGORY=#{category})
+		WHERE ROW_NUM between #{startPage} and #{endPage}
+	</select>
+	
+	
+	<!-- 자료실 파일 하나 가져오기 -->
+	<select id="selectOneResouceFile" resultType="ResourceData">
+		SELECT
+			FILE_NO as fileNo,
+			MEM_NO as memNo,
+			CATEGORY as category,
+			ORIGINALFILENAME as originalFileName,
+			CHANGEDFILENAME as changedFileName,
+			FILEPATH as filePath,
+			FILESIZE as fileSize,
+			UPLOADTIME as uploadTime,
+			DEL_YN as delYN
+		FROM FILETBL
+		WHERE DEL_YN='N' AND FILE_NO=#{fileNo}
+	</select>
+	
+	
+	<!-- 파일 삭제 -->
+	<update id="deleteResource">
+		UPDATE FILETBL SET 
+			DEL_YN='Y'
+		WHERE FILE_NO=#{fileNo}
+	</update>
+</mapper>

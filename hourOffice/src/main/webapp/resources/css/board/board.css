@@ -58,6 +58,9 @@
         #TitleContents table td:last-child{
             width: 100px;
         }
+        #TitleContents tr:not(:first-child):hover{
+		background-color:#F5F1F3;
+		}
         
         /* 페이지 번호 */
         #TitleContents #pageNavi{

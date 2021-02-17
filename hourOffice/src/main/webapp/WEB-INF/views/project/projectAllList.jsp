@@ -25,6 +25,35 @@
 </head>
 <body>
 <style>
+	@font-face {
+    font-family: 'GongGothicMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+	@font-face {
+    font-family: 'GongGothicLight';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicLight.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+	.progressBox{
+		background-color: #F5A887;
+	}
+	.publicBox{
+		background-color: #86B0BF;
+	}
+	.complateBox{
+		background-color: #9F9DA6;
+	}
+	#TitleName{
+		font-family: GongGothicMedium;
+	}
+	.pro_font{
+		font-family: GongGothicLight;
+		font-size: 1rem;
+	}
+	
 	.requestBox{
 		width: 180px;
 		height: 150px;
@@ -44,7 +73,7 @@
 
 .requestMember {
 	color: white;
-	padding: 0px 10px 10px 10px;
+	padding: 0px 0px 10px 10px;
 	width: 80%;
 	float: left;
 }
@@ -108,7 +137,7 @@
 					</div>
 					<div id="TitleContents">
 						<!--여기서 각자 id 만드시면 됩니다-->
-						<div>참여 프로젝트</div>
+						<div class="pro_font">참여 프로젝트</div>
 						<div id="newProjectBtn">+ 새 프로젝트</div>
 
 						<div class="projectList">
@@ -158,7 +187,7 @@
 							%>
 								<%if(p.getCompYN()=='N'){ %>
 								<form action="/projectDetail.ho" method="post">
-								<div class="projectBox">
+								<div class="projectBox progressBox">
 									<a>
 										<div class="projectSubject"><input class="projectDetailBtn" type="submit" value="<%=p.getProSubject() %>"/></div>
 										<div class="projectMember"><%=p.getMemCount() %>명 참가중</div>
@@ -185,7 +214,7 @@
 
 
 						<br>
-						<div class="projectClass">공개 프로젝트</div>
+						<div class="projectClass pro_font">공개 프로젝트</div>
 						<div class="projectList">
 						<%if(!publicList.isEmpty()){ %>
 							<%for(Project p : publicList) {%>
@@ -199,7 +228,7 @@
 								
 							%>
 								<form action="/projectDetail.ho" method="post">
-								<div class="projectBox">
+								<div class="projectBox publicBox">
 									<a>
 										<div class="projectSubject"><input class="projectDetailBtn" type="submit" value="<%=p.getProSubject() %>"/></div>
 										<div class="projectMember"><%=p.getMemCount() %>명 참가중</div>
@@ -225,7 +254,7 @@
 						</div>
 
 						<br>
-						<div class="projectClass">완료 프로젝트</div>
+						<div class="projectClass pro_font">완료 프로젝트</div>
 						<div class="projectList">
 						
 						
@@ -244,7 +273,7 @@
 							%>
 								<%if(p.getCompYN()=='Y'){ %>
 								<%count++; %>
-								<div class="projectBox">
+								<div class="projectBox complateBox">
 								<form action="/projectDetail.ho" method="post">
 									<a href="#">
 										<div class="projectSubject"><input class="projectDetailBtn" type="submit" value="<%=p.getProSubject() %>"/></div>

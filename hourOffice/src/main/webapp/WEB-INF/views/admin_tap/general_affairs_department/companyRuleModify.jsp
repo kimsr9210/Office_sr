@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>H:our Office</title>
 	<!-- 폰트어썸 -->
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
     
@@ -19,10 +19,22 @@
 	<link rel="stylesheet" type="text/css" href="/resources/css/board/postWrite.css" />
 	
 	<!-- 스마트에디터2 라이브러리 -->
-    <script type="text/javascript" src="api/smartEditor2/js/service/HuskyEZCreator.js" charset="utf-8"></script> 
+    <script type="text/javascript" src="/resources/api/smarteditor2/js/service/HuskyEZCreator.js" charset="utf-8"></script> 
     <!-- api 이미지 업로드 라이브러리 추가 -->
     <!-- <script type="text/javascript" src="./quick_photo_uploader/plugin/hp_SE2M_AttachQuickPhoto.js" charset="utf-8"> </script> -->
     
+    <style>
+		#frm > div:first-child{
+			height: 80px;
+			margin-bottom: 10px;
+			padding-bottom: 20px;
+		}
+		
+		#frm > div:first-child > input{
+			width: 1050px;
+			margin-left: 30px;
+		}
+	</style>
 	
     <script>
         $(function(){
@@ -52,18 +64,56 @@
 						
 						
 						<div id="txt-content">
-                            <form>
-                            <div><span>제목</span> <input type="text" name="notName" value="1조 1항"/></div>
-                            <div><span>첨부파일</span> <div></div></div>
+                            <form id="frm" action="/admin_tap_updatePostCompanyRule.ho" method="post">
+                            <div><span>제목</span> <input type="text" name="title" value="${bp.title }" maxlength="35"/></div>
                             
                             <!-- 표시할 textarea 영역 -->
-                            <textarea name="ruleContent" id="txtArea" required>이 페이지 컨텐츠 부분 width 고정으로 하려면 어떻게 하는거죠..?</textarea>
-                            
-                                <div><span>알림</span> <input type="checkbox" name="push"/> 푸쉬</div>
-                            <div><button>저장</button> <button type="button" class="delBtn">취소</button></div>
+                            <textarea name="content" id="txtArea" required>${bp.content }</textarea>
+                            <div></div>
+                            <div><button type="button" id="save-btn">수정</button> <button type="button" class="delBtn">취소</button></div>
                             </form>
                         </div>
-						
+
+	<script>
+		$(function(){
+			var files; // 파일 변수
+			
+		    //전역변수
+		    var obj = [];              
+		    //스마트에디터 프레임생성
+		    nhn.husky.EZCreator.createInIFrame({
+		        oAppRef: obj,
+		        elPlaceHolder: "txtArea",
+		        sSkinURI: "/resources/api/smarteditor2/SmartEditor2Skin.html",
+		        fCreator : "createSEditor2", 
+		        htParams : {
+		            bUseToolbar : true, // 툴바 사용 여부 (true:사용/ false:사용하지 않음)            
+		            bUseVerticalResizer : false, // 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
+		            bUseModeChanger : true // 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
+		        }
+		    });
+		    //전송버튼
+		    $("#save-btn").click(function(){
+		    	$('textarea').next().append('<input type="text" name="postNo" value="${bp.postNo}" style="display:none;"/>');
+		        //id가 smarteditor인 textarea에 에디터에서 대입
+		        obj.getById["txtArea"].exec("UPDATE_CONTENTS_FIELD", []);
+		        var $txtArea = $('#txtArea').val();
+		        
+		        if($('input[name=title]').val()==''){
+		        	alert('제목을 입력해주세요.');
+		        	return;
+		        }else if($txtArea == ""  || $txtArea == null || $txtArea == '&nbsp;' || $txtArea == '<p>&nbsp;</p>' || $txtArea == '<p><br></p>' ){
+		        	alert('내용을 입력해주세요.');	
+		        }else{
+			        //폼 submit
+			       	$("#frm").submit();
+		        }
+		    });
+		    
+		}) 
+		
+	</script>
+
 						
 						<!----------------------------------->
 					</div>
@@ -76,23 +126,5 @@
 
 	</div>
 	
-	<!-- smartEditor2 api 페이지 로딩시 초기화 -->
-    <script type="text/javascript">
-        
-        var oEditors = []; 
-        nhn.husky.EZCreator.createInIFrame({ 
-            oAppRef : oEditors, 
-            elPlaceHolder : "txtArea", //저는 textarea의 id와 똑같이 적어줬습니다. 
-            sSkinURI : "/api/smartEditor2/SmartEditor2Skin.html", //경로를 꼭 맞춰주세요! 
-            fCreator : "createSEditor2", 
-            htParams : { 
-                bUseToolbar : true, // 툴바 사용 여부 (true:사용/ false:사용하지 않음) 
-                bUseVerticalResizer : false, // 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음) 
-                bUseModeChanger : true // 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음) 
-            } 
-        });
-
-        
-    </script>
 </body>
 </html>

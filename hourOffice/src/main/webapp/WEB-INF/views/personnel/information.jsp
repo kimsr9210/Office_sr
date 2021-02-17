@@ -206,14 +206,19 @@ font-family: GongGothicLight;
 		</div>
 
 		<!-- 자바 스크립트    -->
+		<script>
+			$(function(){
+				$('#categoryMypage').next().css('display','block');
+				$('#categoryMypage').next().css('height','150px');
+				$('#categoryMypage').children().last().children().attr('class','fas fa-chevron-left');
+				
+				$('#categoryMypage').next().children().eq(2).children().css('font-weight','800');
+				$('#categoryMypage').next().children().eq(2).children().css('color','#ffcc29');
+			})
+		</script>
 		<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>
 
 	</div>
-
-	</div>
-</body>
-</html>
-
 
 </body>
 </html>

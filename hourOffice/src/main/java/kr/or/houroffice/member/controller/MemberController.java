@@ -44,7 +44,7 @@ public class MemberController {
 	@RequestMapping(value="/memberLogout.ho")
 	public String logoutMember(HttpSession session){ // 로그아웃 메소드
 		session.invalidate();
-		return "redirect:/index.jsp";
+		return "redirect:/login.jsp";
 	}
 	
 	@RequestMapping(value="/startWork.ho")// 출근 기록

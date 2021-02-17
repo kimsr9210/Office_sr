@@ -20,7 +20,6 @@
 </head>
 <body>
 	<div id="wrap">
-<c:if test="${sessionScope.member ==null }"><script>alert("로그인이 필요합니다."); location.href="/login.ho";</script></c:if>
 		<%@ include file="/WEB-INF/views/common/header.jsp"%>
 		<div id="contentsBox">
 			<%@ include file="/WEB-INF/views/common/sideNavi.jsp"%>

@@ -400,10 +400,14 @@ font-family: GongGothicLight;
 		</div>
 	</div>
 	<!-- 자바 스크립트    -->
+	<script>
+	$('#categoryMypage').next().css('display','block');
+	$('#categoryMypage').next().css('height','150px');
+	$('#categoryMypage').children().last().children().attr('class','fas fa-chevron-left');
+	
+	$('#categoryMypage').next().children().eq(5).children().css('font-weight','800');
+	$('#categoryMypage').next().children().eq(5).children().css('color','#ffcc29');
+	</script>
 	<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>
-</body>
-</html>
-
-
 </body>
 </html>

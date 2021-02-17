@@ -8,22 +8,22 @@ public class BoardFile {
 	private int postNo;				// 게시물 번호
 	private String origName;		// 파일 오리지널 이름
 	private String chgName;			// 파일 바뀐 이름
-	private String path;			// 파일 저장 경로
-	private long size;				// 파일 크기
+	private String filePath;			// 파일 저장 경로
+	private long fileSize;				// 파일 크기
 	private Timestamp uploadDate;	// 파일 업로드일
 	public BoardFile() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public BoardFile(int fileNo, int postNo, String origName, String chgName, String path, long size,
+	public BoardFile(int fileNo, int postNo, String origName, String chgName, String filePath, long fileSize,
 			Timestamp uploadDate) {
 		super();
 		this.fileNo = fileNo;
 		this.postNo = postNo;
 		this.origName = origName;
 		this.chgName = chgName;
-		this.path = path;
-		this.size = size;
+		this.filePath = filePath;
+		this.fileSize = fileSize;
 		this.uploadDate = uploadDate;
 	}
 	public int getFileNo() {
@@ -50,24 +50,23 @@ public class BoardFile {
 	public void setChgName(String chgName) {
 		this.chgName = chgName;
 	}
-	public String getPath() {
-		return path;
+	public String getFilePath() {
+		return filePath;
 	}
-	public void setPath(String path) {
-		this.path = path;
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
 	}
-	public long getSize() {
-		return size;
+	public long getFileSize() {
+		return fileSize;
 	}
-	public void setSize(long size) {
-		this.size = size;
+	public void setFileSize(long fileSize) {
+		this.fileSize = fileSize;
 	}
 	public Timestamp getUploadDate() {
 		return uploadDate;
 	}
 	public void setUploadDate(Timestamp uploadDate) {
 		this.uploadDate = uploadDate;
-	}
-	
+	}	
 	
 }

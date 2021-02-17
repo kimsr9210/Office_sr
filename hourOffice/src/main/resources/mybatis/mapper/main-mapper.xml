@@ -35,12 +35,35 @@
 		<result property="ruleTitle" column="RULE_TITLE" />
 		<result property="ruleContent" column="RULE_CONTENT" jdbcType="CLOB" javaType="java.lang.String" />
 		<result property="ruleDate" column="RULE_DATE" />
+		<result property="ruleDateFormat" column="RULE_DATE_FORMAT" />
 	</resultMap>
 
-	<select id="selectAllRule" resultMap="ruleListResult">
-		SELECT
-			*
-		FROM COMPANY_RULE
-		ORDER BY RULE_DATE DESC
+	<select id="selectAllRule" parameterType="Page" resultMap="ruleListResult">
+		select
+			RULE_NO,
+			RULE_TITLE,
+			RULE_CONTENT,
+			RULE_DATE,
+			to_char(RULE_DATE,'yyyy-mm-dd') as RULE_DATE_FORMAT
+		from 
+	    (SELECT ROW_NUMBER() OVER(ORDER BY RULE_DATE DESC) AS ROW_NUM, CR.* from COMPANY_RULE CR)
+	    where ROW_NUM between #{startPage} and #{endPage}
+	</select>
+	
+	<select id="selectAllMail" parameterType="MainMailPage" resultType="MainMailGetter">
+	    SELECT
+	  	MAIL_NO AS mailNo,
+	  	SENDER AS sendMemNo,
+	  	TITLE AS title,
+	  	SEND_DATE AS sendDate,
+	    to_char(SEND_DATE,'mm/dd') AS sendDateFormat,
+	    RECEIVER AS recMemNo,
+	  	READ_YN AS readYN
+	    
+	  	FROM (SELECT ROW_NUMBER() OVER(ORDER BY ML.MAIL_NO DESC) AS ROW_NUM, ML.MAIL_NO, ML.MEM_NO SENDER, ML.TITLE, ML.SEND_DATE,
+	    MR.MEM_NO RECEIVER, MR.READ_YN, MR.DEL_YN FROM MAIL ML JOIN MAIL_RECEIVE MR ON ML.MAIL_NO = MR.MAIL_NO JOIN MEMBER M ON ML.MEM_NO = M.MEM_NO
+		WHERE MR.MEM_NO = #{memNo} AND MR.DEL_YN = 'N')
+	    
+		WHERE ROW_NUM BETWEEN #{startPage} AND #{endPage}
 	</select>
 </mapper>

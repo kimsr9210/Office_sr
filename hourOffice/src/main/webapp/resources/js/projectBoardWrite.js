@@ -189,10 +189,7 @@ $(function() {
 		$(this).parent().remove();
 	});
 	
-	//이전화면 누르기
-	$('#backward').click(function(){
-		location.replace('/projectDatail.ho');
-	});
+	
 	
 	//게시물 즐겨찾기 추가버튼
 	$('#projectFavor').click(function(){

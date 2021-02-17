@@ -45,15 +45,17 @@
             border-bottom-left-radius: 5px;
             border-bottom-right-radius: 5px;
         }
-        #txt-content div:nth-child(2) > span{
+        #txt-content div:nth-child(2) > button{
             /* 첨부파일 글씨 span */
+            width:100px;
+            margin:0;
             position: relative;
-            bottom: 45px;
+            top: 8px;
         }
         #txt-content div:nth-child(2) > div{
             /* 첨부파일 영역 */
             width: 80%; height: 80%;
-            margin-left: 100px;
+            margin-left: 50px;
             border: 1px solid lightgray;
             box-shadow: 1px 1px 5px #E7E0E8 inset;
             display: inline-block;
@@ -85,4 +87,25 @@
             height: 50px;
             text-align: center;
             padding-top: 10px;
+        }
+        
+        
+        .i-icon path{
+        	position:relative;
+        	z-index:1;
+        }
+        #file-icon > .i-icon{
+        	position:relative;
+        	z-index: 80;
+        }
+        #file-icon{
+        	font-size:1.5rem;
+        	position:relative;
+        	top:10px;
+        	z-index:90;
+        }
+        /* 파일명 필드 */
+        #file-icon + span{
+        	position:relative;
+        	top:7px;
         }

@@ -7,7 +7,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>H:our Office</title>
 	<!-- 폰트어썸 -->
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
     
@@ -20,13 +20,11 @@
 	<link rel="stylesheet" type="text/css" href="/resources/css/admin_tap/adminTapCommon.css" />
 	<!-- CSS -->
 	<link rel="stylesheet" type="text/css" href="/resources/css/admin_tap/allListMember.css" />
-	
-	<style>
-		
-		
-	</style>
-	
+	<!-- 페이지 네비 CSS -->
+	<link rel="stylesheet" type="text/css" href="/resources/css/board/pageNavi.css" />
+
 </head>
+
 
 <script>
 
@@ -51,6 +49,12 @@ $(function(){
                 $('input[name=checkMem]').prop('checked',false);
                 checkMem = []; // 변수 비워주기
             }else{
+            	$('input[type=checkbox]').each(function(){
+            		if($(this).val()=='all'){
+            			$(this).prop('checked',false);
+            			checkPost.splice(checkPost.indexOf($(this).val()),1);
+            		}
+            	});
                 checkMem.splice(checkMem.indexOf($(this).val()),1);
             }
         }
@@ -224,7 +228,7 @@ $(function(){
                                 </tr>
                                 <% } %>
                             </table>
-                            <div id="pageNavi">${pageNavi }</div>
+                            <ul id="page-navi">${pageNavi }</ul>
                             
                         </div>
 						
@@ -237,6 +241,15 @@ $(function(){
 		</div>
 
 	<!-- 자바 스크립트    -->
+    <script>
+	//관리 페이지 일 때
+	$('#categoryAdmin').next().css('display','block');
+	$('#categoryAdmin').next().css('height','200px');
+	$('#categoryAdmin').children().last().children().attr('class','fas fa-chevron-left');
+	
+	$('#categoryAdmin').next().children().eq(1).children().css('font-weight','800');
+	$('#categoryAdmin').next().children().eq(1).children().css('color','#ffcc29');
+	</script>
 	<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>
 
 	</div>

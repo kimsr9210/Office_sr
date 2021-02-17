@@ -33,6 +33,7 @@
                            <select name="searchType" id="search-option">
                                <option value="title">제목</option>
                                <option value="sender">보낸사람</option>
+                               <option value="contents">내용</option>
                            </select>
                             <input type="text" name="keyword" id="mail-search"><button type="submit" id="mail-search-btn">
                                 <i class="fas fa-search"></i>
@@ -82,6 +83,12 @@
 	<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>
 	<script>
         $(function(){
+        	$('#categoryMail').next().css('display','block');
+        	$('#categoryMail').next().css('height','150px');
+        	$('#categoryMail').children().last().children().attr('class','fas fa-chevron-left');
+        	
+        	$('#categoryMail').next().children().eq(4).children().css('font-weight','800');
+        	$('#categoryMail').next().children().eq(4).children().css('color','#ffcc29');
             //all 선택
             $('#mail-all-select').click(function(){
                 console.log($(this).prop('checked'));
@@ -154,24 +161,30 @@
             	 $('input[name=mail-one-select]:checked').each(function(){
             		 inputArray.push($(this).val());
             	 });
-            	 console.log(inputArray);
-            	 $.ajax({
-            		 url : "/deleteMail.ho",
-            		 traditional : true,
-            		 data : {"listType": 'F', "mailNoList" : inputArray},
-            		 type : "post",
-            		 success : function(result){
-            			 if(result){
-            			 	alert('처리 성공');
-            			 	location.reload();
-            			 }else{
-            				 alert('처리 실패');
-            			 }
-            		 },
-            		 error : function(){
-            			 alert('처리 에러');
-            		 }
-            	 });
+            	 if(inputArray.length>0){ 
+            		 var answer = window.confirm('정말로 삭제하시겠습니까?');
+                     if(answer){
+		            	 $.ajax({
+		            		 url : "/deleteMail.ho",
+		            		 traditional : true,
+		            		 data : {"listType": 'F', "mailNoList" : inputArray},
+		            		 type : "post",
+		            		 success : function(result){
+		            			 if(result){
+		            			 	alert('처리 성공');
+		            			 	location.reload();
+		            			 }else{
+		            				 alert('처리 실패');
+		            			 }
+		            		 },
+		            		 error : function(){
+		            			 alert('처리 에러');
+		            		 }
+		            	 });
+                     }
+            	 }else{
+            		 alert('대상을 1개 이상 선택해주세요');
+            	 }
             });
           //읽음 버튼
             $('#mail_read_btn').click(function(){
@@ -180,12 +193,11 @@
             	 $checkedList.each(function(){
             		 inputArray.push($(this).val());
             	 }); 
-            	 console.log(inputArray);
-            	 
+            	 if(inputArray.length>0){ 
             	  $.ajax({
-            		 url : "/changeReadMailList.ho",
+            		 url : "/allChange.ho",
             		 traditional : true,
-            		 data : {"listType": ['F'], "mailNoList" : inputArray},
+            		 data : {"listType": ['F'], "mailNoList" : inputArray, "ptype" : 'R'},
             		 type : "post",
             		 success : function(result){
             			 if(result){
@@ -202,6 +214,9 @@
             			 alert('처리 에러');
             		 }
             	 });
+            	 }else{
+            		 alert('대상을 1개 이상 선택해주세요');
+            	 }
             });
             //답장 버튼
             $('#mail_rep_btn').click(function(){

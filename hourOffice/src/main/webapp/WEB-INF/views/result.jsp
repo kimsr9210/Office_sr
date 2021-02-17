@@ -8,7 +8,9 @@
 </head>
 <body>
 <script>
+<% if(request.getAttribute("msg")!=null){ %>
 	alert('${msg}');
+<% } %>
 	location.replace('${location}');
 </script>
 </body>

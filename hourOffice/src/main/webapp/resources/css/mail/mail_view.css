@@ -1,5 +1,18 @@
 @charset "UTF-8";
 
+@font-face {
+    font-family: 'GongGothicMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'GongGothicLight';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicLight.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 /* -------------- 공용 레이아웃 (수정X)-------------- */
 * {
     margin: 0;
@@ -68,6 +81,7 @@ a:active{ text-decoration: none;}
     width: calc(100% - 80px);
     height: 50px;
     font-size: 1.5rem;
+    font-family : GongGothicMedium;
     margin: 40px 40px 10px;
     float: left;
 }
@@ -173,6 +187,7 @@ a:active{ text-decoration: none;}
 }
 #mail_btn_wrap .left-btn{
     float: left;
+    margin-right:5px;
 }
 #mail_btn_wrap .right-btn{
     float: right;

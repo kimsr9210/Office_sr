@@ -43,12 +43,9 @@ public class MailDAO {
 	public int insertMail(SqlSessionTemplate sqlSession, SendingMail sm) throws IllegalStateException, IOException {
 		//넣어야 할 테이블 4개
 		MultipartFile mpf = sm.getMailFile(); //받아온 파일 객체
-		if(mpf.getOriginalFilename().length()>0){//파일이 있으면
-			sm.setFileYN('Y');
-		}
+		if(mpf.getOriginalFilename().length()>0) sm.setFileYN('Y');//파일이 있으면
+
 		int result1 = sqlSession.insert("mail.insertMail", sm);
-		
-		System.out.println(sm.getMailNo());
 		int result2 = sqlSession.insert("mail.insertMailReceive", sm); //mailNo, memNo
 		
 		int result3 = 1;
@@ -56,35 +53,29 @@ public class MailDAO {
 		if(sm.getMemRef()!=null){//참조가 있으면
 			sqlSession.insert("mail.insertMailRef",sm); //mailNo, memNo
 		}
-
 		
 		if(mpf.getOriginalFilename().length()>0){//파일이 있으면
 			MailFile mf = new MailFile(); //파일 정보를 담을 객체
 			
 			String uploadPath = "resources/file/mail"; //파일 저장 위치
 			String realUploadPath = resourceLoader.getResource("/").getURI().getPath(); //webapp까지의 실제 위치
-			String originalFileName = mpf.getOriginalFilename(); //파일 이름 가져오기
+			String originalFileName = mpf.getOriginalFilename(); 
 			
 			//원본 파일의 이름바꾸는 작업(바꾸는 파일의 이름은 시간값_ho)
-			//시간 포맷 및 현재 시간값 가져오기
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 			long currentTime = Calendar.getInstance().getTimeInMillis();
 			Timestamp uploadTime = Timestamp.valueOf(formatter.format(currentTime));
 			
-			//경로를 통해 해당 파일을 연결하는 객체
-			File file = new File(realUploadPath + uploadPath+ "\\"+originalFileName); //해당 경로에 파일 생성
+			File file = new File(realUploadPath + uploadPath+ "\\"+originalFileName); //해당 경로에서 파일 생성
 			
-			//File객체의 renameTo메소드를 통해 파일 이름 수정
-			file.renameTo(new File(realUploadPath+ uploadPath+"\\"+currentTime+"_ho"));
+			file.renameTo(new File(realUploadPath+ uploadPath+"\\"+currentTime+"_ho"));//파일 이름 수정
 			String changedFileName = currentTime+"_ho";
-			//File 객체를 통해 파일이름의 변경되면 새롭게 연결하는 파일 객체가 필요.
-			File reNameFile = new File(realUploadPath+ uploadPath+"\\"+changedFileName);
+			File reNameFile = new File(realUploadPath+ uploadPath+"\\"+changedFileName);//파일이름이 변경되면 새롭게 연결하는 파일 객체가 필요.
 			//String filePath = reNameFile.getPath(); //원래 절대경로
 			String filePath = uploadPath+"\\"+changedFileName; //DB에 상대경로로 저장하기 위함.
 
-			//해당 업로드된 file의 사이즈
-			long fileSize = mpf.getSize();
-			mpf.transferTo(reNameFile); //파일 저장
+			long fileSize = mpf.getSize();//업로드된 file의 사이즈
+			mpf.transferTo(reNameFile); //실제 위치에 파일 저장
 			
 			mf.setMailNo(sm.getMailNo());
 			mf.setOriginalFilename(originalFileName);
@@ -202,82 +193,30 @@ public class MailDAO {
 		int resultMF = 0;
 		
 		for(int mailNo : mailNoList){
-			mi.setSdMailNo(mailNo);
+			mi.setSdMailNo(mailNo); //정보는 같고 메일 번호만 바뀜.
 			resultM = sqlSession.insert("mail.insertResendMail", mi);
-			
 			resultC += sqlSession.insert("mail.insertResendMailRec",mi);
 			resultF += sqlSession.insert("mail.insertResendMailRef",mi);
 			resultMF +=sqlSession.insert("mail.insertResendMailFile",mi);
 		}
 		
-		if(resultM + resultC+resultF+resultMF>1){//메일과 수신인 1명해서 2가 최소
-			return 1;
-		}return 0;
+		if(resultM + resultC+resultF+resultMF>1) return 1;//메일과 수신인 1명해서 2가 최소
+		return 0;
 	}
 
 	public int deleteMailList(SqlSessionTemplate sqlSession, MailList ml) {
-		int resultC = 0; 
-		int resultF = 0; 
-		
-		if(ml.getRecMailNoList().size()>0){
-			resultC = sqlSession.update("mail.deleteRecMailList",ml);
-		}
-		if(ml.getRefMailNoList().size()>0){
-			resultF = sqlSession.update("mail.deleteRefMailList",ml);
-		}
-
-		if(resultC+resultF>0){//참조가 없을 수도 있고, 발송의 최소는 1명이므로..
-			return 1;
-		}return 0;
+		return sqlSession.update("mail.deleteMailList",ml);
 	}
 
 	public int updateRestoreMailList(SqlSessionTemplate sqlSession, MailList ml) {
-		int resultC = 0; 
-		int resultF = 0; 
-		
-		if(ml.getRecMailNoList().size()>0){
-			resultC = sqlSession.update("mail.restoreRecMailList",ml);
-		}
-		if(ml.getRefMailNoList().size()>0){
-			resultF = sqlSession.update("mail.restoreRefMailList",ml);
-		}
-
-		if(resultC+resultF>0){//참조가 없을 수도 있고, 발송의 최소는 1명이므로..
-			return 1;
-		}return 0;
+		return sqlSession.update("mail.restoreMailList",ml);
 	}
 
 	public int deletePermMailList(SqlSessionTemplate sqlSession, MailList ml) {
-		int resultC = 0; 
-		int resultF = 0; 
-		
-		if(ml.getRecMailNoList().size()>0){
-			resultC = sqlSession.delete("mail.deletePermRecMailList",ml);
-		}
-		if(ml.getRefMailNoList().size()>0){
-			resultF = sqlSession.delete("mail.deletePermRefMailList",ml);
-		}
-		
-		if(resultC+resultF>0){//참조가 없을 수도 있고, 발송의 최소는 1명이므로..
-			return 1;
-		}return 0;
+		return sqlSession.delete("mail.deletePermMailList",ml);
 	}
 
 	public int updateReadMailList(SqlSessionTemplate sqlSession, MailList ml) {
-		int resultC = 0; 
-		int resultF = 0; 
-		
-		if(ml.getRecMailNoList().size()>0){
-			resultC = sqlSession.update("mail.updateReadRecMailList",ml);
-		}
-		if(ml.getRefMailNoList().size()>0){
-			resultF = sqlSession.update("mail.updateReadRefMailList",ml);
-		}
-		
-		if(resultC+resultF>0){//참조가 없을 수도 있고, 발송의 최소는 1명이므로.. 최소 1줄이상.
-			return 1;
-		}return 0;
+		return sqlSession.update("mail.updateReadMailList",ml);
 	}
-
-
 }

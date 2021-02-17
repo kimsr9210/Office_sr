@@ -224,7 +224,7 @@
 									</form>
 
 									<!-- 코드 일때 -->
-									<form action="/insertProjectCode.ho" method="post">
+									<form action="/insertProjectCode.ho" method="post" enctype="multipart/form-data">
 										<input type="hidden" value="<%=p.getProNo() %>" name="proNo" />
 										<input type="hidden" value="${sessionScope.member.memNo }" name="memNo" />
 										<div id="codeBox" class="boardAllStyle">
@@ -522,6 +522,11 @@
 	<script>
 		$(function(){
 
+			$('#categoryProject').next().css('display', 'block');
+			$('#categoryProject').next().css('height', '125px');
+			$('#categoryProject').children().last().children().attr('class',
+					'fas fa-chevron-left');
+			
 			//프로젝트 나가기
 			$('#projectExit, .outProject').click(function(){
 				var proNo = '<%=p.getProNo()%>';
@@ -805,6 +810,11 @@
     				$(this).css('border-color', '#1D9F8E');
     				$(this).text('초대완료');
     			}
+    		});
+    		
+    		//이전화면 누르기
+    		$('#backward').click(function(){
+    			location.replace('/projectDatail.ho?proNo=<%=p.getProNo()%>');
     		});
 		});
 	</script>

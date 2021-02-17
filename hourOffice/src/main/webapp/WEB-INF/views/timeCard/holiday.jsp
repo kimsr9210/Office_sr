@@ -149,7 +149,14 @@ font-family: GongGothicLight;
 				</div>
 			</div>
 		</div>
-
+		<script>
+		$('#categoryWork').next().css('display','block');
+		$('#categoryWork').next().css('height','75px');
+		$('#categoryWork').children().last().children().attr('class','fas fa-chevron-left');
+		
+		$('#categoryWork').next().children().eq(1).children().css('font-weight','800');
+		$('#categoryWork').next().children().eq(1).children().css('color','#ffcc29');
+		</script>
 		<!-- 자바 스크립트    -->
 		<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>
 

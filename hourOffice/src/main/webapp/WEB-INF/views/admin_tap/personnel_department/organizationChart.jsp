@@ -1,3 +1,4 @@
+<%@page import="kr.or.houroffice.member.model.vo.Department"%>
 <%@page import="kr.or.houroffice.member.model.vo.Member"%>
 <%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -6,7 +7,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>H:our Office</title>
 	<!-- 폰트어썸 -->
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
     
@@ -123,7 +124,7 @@
                     <p><input type="text" name="deptName"/></p><br>
                     <p><input type="text" name="deptCode"/></p>
                 </div>
-                <button id="modal_close_btn">생성</button>
+                <button type="button" id="modal_close_btn">생성</button>
             </form>
         </div>
    
@@ -196,6 +197,8 @@
                 
                     $('#infor-div').show(); // 정보 div 열기
                 }else{
+                	$('#infor-div #deptName-InInfor').text('(없음)');
+            		$('#infor-div #deptCode-InInfor').text('(없음)');
                 <% for(Member member : list){ %>
                 	if(<%=member.getDeptCode()%>==null){
                 		$('#infor-div #change-form > table').html(tblText);
@@ -240,6 +243,21 @@
             $('#addBtn').click(function(){
                 $('#modal').show();
                 
+            });
+            // 부서 추가
+            $('#modal_close_btn').click(function(){
+            	var $deptCode = $('#modal-right').find('input[name=deptCode]').val();
+            	var count = 0;
+            <% ArrayList<Department> deptListAll = (ArrayList<Department>)request.getAttribute("deptListAll"); %>
+            <% for(Department deptAll : deptListAll){ %>
+            	if($deptCode+" "=='<%=deptAll.getDeptCode()%>'){
+            		alert('해당 코드는 사용하실 수 없습니다.(중복)');
+            		count++;
+            	}
+            <% } %>
+            	if(count==0){
+            		$('#modal form').submit();
+            	}
             });
             
             // 부서 삭제
@@ -318,6 +336,10 @@
                 $('#modal').hide();
                 $('#modal input').val('');
             });
+        
+        
+        
+        
         })
         
             
@@ -335,6 +357,14 @@
 		</div>
 		
 	<!-- 자바 스크립트    -->
+    <script>
+	$('#categoryAdmin').next().css('display','block');
+	$('#categoryAdmin').next().css('height','200px');
+	$('#categoryAdmin').children().last().children().attr('class','fas fa-chevron-left');
+	
+	$('#categoryAdmin').next().children().eq(2).children().css('font-weight','800');
+	$('#categoryAdmin').next().children().eq(2).children().css('color','#ffcc29');
+	</script>
 	<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>
 	
 	

@@ -72,11 +72,13 @@
         });
        
         $(function() {
+        	
+        	$('#categoryMail').next().css('display','block');
+        	$('#categoryMail').next().css('height','150px');
+        	$('#categoryMail').children().last().children().attr('class','fas fa-chevron-left');
             //주소록 창
             var addrView;
             $(document).on('click', '.addr_list', function(){
-                var recList = $('#receive-list');
-                var refList = $('#ref-list');
                 addrView = window.open('/address.ho', '_blank', 'width=801, height=652, top=150, left=350, resizable=no, location=no, titlebar=no');
             });
             //멤버 목록 삭제
@@ -88,7 +90,6 @@
                 var inputContent = oEditors.getById["mail-content"].getIR();    
                 //스마트에디터에 쓴 글을 가져오는 스크립트 코드
                 $('#mail-content').val(inputContent);
-                console.log($('#receive-list').html());
                 if($('#receive-list').html()==""){
                 	alert('받는 사람이 1명 이상이어야 합니다.');
                 	return false;

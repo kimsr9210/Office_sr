@@ -11,6 +11,8 @@
         font-size: 15px;
         font-weight: 700;
         margin-bottom: 15px;
+        color: #707070;
+        font-family: 'GongGothicMedium';
     }
     #clock{
         color: #8B8EA1;
@@ -20,6 +22,7 @@
         text-align: center;
         font-size: 15px;
         margin-bottom: 10px;
+        font-family: 'GongGothicLight';
     }
     .work-record{
         text-align: center;

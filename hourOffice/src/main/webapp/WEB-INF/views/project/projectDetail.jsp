@@ -43,6 +43,19 @@
 <body>
 <style>
 @font-face {
+    font-family: 'GongGothicMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'GongGothicLight';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicLight.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
     font-family: 'NanumSquareRound';
     src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff') format('woff');
     font-weight: normal;
@@ -91,6 +104,11 @@
 .codeBlue{
 	font-weight: bolder;
 	color: #36bcfc;
+}
+
+.codeGray{
+	font-weight: normal;
+	color: #8C8C8C;
 }
 .codeLine{
 	width:30px;
@@ -314,11 +332,11 @@
     	width: 98%;
     	padding: 70px;
     	font-size: 1.5rem;
-    	font-weight: bolder;
     	text-align: center;
     	border: 1px solid #cccccc;
     	margin-top: 20px;
     	border-radius: 3px;
+    	font-family: GongGothicLight;
     }
     
     .memberImg {
@@ -560,6 +578,7 @@
                                             <div class="boardModifyList boardModify">게시물 수정</div>
                                             <div class="boardModifyList boardDelete">게시물 삭제</div>
                                             <input type="hidden" name="boardNo" value="<%=pb.getBoardNo()%>"/>
+                                            <input type="hidden" name="boardType" value="post"/>
                                         </div>
                                     </div>
                                     <%} %>
@@ -1380,6 +1399,11 @@
     <!-- 자바 스크립트    -->
     <script>
     	$(function(){
+    		$('#categoryProject').next().css('display', 'block');
+			$('#categoryProject').next().css('height', '125px');
+			$('#categoryProject').children().last().children().attr('class',
+					'fas fa-chevron-left');
+    		
     		//프로젝트 나가기
     		$('#projectExit, .outProject').click(function(){
     			var proNo = '<%=p.getProNo()%>';
@@ -1581,7 +1605,7 @@
     		$('.codeLine').click(function(){
     			var $text = $(this).parent().text();
     			$text = $text+" → ";
-    			var comment = $(this).parent().parent().parent().parent().next().next().children().eq(1).children().children().eq(0);
+    			var comment =$(this).parents('.boardBox').children('.commentWrite').children('.commentText').children().children('.boardComment');
     			comment.val($text);
     			comment.focus();
     		});
@@ -1698,6 +1722,8 @@
     				$(this).text('초대완료');
     			}
     		});
+    		
+    		
     	});
     </script>
 	<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>

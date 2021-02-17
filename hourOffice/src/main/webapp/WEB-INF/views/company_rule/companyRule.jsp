@@ -1,10 +1,12 @@
+<%@page import="kr.or.houroffice.board.model.vo.BoardPost"%>
+<%@page import="java.text.SimpleDateFormat"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>H:our Office</title>
 	<!-- 폰트어썸 -->
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
     
@@ -25,6 +27,7 @@
             padding-right: 20px;
             position: relative;
             top: 10px;
+            z-index:99;
         }
         #TitleContents #title > a{
             /* 윗글 & 아랫글 & 목록 */
@@ -53,21 +56,31 @@
 					<div id="TitleContents">
 						<!--여기서 각자 id 만드시면 됩니다-->
 						
-						
-						<div id="title"><a href="/allCompanyRulePage.ho"><button type="button">목록</button></a><a href="#"><i class="fas fa-arrow-down i-icon"></i> 아랫글</a><a href="#"><i class="fas fa-arrow-up i-icon"></i> 윗글</a></div>
+			<% SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss"); %>
+						<div id="title"><a href="/allCompanyRulePage.ho"><button type="button">목록</button></a>
+                    <% if((Integer)request.getAttribute("prevPost")>0){ %>
+						<a href="/companyRule.ho?ruleNo=${prevPost }"><i class="fas fa-arrow-down i-icon"></i> 아랫글</a>
+					<% }else{ %>
+						<a style="color:lightgray;"><i class="fas fa-arrow-down i-icon" style="color:lightgray; cursor:default;"></i> 아랫글</a>
+					<% } %>
+					<% if((Integer)request.getAttribute("nextPost")>0){ %>
+						<a href="/companyRule.ho?ruleNo=${nextPost }"><i class="fas fa-arrow-up i-icon"></i> 윗글</a>
+					<% }else{ %>
+						<a style="color:lightgray;"><i class="fas fa-arrow-up i-icon" style="color:lightgray; cursor:default;"></i> 윗글</a>
+					<% } %>
+						</div>	
+                        
                         <div id="companyRule-content">
-                            <div>1조 1항</div>
+                            <div>${bp.title }</div>
                             <hr>
-                            <div>작성일 2021/01/29 10:33:29</div>
-                            <div>
-                                	내용
-                            </div>
+                            <div>작성일 <%=format.format(((BoardPost)request.getAttribute("bp")).getPostingDate()) %></div>
+                            <div>${bp.content }</div>
                             
                         </div>
-
+					</div>
 
 						<!----------------------------------->
-					</div>
+					
 				</div>
 			</div>
 		</div>

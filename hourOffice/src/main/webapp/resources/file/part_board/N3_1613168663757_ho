@@ -1,0 +1,23 @@
+* DispatcherServlet (Front-Controller)
+스프링에서 사용자의 요청을 가장 먼저 받아주는 Front-Controller인
+DispatcherServlet은 Spring에서는 이미 만들어져 있음 그렇기 때문에 개발자가 직접 만들 필요가 없음
+	-> 단, web.xml에서 DispatcherServlet이 Controller를 요청하는 OO.do 형태를 처리하기 위하여 <url-pattern> 값을
+	*.do로 변경해주어야 함
+
+* Controller 와 HandlerMapping
+Spring에서의 Controller는 매번 java Class를 만들지 않도록  하나의 Controller  Class를 만들어서 처리 함 
+(단, 다른로직은 다른 Controller가 필요)
+각 각의 로직을 메소드로 구분하여 처리할 수 있도록 구현 
+또한 HandlerMapping에 등록을 하기 위하여 @RequestMapping 이라는 어노테이션을 사용
+@RequestMapping에는 view page 에서 찾아올 Controller를 명시
+(ex. @RequestMapping(value="/memberLogin.do") )
+
+* ViewResolver
+Spring의 viewResolver는 servlet-context.xml에 등록되어 있음
+기본적으로 prefix 값은 /WEB-INF/views / suffix 값은 .jsp
+Controller에서 return 시에 member/memberFail 이라고 작성되면 DispatcherServlet은
+viewResolver에 의하여 /WEB-INF/views/member/memberFail.jsp 라는 경로를 만들어서 이동 시킴
+단, redirect라는 키워드를 사용하게 되면 DispatcherServlet은 viewResolver를 호출하지 않고,
+직접적인 경로로 이동 시킴 (ex. "redirect:/index.jsp" 라고 작성하면 /index.jsp로 직접 이동 시킴
+
+

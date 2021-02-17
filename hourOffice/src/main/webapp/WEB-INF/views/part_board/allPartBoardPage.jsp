@@ -8,7 +8,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>H:our Office</title>
 	<!-- 폰트어썸 -->
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
     
@@ -23,10 +23,11 @@
 	<link rel="stylesheet" type="text/css" href="/resources/css/board/board.css" />
 	<!-- CSS 테이블만 있는 것 -->
 	<link rel="stylesheet" type="text/css" href="/resources/css/board/userBoard.css" />
+	<!-- 페이지 네비 CSS -->
+	<link rel="stylesheet" type="text/css" href="/resources/css/board/pageNavi.css" />
 
 <style>
 	th{
-		
 		background-color:#D2E6E6;
 	}
 </style>
@@ -42,13 +43,13 @@
 				<div id="contentsDetail" class="clearfix">
 					<div id="TitleName">
 						<!--여기서 각자 id 만드시면 됩니다-->
-						${list[0].deptName } 게시판
+						${sessionScope.member.deptName } 게시판
 						<!----------------------------------->
 					</div>
 					<div id="TitleContents">
 						<!--여기서 각자 id 만드시면 됩니다-->
 						
-						<span><a href="/writePostPartBoard.ho?deptCode=${list[0].deptCode }"><i class="fas fa-feather-alt i-icon"></i> 새글쓰기</a></span>
+						<span><a href="/writePostPartBoard.ho?deptCode=${sessionScope.member.deptCode }"><i class="fas fa-feather-alt i-icon"></i> 새글쓰기</a></span>
 						<table>
                             <tr>
                                 <th>번호</th>
@@ -62,12 +63,12 @@
                   	<% if(!list.isEmpty()){ %>
                   	<% for(PartBoard pb : list){ %>
                             <tr>
-                                <td><%=pb.getPartNo() %></td>
-                                <td><div><a href="/partBoard.ho?deptCode=${list[0].deptCode }&partNo=<%=pb.getPartNo()%>"><%=pb.getPartContent() %></a></div></td>
+                                <td><%=pb.getBoardNumber() %></td>
+                                <td><div><a href="/postInPartBoard.ho?deptCode=${list[0].deptCode }&partNo=<%=pb.getPartNo()%>"><%=pb.getPartTitle() %></a></div></td>
                                 <td><%=pb.getPartWriter() %></td>
                     <% if(format.format(pb.getPartDate()).equals(format.format(toDay))){ %>
-                    <% format = new SimpleDateFormat("hh:mm"); %>
-                    			<td><%=format.format(pb.getPartDate()) %></td>
+                    <% SimpleDateFormat formatToDay = new SimpleDateFormat("hh:mm"); %>
+                    			<td><%=formatToDay.format(pb.getPartDate()) %></td>
 					<% }else{ %>
 								<td><%=format.format(pb.getPartDate()) %></td>
                     <% } %>
@@ -76,21 +77,19 @@
                     <% } %>
                         </table>
                         
-                        <div id="pageNavi">< 1 2 3 4 5 ></div>
+                        <ul id="page-navi">${pageNavi.url }</ul>
                         <div id="search-div">
-                            <form action="#" method="get">
+                            <form action="/searchPartBoard.ho" method="get">
                             <select name="searchType">
                                 <option value="both">제목+내용</option>
-                                <option value="notName">제목</option>
-                                <option value="notContent">내용</option>
+                                <option value="title">제목</option>
+                                <option value="content">내용</option>
+                                <option value="writer">작성자</option>
                             </select>
-                            <input type="text" name="text"/>
+                            <input type="text" name="keyword"/><input type="text" name="deptCode" value="${list[0].deptCode }" style="display:none;"/>
                             <button><i class="fas fa-search i-icon"></i></button>
                             </form>
                         </div>
-						
-						
-						
 						
 						
 						<!----------------------------------->
@@ -100,6 +99,16 @@
 		</div>
 
 	<!-- 자바 스크립트    -->
+    <script>
+		$(function(){
+			$('#categoryBoard').next().css('display','block');
+			$('#categoryBoard').next().css('height','150px');
+			$('#categoryBoard').children().last().children().attr('class','fas fa-chevron-left');
+			
+			$('#categoryBoard').next().children().eq(5).children().css('font-weight','800');
+			$('#categoryBoard').next().children().eq(5).children().css('color','#ffcc29');
+		});
+	</script>
 	<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>
 
 	</div>

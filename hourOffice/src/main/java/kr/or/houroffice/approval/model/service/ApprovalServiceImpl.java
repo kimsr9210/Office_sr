@@ -83,7 +83,7 @@ public class ApprovalServiceImpl implements ApprovalService {
 			if(aprLine != null){
 				for(int i=0; i<aprLine.length;i++){
 					al.setMemNo(aprLine[i]);
-					int result = aprDAO.insertApprovalLine(sqlSession,al);
+					aprDAO.insertApprovalLine(sqlSession,al);
 				}
 			}
 			//결재 참조
@@ -91,7 +91,7 @@ public class ApprovalServiceImpl implements ApprovalService {
 			if(aprRef != null){
 				for(int i=0; i<aprRef.length;i++){
 					ar.setMemNo(aprRef[i]);
-					int result = aprDAO.insertApprovalRef(sqlSession,ar);
+					aprDAO.insertApprovalRef(sqlSession,ar);
 				}
 			}
 		}
@@ -102,15 +102,11 @@ public class ApprovalServiceImpl implements ApprovalService {
 		int docuNo = insertAprCommon(afh);
 		afh.setDocuNo(docuNo);
 		
-		if(docuNo>0){
-			//개별 양식 정보
+		if(docuNo>0){//개별 양식 정보
 			int result = aprDAO.insertHolidayForm(sqlSession, afh);
 			
-			if(result>0){
-				return 1;
-			}else {
-				return 0;
-			}
+			if(result>0)return 1;
+			else return 0;
 		}
 		return 0;
 	}
@@ -119,15 +115,11 @@ public class ApprovalServiceImpl implements ApprovalService {
 		int docuNo = insertAprCommon(afl);
 		afl.setDocuNo(docuNo);
 		
-		if(docuNo>0){
-			//개별 양식 정보
+		if(docuNo>0){//개별 양식 정보
 			int result = aprDAO.insertLazinessForm(sqlSession, afl);
 			
-			if(result>0){
-				return 1;
-			}else {
-				return 0;
-			}
+			if(result>0)return 1;
+			else return 0;
 		}
 		return 0;
 	}
@@ -136,15 +128,11 @@ public class ApprovalServiceImpl implements ApprovalService {
 		int docuNo = insertAprCommon(afo);
 		afo.setDocuNo(docuNo);
 		
-		if(docuNo>0){
-			//개별 양식 정보
+		if(docuNo>0){//개별 양식 정보
 			int result = aprDAO.insertOvertimeForm(sqlSession, afo);
 			
-			if(result>0){
-				return 1;
-			}else {
-				return 0;
-			}
+			if(result>0)return 1;
+			else return 0;
 		}
 		return 0;
 	}
@@ -153,15 +141,11 @@ public class ApprovalServiceImpl implements ApprovalService {
 		int docuNo = insertAprCommon(afc);
 		afc.setDocuNo(docuNo);
 		
-		if(docuNo>0){
-			//개별 양식 정보
+		if(docuNo>0){//개별 양식 정보
 			int result = aprDAO.insertCCCForm(sqlSession, afc);
 			
-			if(result>0){
-				return 1;
-			}else {
-				return 0;
-			}
+			if(result>0)return 1;
+			else return 0;
 		}
 		return 0;
 	}
@@ -197,16 +181,14 @@ public class ApprovalServiceImpl implements ApprovalService {
 	}
 	
 	public int insertAprMark(ApprovalLine al, char docuType) { //결재 승인 or 반려 처리
-		int result = aprDAO.insertAprMark(sqlSession, al, docuType);
-		return result;
+		return aprDAO.insertAprMark(sqlSession, al, docuType);
 	}
 
 	public int deleteApproval(Approval apr) {
-		int result = aprDAO.deleteApproval(sqlSession, apr);
-		return result;
+		return aprDAO.deleteApproval(sqlSession, apr);
 	}
 
-	public int updateAprCommon(AprForm af){
+	public int updateAprCommon(AprForm af){//결재 공통 정보 변경. -결재선,결재참조
 		ApprovalLine al = new ApprovalLine();
 		ApprovalRef ar = new ApprovalRef();
 		
@@ -234,54 +216,41 @@ public class ApprovalServiceImpl implements ApprovalService {
 				aprDAO.insertApprovalRef(sqlSession,ar);
 			}
 		}
-		if(alResult+arResult>1){
-			return 1;
-		}
+		if(alResult+arResult>1) return 1; //삭제처리 결과만 반영
 		return 0;
 	}
 	
-	public int updateAprForm(AprFormHol afh) {
-		//결재선, 결재참조 수정, form 업데이트
+	public int updateAprForm(AprFormHol afh) { //결재선, 결재참조 수정, 개별 form 업데이트
 		int result = aprDAO.updateAprForm(sqlSession, afh);
 		int result2 = updateAprCommon(afh);
 		
-		if(result+result2>1){
-			return 1;
-		}
+		if(result+result2>1) return 1; 
 		return 0;
 	}
 
 	public int updateAprForm(AprFormCCC afc) {
 		int result = aprDAO.updateAprForm(sqlSession, afc);
 		int result2 = updateAprCommon(afc);
-		if(result+result2>1){
-			return 1;
-		}
+		if(result+result2>1) return 1; 
 		return 0;
 	}
 
 	public int updateAprForm(AprFormLazy afl) {
 		int result = aprDAO.updateAprForm(sqlSession, afl);
 		int result2 = updateAprCommon(afl);
-		if(result+result2>1){
-			return 1;
-		}
+		if(result+result2>1) return 1; 
 		return 0;
 	}
 
 	public int updateAprForm(AprFormOvt afo) {
 		int result = aprDAO.updateAprForm(sqlSession, afo);
 		int result2 = updateAprCommon(afo);
-		if(result+result2>1){
-			return 1;
-		}
+		if(result+result2>1) return 1; 
 		return 0;
 	}
 
-
 	public int updateCardType(CCCForm cf) {
-		int result = aprDAO.updateCardType(sqlSession, cf);
-		return result;
+		return aprDAO.updateCardType(sqlSession, cf);
 	}
 
 }

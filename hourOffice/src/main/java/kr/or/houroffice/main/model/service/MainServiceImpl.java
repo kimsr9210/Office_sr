@@ -7,9 +7,12 @@ import javax.annotation.Resource;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Service;
 
+import kr.or.houroffice.common.Page;
 import kr.or.houroffice.main.model.dao.MainDAO;
 import kr.or.houroffice.main.model.vo.AllNotice;
 import kr.or.houroffice.main.model.vo.CompanyRule;
+import kr.or.houroffice.main.model.vo.MainMailGetter;
+import kr.or.houroffice.main.model.vo.MainMailPage;
 
 @Service("mainService")
 public class MainServiceImpl implements MainService{
@@ -26,8 +29,15 @@ public class MainServiceImpl implements MainService{
 	}
 
 	@Override
-	public ArrayList<CompanyRule> selectAllRule() {
-		return mainDAO.selectAllRule(sqlSession);
+	public ArrayList<CompanyRule> selectAllRule(Page page) {
+		return mainDAO.selectAllRule(sqlSession,page);
+		
+	}
+
+	@Override
+	public ArrayList<MainMailGetter> selectAllMail(MainMailPage mmp) {
+		return mainDAO.selectAllMail(sqlSession,mmp);
+		
 	}
 
 }

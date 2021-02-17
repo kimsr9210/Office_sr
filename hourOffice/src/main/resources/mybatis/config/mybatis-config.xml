@@ -27,6 +27,7 @@
 		<typeAlias type="kr.or.houroffice.board.model.vo.PartBoard" alias="PartBoard"/> <!-- 부서별 게시판 -->
 		<typeAlias type="kr.or.houroffice.board.model.vo.PartComments" alias="PartComments"/> <!-- 부서별 게시판 댓글 -->
 		<typeAlias type="kr.or.houroffice.board.model.vo.BoardFile" alias="BoardFile"/> <!-- 게시판 파일 -->
+		<typeAlias type="kr.or.houroffice.board.model.vo.BoardPost" alias="BoardPost"/> <!-- 게시판 게시글(공지+사칙 공통) -->
 
 		<typeAlias type="kr.or.houroffice.approval.model.vo.Approval" alias="Approval"/>
 		<typeAlias type="kr.or.houroffice.approval.model.vo.ApprovalLine" alias="ApprovalLine"/>
@@ -53,8 +54,15 @@
 		<typeAlias type="kr.or.houroffice.mail.model.vo.MailList" alias="MailList"/>
 		<typeAlias type="kr.or.houroffice.mail.model.vo.SendingMail" alias="SendingMail"/>
 		
+		
+		<typeAlias type="kr.or.houroffice.resource.model.vo.ResourceData" alias="ResourceData"/>
+		<typeAlias type="kr.or.houroffice.resource.model.vo.ResourcePage" alias="ResourcePage"/>
+    
 		<typeAlias type="kr.or.houroffice.main.model.vo.AllNotice" alias="AllNotice"/>
 		<typeAlias type="kr.or.houroffice.main.model.vo.CompanyRule" alias="CompanyRule"/>
+		<typeAlias type="kr.or.houroffice.main.model.vo.MainMailPage" alias="MainMailPage"/>
+		<typeAlias type="kr.or.houroffice.main.model.vo.MainMailGetter" alias="MainMailGetter"/>
+		<typeAlias type="kr.or.houroffice.common.Page" alias="Page"/>
 	</typeAliases>
 </configuration>
 

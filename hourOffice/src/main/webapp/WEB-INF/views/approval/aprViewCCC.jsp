@@ -185,9 +185,23 @@
 	<!-- 자바 스크립트    -->
 	<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>
 	<script>
+	$('#categoryElecAppr').next().css('display', 'block');
+	$('#categoryElecAppr').next().css('height', '150px');
+	$('#categoryElecAppr').children().last().children().attr('class',
+			'fas fa-chevron-left');
 		function listPage(){
 			history.back(-1);
 		}
+		$(function(){
+			//삭제전 확인
+	        $('#apr_del_btn').click(function(){
+	            var answer = window.confirm('정말로 삭제하시겠습니까?');
+	            if(answer){
+	                return true;
+	            }return false;
+	        });
+		});
+		
 	</script>
 	</c:when>
 	<c:otherwise><script>alert("비공개입니다."); history.back(-1);</script></c:otherwise>

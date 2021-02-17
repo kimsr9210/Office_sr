@@ -10,7 +10,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>H:our Office</title>
 	<!-- 폰트어썸 -->
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
     
@@ -409,6 +409,14 @@
 		</div>
 
 	<!-- 자바 스크립트    -->
+    <script>
+	$('#categoryAdmin').next().css('display','block');
+	$('#categoryAdmin').next().css('height','200px');
+	$('#categoryAdmin').children().last().children().attr('class','fas fa-chevron-left');
+	
+	$('#categoryAdmin').next().children().eq(1).children().css('font-weight','800');
+	$('#categoryAdmin').next().children().eq(1).children().css('color','#ffcc29');
+	</script>
 	<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>
 
 	</div>

@@ -183,6 +183,10 @@ public class AdminMemberService {
 	public ArrayList<Department> selectAllDepartment(){
 		return mDAO.selectAllDepartment(sqlSession);
 	}
+	//BY 다빈 조직도 - 부서목록 (삭제한것까지 모두)
+	public ArrayList<Department> selectAllDeptCode() {
+		return mDAO.selectAllDeptCode(sqlSession);
+	}
 	
 	
 	

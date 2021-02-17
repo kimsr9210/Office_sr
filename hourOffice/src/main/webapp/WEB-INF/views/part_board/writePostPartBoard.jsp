@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>H:our Office</title>
 	<!-- 폰트어썸 -->
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
     
@@ -32,9 +32,6 @@
             });
         })
     </script>
-    
-    
-	
 </head>
 <body>
 	<div id="wrap">
@@ -55,20 +52,31 @@
 						
 						<div id="txt-content">
                             <form id="frm" action="/savePostPartBoard.ho" method="post" enctype="multipart/form-data">
-                            <div><span>제목</span> <input type="text" name="partTitle"/></div>
-                            <div><span>첨부파일</span> <div id="attachedFile"></div><input type="file" name="attachedFile" style="display:none"/></div>
+                            <div><span>제목</span> <input type="text" name="partTitle" maxlength="35"/></div>
+                            <div><button type="button" id="attached-btn">첨부파일</button> <div id="attachedFile"><span id="file-icon"><i class="far fa-file-alt i-icon"></i></span><span></span></div><input type="file" name="attachedFile" style="display:none"/></div>
                             
                             <!-- 표시할 textarea 영역 -->
                             <textarea name="partContent" id="txtArea" required></textarea>
                                 <div></div>
-                            <div><button id="save-btn">저장</button> <button type="button" class="delBtn">취소</button></div>
+                            <div><button type="button" id="save-btn">저장</button> <button type="button" class="delBtn">취소</button></div>
                             </form>
                         </div>
 						
-						
-	<!-- smartEditor2 api 페이지 로딩시 초기화 -->
+	
 	<script>
 		$(function(){
+      $('#categoryBoard').next().css('display','block');
+			$('#categoryBoard').next().css('height','150px');
+			$('#categoryBoard').children().last().children().attr('class','fas fa-chevron-left');
+			
+			$('#categoryBoard').next().children().eq(5).children().css('font-weight','800');
+			$('#categoryBoard').next().children().eq(5).children().css('color','#ffcc29');
+      
+      
+			var files; // 파일 변수
+			
+			$('#attachedFile').children(':first-child').css('visibility','hidden'); // 아이콘 셋팅
+			<!-- smartEditor2 api 페이지 로딩시 초기화 -->
 		    //전역변수
 		    var obj = [];              
 		    //스마트에디터 프레임생성
@@ -87,28 +95,59 @@
 		    $("#save-btn").click(function(){
 		        //id가 smarteditor인 textarea에 에디터에서 대입
 		        obj.getById["txtArea"].exec("UPDATE_CONTENTS_FIELD", []);
-		        //폼 submit
-		        $("#frm").submit();
+		        var $txtArea = $('#txtArea').val();
+		        
+		        if($('input[name=partTitle]').val()==''){
+		        	alert('제목을 입력해주세요.');
+		        	return;
+		        }else if($txtArea == ""  || $txtArea == null || $txtArea == '&nbsp;' || $txtArea == '<p>&nbsp;</p>' || $txtArea == '<p><br></p>' ){
+		        	alert('내용을 입력해주세요.');	
+		        }else{
+			        //폼 submit
+			       	$("#frm").submit();
+		        }
 		    });
 		    
-		    $('#attachedFile').click(function(){
-		    	$(this).next().click(); // input 태그
+		    $('#attached-btn').click(function(){
+		    	$(this).next().next().click(); // input 태그
+		    	
 		    });
 		    
 		    $('input[type=file]').on("change",handlefileSelect);
 		    function handlefileSelect(e){
-		    	var files = e.target.files;
+		    	files = e.target.files;
 		    	var filesArr = Array.prototype.slice.call(files);
 		    	
 		    	filesArr.forEach(function(f){
 		    		var reader = new FileReader();
 		    		reader.onload = function(e){
-		    			$('#attachedFile').html('<div>'+f.name+'<span>X</span></div>');
+		    			$('#attachedFile').children(':first-child').css('visibility','');
+		    			$('#attachedFile > span:last-child').text(f.name);
 		    		}
 		    		reader.readAsDataURL(f);
 		    	});
 		    }
-		})
+		    
+		    $('#attachedFile').hover(function(){
+		    	if($(this).children(':last-child').text()!=''){
+		    		$('#file-icon > .i-icon').removeClass('fa-file-alt').addClass('fa-times-circle');
+		    	}
+		    },function(){
+		    	$('#file-icon > .i-icon').removeClass('fa-times-circle').addClass('fa-file-alt');
+		    });
+		    
+		    
+		    $('#file-icon').click(function(){
+		    	$('#attachedFile').children(':first-child').css('visibility','hidden');
+		    	$('#attachedFile').children(':last-child').text('');
+		    	$('input[type=file]').val('');
+		    	//files[0].select; // 파일 선택
+		    	//document.selection.clear; // 선택된 파일 삭제
+		    	
+		    });
+		    
+		}) 
+		
 	</script>		
 						
 	
@@ -127,4 +166,3 @@
 	</div>
 </body>
 </html>
-

@@ -1,10 +1,11 @@
+<%@page import="kr.or.houroffice.board.model.vo.BoardPost"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>H:our Office</title>
 	<!-- 폰트어썸 -->
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
     
@@ -18,8 +19,8 @@
 	<!-- 게시글 쓰기 공통 CSS -->
 	<link rel="stylesheet" type="text/css" href="/resources/css/board/postWrite.css" />
 	
-	<!-- 스마트에디터2 라이브러리 -->
-    <script type="text/javascript" src="api/smartEditor2/js/service/HuskyEZCreator.js" charset="utf-8"></script> 
+	 <!-- 스마트에디터2 라이브러리 -->
+    <script type="text/javascript" src="/resources/api/smarteditor2/js/service/HuskyEZCreator.js" charset="utf-8"></script> 
     <!-- api 이미지 업로드 라이브러리 추가 -->
     <!-- <script type="text/javascript" src="./quick_photo_uploader/plugin/hp_SE2M_AttachQuickPhoto.js" charset="utf-8"> </script> -->
     
@@ -52,15 +53,15 @@
 						
 						
 						<div id="txt-content">
-                            <form>
-                            <div><span>제목</span> <input type="text" name="notName" value="[01월] 이번주 식단표 ver.1.5"/></div>
-                            <div><span>첨부파일</span> <div></div></div>
+                            <form id="frm" action="/admin_tap_updatePostNotice.ho" method="post" enctype="multipart/form-data">
+                            <div><span>제목</span> <input type="text" name="title" value="${bp.title }" maxlength="35"/></div>
+                            <div><button type="button" id="attached-btn">첨부파일</button> <div id="attachedFile"><span id="file-icon"><i class="far fa-file-alt i-icon"></i></span><span>${bp.origName }</span></div><input type="file" name="attachedFile" style="display:none"/></div>
                             
                             <!-- 표시할 textarea 영역 -->
-                            <textarea name="notContent" id="txtArea" required>이 페이지 컨텐츠 부분 width 고정으로 하려면 어떻게 하는거죠..?</textarea>
+                            <textarea name="content" id="txtArea" required>${bp.content }</textarea>
                             
-                                <div><span>알림</span> <input type="checkbox" name="push"/> 푸쉬</div>
-                            <div><button>저장</button> <button type="button" class="delBtn">취소</button></div>
+                            <div><span>알림</span> <input type="checkbox" name="push"/> 푸쉬</div>
+                            <div><button type="button" id="save-btn">수정</button> <button type="button" class="delBtn">취소</button></div>
                             </form>
                         </div>
 						
@@ -80,21 +81,90 @@
 	
 	
 	<!-- smartEditor2 api 페이지 로딩시 초기화 -->
-    <script type="text/javascript">
+    <script>
         
-        var oEditors = []; 
-        nhn.husky.EZCreator.createInIFrame({ 
-            oAppRef : oEditors, 
-            elPlaceHolder : "txtArea", //저는 textarea의 id와 똑같이 적어줬습니다. 
-            sSkinURI : "/api/smartEditor2/SmartEditor2Skin.html", //경로를 꼭 맞춰주세요! 
-            fCreator : "createSEditor2", 
-            htParams : { 
-                bUseToolbar : true, // 툴바 사용 여부 (true:사용/ false:사용하지 않음) 
-                bUseVerticalResizer : false, // 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음) 
-                bUseModeChanger : true // 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음) 
-            } 
-        });
-
+        $(function(){
+        	var files; // 파일 변수
+			var havefile = '${bp.fileNo}';
+			if(havefile==0){
+				$('#attachedFile').children(':first-child').css('visibility','hidden'); // 아이콘 셋팅
+			}
+        	//전역변수
+		    var obj = [];              
+		    //스마트에디터 프레임생성
+		    nhn.husky.EZCreator.createInIFrame({
+		        oAppRef: obj,
+		        elPlaceHolder: "txtArea",
+		        sSkinURI: "/resources/api/smarteditor2/SmartEditor2Skin.html",
+		        fCreator : "createSEditor2", 
+		        htParams : {
+		            bUseToolbar : true, // 툴바 사용 여부 (true:사용/ false:사용하지 않음)            
+		            bUseVerticalResizer : false, // 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
+		            bUseModeChanger : true // 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
+		        }
+		    });
+		    // 첨부파일 버튼
+		    $('#attached-btn').click(function(){
+		    	$(this).next().next().click(); // input 태그
+		    	
+		    });
+		 	// 파일을 선택하면
+		    $('input[type=file]').on("change",handlefileSelect);
+		    function handlefileSelect(e){
+		    	files = e.target.files;
+		    	var filesArr = Array.prototype.slice.call(files);
+		    	
+		    	filesArr.forEach(function(f){
+		    		var reader = new FileReader();
+		    		reader.onload = function(e){
+		    			$('#attachedFile').children(':first-child').css('visibility','');
+		    			$('#attachedFile > span:last-child').text(f.name);
+		    		}
+		    		reader.readAsDataURL(f);
+		    	});
+		    }
+			 // 파일 icon을 호버하면 선택한 파일 삭제버튼 나옴
+		    $('#attachedFile').hover(function(){
+		    	if($(this).children(':last-child').text()!=''){
+		    		$('#file-icon > .i-icon').removeClass('fa-file-alt').addClass('fa-times-circle');
+		    	}
+		    },function(){
+		    	$('#file-icon > .i-icon').removeClass('fa-times-circle').addClass('fa-file-alt');
+		    });
+		    
+		 	// 파일 icon을 클릭하면 선택한 파일 삭제
+		    $('#file-icon').click(function(){
+		    	$('#attachedFile').children(':first-child').css('visibility','hidden');
+		    	$('#attachedFile').children(':last-child').text('');
+		    	$('input[type=file]').val('');
+		    	
+		    });
+		    
+		  	//전송버튼
+		    $("#save-btn").click(function(){
+		        
+		    	$('textarea').next().append('<input type="text" name="notNo" value="${bp.postNo}" style="display:none;"/>');
+		        $('textarea').next().append('<input type="text" name="fileNo" value="'+havefile+'" style="display:none;"/>');
+		        if($('#attachedFile').children(':last-child').text()!=''){
+		    		$('textarea').next().append('<input type="text" name="havefile" value="U" style="display:none;"/>');
+		    	}
+		      	
+		        //id가 smarteditor인 textarea에 에디터에서 대입
+		        obj.getById["txtArea"].exec("UPDATE_CONTENTS_FIELD", []);
+		        var $txtArea = $('#txtArea').val();
+		        
+		        if($('input[name=title]').val()==''){ // 제목 공백
+		        	alert('제목을 입력해주세요.');
+		        	return;
+		        }else if($txtArea == ""  || $txtArea == null || $txtArea == '&nbsp;' || $txtArea == '<p>&nbsp;</p>' || $txtArea == '<p><br></p>' ){ // 내용 공백
+		        	alert('내용을 입력해주세요.');	
+		        }else{
+			        //폼 submit
+			       	$("#frm").submit();
+		        }
+		    });
+        	
+        })
         
     </script>
 </body>

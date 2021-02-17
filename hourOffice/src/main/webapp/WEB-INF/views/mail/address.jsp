@@ -44,11 +44,14 @@
     
     <script>
         $(function(){
+        	$('#categoryMail').next().css('display','block');
+        	$('#categoryMail').next().css('height','150px');
+        	$('#categoryMail').children().last().children().attr('class','fas fa-chevron-left');
+        	
             //부서 클릭시 리스트 출력
             $('#dept-list>span').click(function(){
             	var $this = $(this);
                 var deptCode = $this.attr('deptcode');
-                console.log(deptCode);
                 $.ajax({
                 	url : "/deptAddress.ho",
                 	data : {"deptCode" : deptCode},
@@ -80,7 +83,6 @@
                 for(var i=0; i<selectedList.length; i++){
                     $(selectedList[i]).prop('checked',false);
                    var tmp = $(selectedList[i]).parent().clone(); 
-                    
                     $('#receiver-list').append(tmp);
                 }
                 
@@ -90,7 +92,6 @@
                 for(var i=0; i<selectedList.length; i++){
                     $(selectedList[i]).parent().remove();
                 }
-                
             });
             $('#ref-add').click(function(){
                 var selectedList = $('#mem-list>span>input:checked');
@@ -127,8 +128,6 @@
            function returnList(){
             var recList = $('#receiver-list').children();
             var refList = $('#ref-list').children();
-               console.log(recList);
-               console.log(refList);
                var addRec = "";
                var addRef = "";
                for(var i=0; i<recList.length; i++){

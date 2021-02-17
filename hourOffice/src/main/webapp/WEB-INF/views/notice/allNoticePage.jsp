@@ -1,10 +1,14 @@
+<%@page import="java.sql.Date"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="kr.or.houroffice.board.model.vo.BoardPost"%>
+<%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>H:our Office</title>
 	<!-- 폰트어썸 -->
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
     
@@ -19,14 +23,9 @@
 	<link rel="stylesheet" type="text/css" href="/resources/css/board/board.css" />
 	<!-- CSS 테이블만 있는 것 -->
 	<link rel="stylesheet" type="text/css" href="/resources/css/board/userBoard.css" />
+	<!-- 페이지 네비 CSS -->
+	<link rel="stylesheet" type="text/css" href="/resources/css/board/pageNavi.css" />
 	
-	
-    <script>
-        $(function(){
-            
-            
-        })
-    </script>
 </head>
 <body>
 	<div id="wrap">
@@ -40,10 +39,10 @@
 						<!--여기서 각자 id 만드시면 됩니다-->
 						전체 공지
 						<!----------------------------------->
+			<% ArrayList<BoardPost> list = (ArrayList<BoardPost>)request.getAttribute("list"); %>
 					</div>
 					<div id="TitleContents">
 						<!--여기서 각자 id 만드시면 됩니다-->
-						
 						
 						<table>
                             <!--<tr style="padding:0;"><td colspan="4" style="padding:0;"><hr></td></tr>-->
@@ -54,24 +53,35 @@
                                 <th>작성일</th>
                             </tr>
                             <!--<tr><td colspan="4" style="padding:0;"><hr></td></tr>-->
+      		<% SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd."); %>
+        	<% SimpleDateFormat formatToDay = new SimpleDateFormat("hh:mm"); %>
+        	<% Date toDay = new Date(System.currentTimeMillis()); // 현재 날짜 구하기 %>
+      		<% if(list!=null){ %>
+      		<% for(BoardPost bp : list){ %>
                             <tr>
-                                <td>1</td>
-                                <td><div><a href="/notice.ho">ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss</a></div></td>
-                                <td>주다빈 사원</td>
-                                <td>2021/01/28</td>
+                                <td><%=bp.getPostNo() %></td>
+                                <td><div><a href="/notice.ho?notNo=<%=bp.getPostNo()%>"><%=bp.getTitle() %></a></div></td>
+                                <td><%=bp.getWriter() %> <%=bp.getMemPosition() %></td>
+            <% if(format.format(bp.getPostingDate()).equals(format.format(toDay))){ %>
+                                <td><%=formatToDay.format(bp.getPostingDate()) %></td>
+            <% }else{ %>
+                				<td><%=format.format(bp.getPostingDate()) %></td>
+            <% } %>
                             </tr>
+       		<% } %>
+       		<% } %>
                         </table>
                         </form>
                         
-                        <div id="pageNavi">< 1 2 3 4 5 ></div>
+                        <ul id="page-navi">${pageNavi.url }</ul>
                         <div id="search-div">
-                            <form action="#" method="get">
+                            <form action="/searchNotice.ho" method="get">
                             <select name="searchType">
                                 <option value="both">제목+내용</option>
-                                <option value="notName">제목</option>
-                                <option value="notContent">내용</option>
+                                <option value="title">제목</option>
+                                <option value="content">내용</option>
                             </select>
-                            <input type="text" name="text"/>
+                            <input type="text" name="keyword"/>
                             <button><i class="fas fa-search i-icon"></i></button>
                             </form>
                         </div>

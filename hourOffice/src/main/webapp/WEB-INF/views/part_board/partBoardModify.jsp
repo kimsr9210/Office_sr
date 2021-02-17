@@ -1,10 +1,11 @@
+<%@page import="kr.or.houroffice.board.model.vo.PartBoard"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>H:our Office</title>
 	<!-- 폰트어썸 -->
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
     
@@ -22,16 +23,16 @@
     <script>
         $(function(){
             // 취소버튼 클릭 이벤트
-            $('#del-btn').click(function(){
+            $('.delBtn').click(function(){
                 history.go(-1);
             });
         })
     </script>
     
-    <!-- 페이지 상단 또는 하단에 라이브러리 추가 -->
-   <script type="text/javascript" src="/WEB-INF/views/api/smartEditor2/js/service/HuskyEZCreator.js" charset="utf-8"></script> 
+    <!-- 스마트에디터2 라이브러리 -->
+    <script type="text/javascript" src="/resources/api/smarteditor2/js/service/HuskyEZCreator.js" charset="utf-8"></script> 
    <!-- api 이미지 업로드 라이브러리 추가 -->
-   <script type="text/javascript" src="./quick_photo_uploader/plugin/hp_SE2M_AttachQuickPhoto.js" charset="utf-8"> </script>
+   <!-- <script type="text/javascript" src="./quick_photo_uploader/plugin/hp_SE2M_AttachQuickPhoto.js" charset="utf-8"> </script> -->
 	
 </head>
 <body>
@@ -44,24 +45,121 @@
 				<div id="contentsDetail" class="clearfix">
 					<div id="TitleName">
 						<!--여기서 각자 id 만드시면 됩니다-->
-						개발부서 게시판 <span>글 수정</span>
+						${pb.deptName } 게시판 <span>글 수정</span>
 						<!----------------------------------->
 					</div>
 					<div id="TitleContents">
 						<!--여기서 각자 id 만드시면 됩니다-->
 						
 						<div id="txt-content">
-                            <form>
-                            <div><span>제목</span> <input type="text" name="notName" value="[부서별 게시판] 수정 페이지"/></div>
-                            <div><span>첨부파일</span> <div></div></div>
+                            <form id="frm" action="/updatePostPartBoard.ho" method="post" enctype="multipart/form-data">
+                            <div><span>제목</span> <input type="text"  name="partTitle" value="${pb.partTitle }" maxlength="35"/></div>
+                            <div><button type="button" id="attached-btn">첨부파일</button> <div id="attachedFile"><span id="file-icon"><i class="far fa-file-alt i-icon"></i></span><span>${pb.origName }</span></div><input type="file" name="attachedFile" style="display:none"/></div>
                             
                             <!-- 표시할 textarea 영역 -->
-                            <textarea name="partContent" id="txtArea" required>이 페이지 컨텐츠 부분 width 고정으로 하려면 어떻게 하는거죠..?</textarea>
+                            <textarea name="partContent" id="txtArea" required>${pb.partContent }</textarea>
                             
-                                <div><!-- <span>알림</span> <input type="checkbox" name="push"/> 푸쉬 --></div>
-                            <div><button>수정</button> <button type="button" class="delBtn">취소</button></div>
+                                <div><!-- <span>알림</span> <input type="checkbox" name="push"/> 푸쉬 -->
+                                	<input type="text" name="partNo" value="${pb.partNo }" style="display:none"/>
+                                	<input type="text" name="deptCode" value="${pb.deptCode }" style="display:none;"/>
+                                	<input type="text" name="memNo" value="${pb.memNo }" style="display:none;"/>
+                                </div>
+                            <div><button type="button" id="save-btn">수정</button> <button type="button" class="delBtn">취소</button></div>
                             </form>
                         </div>
+
+	<!-- smartEditor2 api 페이지 로딩시 초기화 -->
+	<script>
+	
+		
+	
+		$(function(){
+			var files; // 파일 변수
+			var havefile = '<%=((PartBoard)request.getAttribute("pb")).getFileNo()%>';
+			if(havefile==0){
+				$('#attachedFile').children(':first-child').css('visibility','hidden'); // 아이콘 셋팅
+			}
+		    //전역변수
+		    var obj = [];              
+		    //스마트에디터 프레임생성
+		    nhn.husky.EZCreator.createInIFrame({
+		        oAppRef: obj,
+		        elPlaceHolder: "txtArea",
+		        sSkinURI: "/resources/api/smarteditor2/SmartEditor2Skin.html",
+		        fCreator : "createSEditor2", 
+		        htParams : {
+		            bUseToolbar : true, // 툴바 사용 여부 (true:사용/ false:사용하지 않음)            
+		            bUseVerticalResizer : false, // 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
+		            bUseModeChanger : true // 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
+		        }
+		    });
+		    
+		  //전송버튼
+		    $("#save-btn").click(function(){
+		        
+		        $('textarea').next().append('<input type="text" name="fileNo" value="'+havefile+'" style="display:none;"/>');
+		        if($('#attachedFile').children(':last-child').text()!=''){
+		    		$('textarea').next().append('<input type="text" name="havefile" value="U" style="display:none;"/>');
+		    	}
+		      	
+		        //id가 smarteditor인 textarea에 에디터에서 대입
+		        obj.getById["txtArea"].exec("UPDATE_CONTENTS_FIELD", []);
+		        var $txtArea = $('#txtArea').val();
+		        
+		        if($('input[name=partTitle]').val()==''){ // 제목 공백
+		        	alert('제목을 입력해주세요.');
+		        	return;
+		        }else if($txtArea == ""  || $txtArea == null || $txtArea == '&nbsp;' || $txtArea == '<p>&nbsp;</p>' || $txtArea == '<p><br></p>' ){ // 내용 공백
+		        	alert('내용을 입력해주세요.');	
+		        }else{
+			        //폼 submit
+			       	$("#frm").submit();
+		        }
+		    });
+		    
+		    // 첨부파일 버튼
+		    $('#attached-btn').click(function(){
+		    	$(this).next().next().click(); // input 태그
+		    	
+		    });
+		    // 파일을 선택하면
+		    $('input[type=file]').on("change",handlefileSelect);
+		    function handlefileSelect(e){
+		    	files = e.target.files;
+		    	var filesArr = Array.prototype.slice.call(files);
+		    	
+		    	filesArr.forEach(function(f){
+		    		var reader = new FileReader();
+		    		reader.onload = function(e){
+		    			$('#attachedFile').children(':first-child').css('visibility','');
+		    			$('#attachedFile > span:last-child').text(f.name);
+		    		}
+		    		reader.readAsDataURL(f);
+		    	});
+		    }
+		    // 파일 icon을 호버하면 선택한 파일 삭제버튼 나옴
+		    $('#attachedFile').hover(function(){
+		    	if($(this).children(':last-child').text()!=''){
+		    		$('#file-icon > .i-icon').removeClass('fa-file-alt').addClass('fa-times-circle');
+		    	}
+		    },function(){
+		    	$('#file-icon > .i-icon').removeClass('fa-times-circle').addClass('fa-file-alt');
+		    });
+		    
+		    // 파일 icon을 클릭하면 선택한 파일 삭제
+		    $('#file-icon').click(function(){
+		    	$('#attachedFile').children(':first-child').css('visibility','hidden');
+		    	$('#attachedFile').children(':last-child').text('');
+		    	$('input[type=file]').val('');
+		    	//files[0].select; // 파일 선택
+		    	//document.selection.clear; // 선택된 파일 삭제
+		    	
+		    });
+		    
+		}) 
+		
+	</script>
+						
 						
 						<!----------------------------------->
 					</div>
@@ -70,59 +168,19 @@
 		</div>
 
 	<!-- 자바 스크립트    -->
+    <script>
+		$(function(){
+			$('#categoryBoard').next().css('display','block');
+			$('#categoryBoard').next().css('height','150px');
+			$('#categoryBoard').children().last().children().attr('class','fas fa-chevron-left');
+			
+			$('#categoryBoard').next().children().eq(5).children().css('font-weight','800');
+			$('#categoryBoard').next().children().eq(5).children().css('color','#ffcc29');
+		});
+	</script>
 	<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>
 	
-	<!-- smartEditor2 api 페이지 로딩시 초기화 -->
-    <script type="text/javascript">
-        
-        var oEditors = []; 
-        nhn.husky.EZCreator.createInIFrame({ 
-            oAppRef : oEditors, 
-            elPlaceHolder : "txtArea", //저는 textarea의 id와 똑같이 적어줬습니다. 
-            sSkinURI : "/WEB-INF/views/api/smartEditor2/SmartEditor2Skin.html", //경로를 꼭 맞춰주세요! 
-            fCreator : "createSEditor2", 
-            htParams : { 
-                bUseToolbar : true, // 툴바 사용 여부 (true:사용/ false:사용하지 않음) 
-                bUseVerticalResizer : false,  // 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음) 
-                bUseModeChanger : true // 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
-            } 
-        });
-        
-        
-        <%--
-        //‘저장’ 버튼을 누르는 등 저장을 위한 액션을 했을 때 submitContents가 호출된다고 가정한다.
-        function submitContents(elClickedObj) {
-            // 에디터의 내용이 textarea에 적용된다.
-            oEditors.getById["textArea"].exec("UPDATE_CONTENTS_FIELD", [ ]);
-
-            // 에디터의 내용에 대한 값 검증은 이곳에서
-            // document.getElementById("textAreaContent").value를 이용해서 처리한다.
-
-            try {
-                elClickedObj.form.submit();
-            } catch(e) {
-
-            }
-        }
-
-        // textArea에 이미지 첨부
-        function pasteHTML(filepath){
-            var sHTML = '<img src="<%=request.getContextPath()%>/path에서 설정했던 경로/'+filepath+'">';
-            oEditors.getById["textArea"].exec("PASTE_HTML", [sHTML]);
-        }
-        
-        oFileUploader = new jindo.FileUploader(jindo.$("uploadInputBox"),{ 
-            sUrl : '/file_uploader', //샘플 켠트롤러입니다. 
-            sCallback : '/resources/editor/photo_uploader/popup/callback.html', //업로드 이후에 iframe이 redirect될 콜백페이지의 주소 
-            sFiletype : "*.jpg;*.png;*.bmp;*.gif", //허용할 파일의 형식. ex) "*", "*.*", "*.jpg", 구분자(;)
-            sMsgNotAllowedExt : 'JPG, GIF, PNG, BMP 확장자만 가능합니다', //허용할 파일의 형식이 아닌경우에 띄워주는 경고창의 문구 
-            bAutoUpload : false, //파일이 선택됨과 동시에 자동으로 업로드를 수행할지 여부 (upload 메소드 수행) 
-            bAutoReset : true // 업로드한 직후에 파일폼을 리셋 시킬지 여부 (reset 메소드 수행) 
-        });
-        
-        var sUploadURL= '/file_uploader_html5'; //upload URL--%>
-        
-    </script>
+	
 	
 	</div>
 </body>

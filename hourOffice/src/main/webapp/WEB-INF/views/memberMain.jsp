@@ -62,6 +62,20 @@
 	.favor{
 		color: yellow;
 	}
+	
+	/* 폰트 */
+	@font-face {
+    font-family: 'GongGothicMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+	}
+	@font-face {
+	    font-family: 'GongGothicLight';
+	    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicLight.woff') format('woff');
+	    font-weight: normal;
+	    font-style: normal;
+	}
 </style>
 <body>
 <c:if test="${empty sessionScope.member }">
@@ -83,7 +97,7 @@
                 
                 <div class="notice">
                     <div class="notice-top">
-                        <a href="/proG.ho">공지</a>
+                        <a href="#">공지</a>
                     </div>
                     <div class="notice-bottom">
                     	<c:choose>
@@ -97,7 +111,7 @@
 		                        </a>
 		                        
 		                        <div>
-		                            <span><fmt:formatDate value="${noticeList[0].notDate }" pattern="yyyy-MM-dd HH:mm:ss"/></span>
+		                            <span><fmt:formatDate value="${noticeList[0].notDate }" pattern="yyyy년 M월 d일 HH:mm:ss"/></span>
 		                            <span>${noticeList[0].notHits }</span>
 		                        </div>
                     		</c:otherwise>
@@ -241,12 +255,120 @@
 				        <div id="mailNavi">
 				            <div id="reMail">받은메일</div>
 				            <div id="mailBtn">
-				                <button><i class="fas fa-chevron-left"></i></button>
-				                <button><i class="fas fa-chevron-right"></i></button>
+				                <button id="preMail"><i class="fas fa-chevron-left"></i></button>
+				                <button id="nextMail"><i class="fas fa-chevron-right"></i></button>
 				            </div>
+				            <input type="hidden" name="mailPage" id="mailPage" value="1">
 				        </div>
-				        <div id="mailList">
-				            	메일이 없습니다.
+				        <div id="mailBOX">
+				        	<c:choose>
+				        		<c:when test="${empty mailList }">
+				        			메일이 없습니다.
+				        		</c:when>
+				        		<c:otherwise>
+				        			<table id="mailStyle">
+				        				<tbody id="mailBody">
+				        				<c:forEach items="${mailList }" var="ml">
+				        				<tr>
+					        				<td>${ml.sendDateFormat }</td>
+					        				<td><a href="/mailView.ho?mailNo=${ml.mailNo }&other=${ml.recMemNo}&listType=R&readYN=${ml.readYN}">${ml.title }</a></td>
+				        				</tr>
+				        				</c:forEach>
+				        				</tbody>
+				        			</table>
+				        			<script>
+                        			var mailPage = $('#mailPage').val();
+                        			
+                        			$('#nextMail').click(function(){
+                        				mailPage++;
+                        				
+                        				$.ajax({
+                        	            	url : "/moveMailPage.ho",
+                        	            	data : {"mailPage":mailPage},
+                                        	type : "get",
+                                        	success : function(data){
+                                        		if(data.length !=0){
+                                        			var mailData;
+                                        			
+                                        			for(var i=0; i<data.length; i++){
+                                        				
+                                        				mailData += "<tr>";
+                                        				
+                                        				mailData += "<td>"+data[i].sendDateFormat+"</td>";
+                                        				mailData += "<td><a href='/mailView.ho?mailNo="+data[i].mailNo+"&other="+data[i].recMemNo+"&listType=R&readYN="+data[i].readYN+"'>"+data[i].title+"</a></td>";
+                                        				
+                                        				mailData += "</tr>";
+                                        			}
+                                        			
+													for(var i=data.length; i<3; i++){
+                                        				
+														mailData += "<tr>";
+                                        				
+														mailData += "<td></td>";
+														mailData += "<td></td>";
+                                        				
+														mailData += "</tr>";
+                                        			}
+                                        			
+                                        			$('#mailBody').html(mailData);
+                                        			
+                                        		}else{
+                                        			alert("마지막 페이지입니다.");
+                                        			mailData--;
+                                        		}
+                                        	},
+                                        	error : function(){
+                                        		alert("서버 통신 오류");
+                                        	}
+                        	            });
+                        			});
+                        			
+                        			$('#preMail').click(function(){
+                        				mailPage--;
+                        				
+                        				$.ajax({
+                        	            	url : "/moveMailPage.ho",
+                        	            	data : {"mailPage":mailPage},
+                                        	type : "get",
+                                        	success : function(data){
+                                        		if(data.length !=0){
+                                        			var mailData;
+                                        			
+														for(var i=0; i<data.length; i++){
+                                        				
+                                        				mailData += "<tr>";
+                                        				
+                                        				mailData += "<td>"+data[i].sendDateFormat+"</td>";
+                                        				mailData += "<td><a href='/mailView.ho?mailNo="+data[i].mailNo+"&other="+data[i].recMemNo+"&listType=R&readYN="+data[i].readYN+"'>"+data[i].title+"</a></td>";
+                                        				
+                                        				mailData += "</tr>";
+                                        			}
+                                        			
+													for(var i=data.length; i<3; i++){
+                                        				
+														mailData += "<tr>";
+                                        				
+														mailData += "<td></td>";
+														mailData += "<td></td>";
+                                        				
+														mailData += "</tr>";
+                                        			}
+                                        			
+                                        			$('#mailBody').html(mailData);
+                                        			
+                                        		}else{
+                                        			alert("첫 번째 페이지입니다.");
+                                        			mailPage++;
+                                        		}
+                                        	},
+                                        	error : function(){
+                                        		alert("서버 통신 오류");
+                                        	}
+                        	            });
+                        			});
+                        			</script>
+				        		</c:otherwise>
+				        	</c:choose>
 				        </div>
 				    </div>
 				    
@@ -266,32 +388,134 @@
                     <div class="role-top">
                         <a href="#">사내규정</a>
                         <div id="roleBtn">
-                            <button><i class="fas fa-chevron-left"></i></button>
-                            <button><i class="fas fa-chevron-right"></i></button>
+                            <button id="preRule"><i class="fas fa-chevron-left"></i></button>
+                            <button id="nextRule"><i class="fas fa-chevron-right"></i></button>
                         </div>
+                        <input type="hidden" name="rulePage" id="rulePage" value="1">
                     </div>
                     <div class="role-bottom">
                         <table id="role-data">
+                        <thead id="ruleHead">
                             <tr>
                                 <th>번호</th>
                                 <th>제목</th>
                                 <th>작성일</th>
                             </tr>
+						</thead>
                             <c:choose>
+                            
                             	<c:when test="${empty ruleList }">
                             		<tr>
                             			<td colspan="3">사내규정이 없습니다.</td>
                             		</tr>
                             	</c:when>
                             	<c:otherwise>
-                            		<c:forEach items="${ruleList }" var="rl" begin="0" end="3">
+                            		<tbody id="ruleBody">
+                            		<c:forEach items="${ruleList }" var="rl">
                             			<tr>
 			                                <td>${rl.ruleNo }</td>
 			                                <td><a href="#">${rl.ruleTitle }</a></td>
 			                                <td><fmt:formatDate value="${rl.ruleDate }" pattern="yyyy-MM-dd"/></td>
 			                            </tr>
                             		</c:forEach>
+                            		</tbody>
+                            		<script>
+                        			var rulePage = $('#rulePage').val();
+                        			
+                        			$('#nextRule').click(function(){
+                        				rulePage++;
+                        				
+                        				$.ajax({
+                        	            	url : "/moveRulePage.ho",
+                        	            	data : {"rulePage":rulePage},
+                                        	type : "get",
+                                        	success : function(data){
+                                        		if(data.length !=0){
+                                        			var ruleData;
+                                        			
+                                        			for(var i=0; i<data.length; i++){
+                                        				
+                                        				ruleData += "<tr>";
+                                        				
+                                        				ruleData += "<td>"+data[i].ruleNo+"</td>";
+                                        				ruleData += "<td><a href='#'>"+data[i].ruleTitle+"</a></td>";
+                                        				ruleData += "<td>"+data[i].ruleDateFormat+"</td>";
+                                        				
+                                        				ruleData += "</tr>";
+                                        			}
+                                        			
+													for(var i=data.length; i<4; i++){
+                                        				
+                                        				ruleData += "<tr>";
+                                        				
+                                        				ruleData += "<td></td>";
+                                        				ruleData += "<td></td>";
+                                        				ruleData += "<td></td>";
+                                        				
+                                        				ruleData += "</tr>";
+                                        			}
+                                        			
+                                        			$('#ruleBody').html(ruleData);
+                                        			
+                                        		}else{
+                                        			alert("마지막 페이지입니다.");
+                                        			rulePage--;
+                                        		}
+                                        	},
+                                        	error : function(){
+                                        		alert("서버 통신 오류");
+                                        	}
+                        	            });
+                        			});
+                        			
+                        			$('#preRule').click(function(){
+                        				rulePage--;
+                        				
+                        				$.ajax({
+                        	            	url : "/moveRulePage.ho",
+                        	            	data : {"rulePage":rulePage},
+                                        	type : "get",
+                                        	success : function(data){
+                                        		if(data.length !=0){
+                                        			var ruleData;
+                                        			
+                                        			for(var i=0; i<data.length; i++){
+                                        				
+                                        				ruleData += "<tr>";
+                                        				
+                                        				ruleData += "<td>"+data[i].ruleNo+"</td>";
+                                        				ruleData += "<td><a href='#'>"+data[i].ruleTitle+"</a></td>";
+                                        				ruleData += "<td>"+data[i].ruleDateFormat+"</td>";
+                                        				
+                                        				ruleData += "</tr>";
+                                        			}
+                                        			
+													for(var i=data.length; i<4; i++){
+                                        				
+                                        				ruleData += "<tr>";
+                                        				
+                                        				ruleData += "<td></td>";
+                                        				ruleData += "<td></td>";
+                                        				ruleData += "<td></td>";
+                                        				
+                                        				ruleData += "</tr>";
+                                        			}
+                                        			
+                                        			$('#ruleBody').html(ruleData);
+                                        			
+                                        		}else{
+                                        			alert("첫 번째 페이지입니다.");
+                                        			rulePage++;
+                                        		}
+                                        	},
+                                        	error : function(){
+                                        		alert("서버 통신 오류");
+                                        	}
+                        	            });
+                        			});
+                        			</script>
                             	</c:otherwise>
+                            	
                             </c:choose>
                             
                         </table>
@@ -312,6 +536,11 @@
                     	</c:when>
                     	<c:otherwise>
                     		<img class="nc-img" src="/resources/images/profile/${sessionScope.member.memProfile }">
+                    		<script>
+                    			$('.nc-img').click(function(){
+                    				location.replace('/information.ho');
+                    			});
+                    		</script>
                     	</c:otherwise>
                     </c:choose>
                     <span class="nc-name">${sessionScope.member.memName } ${sessionScope.member.memPosition }</span>
@@ -484,6 +713,7 @@
 <script src="/resources/js/memberMain/memberMain_cal.js"></script>
 <script src="/resources/js/memberMain/memberMain_work.js"></script>
 <script src="/resources/js/memberMain/memberMain_publicPro.js"></script>
+<script src="/resources/js/memberMain/memberMain_mail.js"></script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
 

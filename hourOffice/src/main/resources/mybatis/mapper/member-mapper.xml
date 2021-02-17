@@ -90,7 +90,7 @@
 	
 	<!-- BY 다빈 - 관리자탭(인사관리) - 통합사원 - 사원 삭제 update -->
 	<update id="resignMember" parameterType="java.util.List">
-		UPDATE MEMBER SET MEM_RESIGN_YN='Y'
+		UPDATE MEMBER SET MEM_RESIGN_YN='Y', MEM_RESIGN_DATE=SYSTIMESTAMP
 		<foreach collection="list" item="item" open="WHERE MEM_DEL_YN='N' AND (" close=")" separator="OR">
 		  MEM_NO=#{item}
 		</foreach>
@@ -151,7 +151,8 @@
 			DEFAULT,
 			NULL,
 			NULL,
-			#{memAddress}
+			#{memAddress},
+			NULL
 		)
 	</insert>
 	
@@ -497,6 +498,7 @@
 			MEM_NO
 		FROM PRO_MEMBER
 		WHERE DEL_YN='N' AND PRO_NO=#{proNo})
+		ORDER BY ROWID DESC
 	</select>
 	
 	<!-- BY 진원 - 개인 근태기록 조회 -->
@@ -514,7 +516,7 @@
 	
 	<!-- BY 진원 - 개인 출근 기록 -->
 	<insert id="insertAttendanceMember">
-		INSERT INTO ATTENDANCE_BOOK VALUES(#{memNo},SYSDATE,SYSTIMESTAMP,NULL,NULL)
+		INSERT INTO ATTENDANCE_BOOK VALUES(#{memNo},SYSTIMESTAMP,NULL,NULL,SYSDATE)
 	</insert>
 	
 	<!-- BY 진원 - 개인 퇴근 기록 -->
@@ -534,6 +536,14 @@
 		FROM DEPARTMENT
 		WHERE DEPT_DEL_YN='N'
 		ORDER BY DEPT_NAME
+	</select>
+	<!-- BY 다빈 - 부서 목록(삭제된것 포함) -->
+	<select id="selectAllDeptCode" resultType="Department">
+		SELECT
+			DEPT_CODE AS deptCode,
+			DEPT_NAME AS deptName,
+			DEPT_DEL_YN AS deptDelYN
+		FROM DEPARTMENT
 	</select>
 
 	<!-- BY 두진 - 전체 멤버 리스트 -->

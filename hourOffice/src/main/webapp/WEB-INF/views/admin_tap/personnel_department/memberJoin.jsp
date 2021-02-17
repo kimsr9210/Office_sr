@@ -7,7 +7,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>H:our Office</title>
 	<!-- 폰트어썸 -->
     <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
     
@@ -143,7 +143,7 @@
                             </div>
                         </div>
                         
-                        <div id="saveDiv"><button type="button">저장 후 추가 생성</button> <button id="submit-btn" type="button">저장</button> <a href=""><button type="button" class="delBtn">취소</button></a></div>
+                        <div id="saveDiv"><button type="button" id="addSave-btn">저장 후 추가 생성</button> <button id="submit-btn" type="button">저장</button> <a href="/admin_tap_allListMember.ho"><button type="button" class="delBtn">취소</button></a></div>
                         
                     </form>    
                     </div>
@@ -285,10 +285,48 @@
 	                        		$('#contWrapper > form').submit();
                         		}
                         	});
-                            // 취소 btn 클릭 이벤트
-                            $('.delBtn').click(function(){
-                            	history.go(-1);
+                            
+                            $('#addSave-btn').click(function(){
+                            	// submit 전에 거르기
+                        		if($('select[name=memPosition]').val()==''){alert('직위를 선택해주세요');}
+                        		else if($('#profileImg').val()==''){alert('프로필 사진을 선택해주세요');}
+                        		else if($('input[name=memName]').val()==''){alert('이름을 입력해주세요');}
+                        		else if($('select[name=memBirth1]').val()==''){alert('생년월일을 입력해주세요');}
+                        		else if($('select[name=memBirth2]').val()==''){alert('생년월일을 입력해주세요');}
+                        		else if($('select[name=memBirth3]').val()==''){alert('생년월일을 입력해주세요');}
+                        		else if($('input[name=memAddress1]').val()==''){alert('주소를 입력해주세요');}
+                        		else if($('input[name=memAddress2]').val()==''){alert('주소를 입력해주세요');}
+                        		else if($('select[name=memPhone1]').val()==''){alert('연락처를 입력해주세요');}
+                        		else if($('input[name=memPhone2]').val()==''){alert('연락처를 입력해주세요');}
+                        		else if($('input[name=memPhone3]').val()==''){alert('연락처를 입력해주세요');}
+                        		else{
+	                        		if($('input[name=acaEnrollDate]').val()==''){
+	                        			$('input[name=acaEnrollDate]').val('0001-01-01');
+	                        		}
+	                        		if($('input[name=acaGradDate]').val()==''){
+	                        			$('input[name=acaGradDate]').val('0001-01-01');
+	                        		}
+	                        		if($('input[name=licDate]').val()==''){
+	                        			$('input[name=licDate]').val('0001-01-01');
+	                        		}
+	                        		if($('input[name=carJoinDate]').val()==''){
+	                        			$('input[name=carJoinDate]').val('0001-01-01');
+	                        		}
+	                        		if($('input[name=carResignDate]').val()==''){
+	                        			$('input[name=carResignDate]').val('0001-01-01');
+	                        		}
+	                        		if($('input[name=milJoinDate]').val()==''){
+	                        			$('input[name=milJoinDate]').val('0001-01-01');
+	                        		}
+	                        		if($('input[name=milLeaveDate]').val()==''){
+	                        			$('input[name=milLeaveDate]').val('0001-01-01');
+	                        		}
+	                        		
+	                        		$('#contWrapper > form').attr('action','/addMoreMemberSingUp.ho').submit();
+                        		}
                             });
+                            
+                            
                             
                             // 우편 API
                             function searchAddr(){
@@ -351,6 +389,14 @@
 		</div>
 
 	<!-- 자바 스크립트    -->
+    <script>
+	$('#categoryAdmin').next().css('display','block');
+	$('#categoryAdmin').next().css('height','200px');
+	$('#categoryAdmin').children().last().children().attr('class','fas fa-chevron-left');
+	
+	$('#categoryAdmin').next().children().eq(1).children().css('font-weight','800');
+	$('#categoryAdmin').next().children().eq(1).children().css('color','#ffcc29');
+	</script>
 	<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>
 
 	</div>

@@ -9,8 +9,8 @@
 <body>
 	<div id="header">
 		<div id="headerLogo">
-			<a href="/index.jsp"><img id="logoImg"
-				src="resources/images/logo_white.png" /></a>
+			<img id="logoImg"
+				src="resources/images/logo4.png" />
 		</div>
 		<form action="/search" method="post">
 			<ui id="headerNavi">
@@ -21,12 +21,21 @@
 				</button>
 			</li>
 			<li><a href="#"><i class="fas fa-bell naviIcon"></i></a></li>
-			<li><a href="#"><i class="fas fa-user-circle naviIcon"></i></a></li>
+			<li><a id="myInfoHead" href="/mypage.ho"><i class="fas fa-user-circle naviIcon"></i></a></li>
 			<li><a id="userLogout" href="/memberLogout.ho"><i
 					class="fas fa-sign-out-alt naviIcon"></i></a> <span id="exitTooltip">로그아웃</span></li>
 			<li id="welcomeName">${sessionScope.member.memName } 님, 환영합니다</li>
 			</ui>
 		</form>
 	</div>
+	
+	<script>
+		$(function(){
+			$('#headerLogo').click(function(){
+				var todayMon = new Date().getMonth()+1;
+				location.replace('/main.ho?todayMon='+todayMon);
+			});
+		});
+	</script>
 </body>
 </html>
