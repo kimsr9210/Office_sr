@@ -350,6 +350,9 @@
 	<update id="deleteDepartment" parameterType="String">
 		UPDATE DEPARTMENT SET DEPT_DEL_YN='Y' WHERE DEPT_CODE=#{deptCode}
 	</update>
+	<update id="updateMemDeptCode" parameterType="String">
+		UPDATE MEMBER SET DEPT_CODE=NULL WHERE DEPT_CODE=#{deptCode}
+	</update>
 	
 	<!-- BY 두진 - 프로젝트 게시물 작성자 리스트 -->
 	<select id="selectProjectBoardMemberList" resultType="Member">
@@ -498,6 +501,7 @@
 			MEM_NO
 		FROM PRO_MEMBER
 		WHERE DEL_YN='N' AND PRO_NO=#{proNo})
+		ORDER BY ROWID DESC
 	</select>
 	
 	<!-- BY 진원 - 개인 근태기록 조회 -->

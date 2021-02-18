@@ -97,7 +97,7 @@
                 
                 <div class="notice">
                     <div class="notice-top">
-                        <a href="#">공지</a>
+                        <a href="/allNoticePage.ho">공지</a>
                     </div>
                     <div class="notice-bottom">
                     	<c:choose>
@@ -105,7 +105,7 @@
                     			<span>등록된 공지가 없습니다...</span>
                     		</c:when>
                     		<c:otherwise>
-                    			<a href="#">
+                    			<a href="/notice.ho?notNo=${noticeList[0].notNo }">
                     				<span>${noticeList[0].notTitle }</span>
 		                            <span>${noticeList[0].notContent }</span>
 		                        </a>
@@ -187,7 +187,7 @@
 								<div class="in-pro-top">
 									<a class="detailBtn">${myProject[0].proSubject }</a>
 									
-									<div class="inProLike">
+									<div class="projectLike">
 		                                <c:set var="like" value="false"></c:set>
 		                                <c:forEach items="${favorList }" var="fl">
 		                                	<c:if test="${fl.proNo eq myProject[0].proNo }">
@@ -249,6 +249,47 @@
 							</c:otherwise>
 						</c:choose>
 					</div>
+					<script>
+					//즐겨찾기
+				    $('.projectLike').click(function(){
+						console.log('클릭!');
+					    var proNo = $(this).children().eq(1).val();
+					    var memNo = $(this).children().eq(2).val();
+					    if($(this).children().eq(0).css('color')=='rgb(255, 255, 255)'){
+					        $.ajax({
+					        	url : "/insertProjectFavor.ho",
+					        	data : {"proNo" : proNo, "memNo" : memNo},
+					        	type : "get",
+					        	success : function(result){
+					        		if(result=="false"){
+					        			alert("프로젝트 즐겨찾기 실패");
+					        		}
+					        	},
+					        	error : function(){
+					        		console.log("프로젝트 즐겨찾기 ajax 통신 실패");
+					        	}
+					        });
+					        $(this).children().eq(0).attr('class','fas fa-star favor');
+					    }else{
+					    	$.ajax({
+					        	url : "/deleteProjectFavor.ho",
+					        	data : {"proNo" : proNo, "memNo" : memNo},
+					        	type : "get",
+					        	success : function(result){
+					        		if(result=="false"){
+					        			alert("프로젝트 즐겨찾기 실패");
+					        		}
+					        	},
+					        	error : function(){
+					        		console.log("프로젝트 즐겨찾기 ajax 통신 실패");
+					        	}
+					        });
+					        $(this).children().eq(0).attr('class','far fa-star');
+					    }
+				    	
+				        
+				    });
+					</script>
 				    
 				    <div id="myMail">
 				        <div class="myMail-title">메일함</div>
@@ -377,7 +418,7 @@
                 <div class="pro-graph">
                     <div id="columnchart_values"></div>
                     <div class="pro-graph-count" style="width:25%;">
-                        <span id="cTitle">이번달 프로젝트 수</span>
+                        <span id="cTitle">이번 달 프로젝트 수</span>
                         <span id="cValue">${monthlyList[0].monthlyCount}</span><!--4자리까지-->
                     </div>
                     
@@ -386,7 +427,7 @@
                 
                 <div class="role">
                     <div class="role-top">
-                        <a href="#">사내규정</a>
+                        <a href="/allCompanyRulePage.ho">사내규정</a>
                         <div id="roleBtn">
                             <button id="preRule"><i class="fas fa-chevron-left"></i></button>
                             <button id="nextRule"><i class="fas fa-chevron-right"></i></button>
@@ -414,7 +455,7 @@
                             		<c:forEach items="${ruleList }" var="rl">
                             			<tr>
 			                                <td>${rl.ruleNo }</td>
-			                                <td><a href="#">${rl.ruleTitle }</a></td>
+			                                <td><a href="/companyRule.ho?ruleNo=${rl.ruleNo }">${rl.ruleTitle }</a></td>
 			                                <td><fmt:formatDate value="${rl.ruleDate }" pattern="yyyy-MM-dd"/></td>
 			                            </tr>
                             		</c:forEach>
@@ -438,7 +479,7 @@
                                         				ruleData += "<tr>";
                                         				
                                         				ruleData += "<td>"+data[i].ruleNo+"</td>";
-                                        				ruleData += "<td><a href='#'>"+data[i].ruleTitle+"</a></td>";
+                                        				ruleData += "<td><a href='/companyRule.ho?ruleNo="+data[i].ruleNo+"'>"+data[i].ruleTitle+"</a></td>";
                                         				ruleData += "<td>"+data[i].ruleDateFormat+"</td>";
                                         				
                                         				ruleData += "</tr>";
@@ -582,7 +623,7 @@
                         			${fn:substring(atten.todayWork,0,workHour) }
                         		</c:otherwise>
                         	</c:choose>
-                        </span> 시간
+                        </span> <a>시간</a>
                         <span id="work-minute">
                         	<c:choose>
                         		<c:when test="${empty atten.todayWork }">
@@ -593,7 +634,7 @@
                         			${fn:substring(atten.todayWork,(workHour+1),workMin) }
                         		</c:otherwise>
                         	</c:choose>
-                        </span> 분
+                        </span> <a>분</a>
                         <input type="hidden" id="workTime" name="todayWork">
                     </div>
                     

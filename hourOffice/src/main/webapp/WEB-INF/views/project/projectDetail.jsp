@@ -105,6 +105,11 @@
 	font-weight: bolder;
 	color: #36bcfc;
 }
+
+.codeGray{
+	font-weight: normal;
+	color: #8C8C8C;
+}
 .codeLine{
 	width:30px;
 	float:left;
@@ -531,6 +536,7 @@
                             <%if(!boardList.isEmpty()) {%>
                             <%for(ProjectBoard pb : boardList){ %>
                             <%
+                            	
                             	String name = "";
                             	String profile = null;
 	                            Date date = new Date(pb.getBoardDate().getTime());
@@ -573,6 +579,7 @@
                                             <div class="boardModifyList boardModify">게시물 수정</div>
                                             <div class="boardModifyList boardDelete">게시물 삭제</div>
                                             <input type="hidden" name="boardNo" value="<%=pb.getBoardNo()%>"/>
+                                            <input type="hidden" name="boardType" value="post"/>
                                         </div>
                                     </div>
                                     <%} %>
@@ -1239,11 +1246,6 @@
             <span id="inviteExit"><i class="fas fa-times"></i></span>
             <div id="inviteName">초대하기</div>
         </div>
-        <div id="inviteSearchBox">
-            <form id="memberSearchForm" action="#" method="get">
-                <input id="memberSearch" type="text" name="memberNo" placeholder=" 프로젝트를 함께할 친구를 찾아보세요!"/><i id="memberSearchImg" class="fas fa-search"></i>
-            </form>
-        </div>
         <div id="inviteContents">
             
             <!--얘가 여러개 생겨남-->
@@ -1291,11 +1293,6 @@
         <div id="memberAllListHeader" class="displayNone">
             <span id="memberAllListExit"><i class="fas fa-times"></i></span>
             <div id="memberAllListName">프로젝트 참가자</div>
-        </div>
-        <div id="memberAllListSearchBox" class="displayNone">
-            <form class="displayNone" id="memberAllListSearchForm" action="#" method="get">
-                <input id="memberAllListSearch" type="text" name="memberNo" placeholder=" 참여자 명으로 검색"/><i id="memberAllListSearchImg" class="fas fa-search"></i>
-            </form>
         </div>
         <div id="memberAllListContents">
             

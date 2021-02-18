@@ -28,8 +28,8 @@
                 <div id="contentsDetail" class="clearfix">
                     <div id="TitleName">메일 쓰기</div>
                     <div id="TitleContents">
-                        <form action="/sendMail.ho" method="post" enctype="multipart/form-data">
-                            <input type="submit" value="메일 전송">
+                        <form action="/sendMail.ho"  method="post" enctype="multipart/form-data">
+                            <input type="submit" id="ttt" value="메일 전송">
                             <fieldset id="mail-info-wrap">
                                 <div class="mail-info">
                                     <div>받는사람 <i class="fas fa-plus-circle addr_list"></i></div>
@@ -83,7 +83,7 @@
             $(document).on('click', '.fa-times-circle', function() {
                 $(this).parent().remove();
             });
-            //
+            //파일 크기 보여주기
             $(document).on('change', 'input[type=file]', function(){
             	var size = this.files[0].size;
                 var printSize;
@@ -95,7 +95,7 @@
            		$(this).next().text(printSize);
             });
             //제출시
-            $('form').submit(function(){
+             $('form').submit(function(){
                 var inputContent = oEditors.getById["mail-content"].getIR();    
                 //스마트에디터에 쓴 글을 가져오는 스크립트 코드
                 $('#mail-content').val(inputContent);
@@ -113,7 +113,7 @@
                        return false;
                     }
                 }
-            });
+            }); 
         });
     </script>
 </body>

@@ -33,6 +33,21 @@
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 %>
 <style>
+	@font-face {
+    font-family: 'GongGothicMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+	@font-face {
+    font-family: 'GongGothicLight';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicLight.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+#TitleName{
+	font-family: GongGothicMedium;
+}
 	#fileBox{
 		width: 1100px;
 		height: 600px;
@@ -556,6 +571,8 @@ input[type="checkbox"]:checked + label:after {
                             		<i class="far fa-image"></i>
                             		<%} else if(rd.getOriginalFileName().contains(".pdf")==true){%>
                             		<i class="far fa-file-pdf"></i>
+                            		<%} else if(rd.getOriginalFileName().contains(".zip")==true || rd.getOriginalFileName().contains(".jar")==true || rd.getOriginalFileName().contains(".7z")==true || rd.getOriginalFileName().contains(".iso")==true || rd.getOriginalFileName().contains(".egg")==true){ %>
+                            		<i class="far fa-file-archive"></i>
                             		<%} else{%>
                             		<i class="far fa-file"></i>
                             		<%} %>

@@ -73,7 +73,7 @@
 
 .requestMember {
 	color: white;
-	padding: 0px 10px 10px 10px;
+	padding: 0px 0px 10px 10px;
 	width: 80%;
 	float: left;
 }
@@ -156,7 +156,7 @@
 							%>
 								<div class="requestBox">
 									<a>
-										<div class="requestSubject">제목 : <%=pr.getProSubject() %></div>
+										<div class="requestSubject"><%=pr.getProSubject() %></div>
 										<div class="requestMember">요청자 : <%=name %>(<%=position %>)</div>
 										<div class="requestBtnBox">
 											<div class="joinBtn">참가하기</div>
@@ -297,6 +297,8 @@
 							<%if(count==0){ %>
 								<div class="noneProject">완료된 프로젝트가 없습니다</div>
 							<%} %>
+						<%} else{%>
+								<div class="noneProject">완료된 프로젝트가 없습니다</div>
 						<%} %>
 							
 							

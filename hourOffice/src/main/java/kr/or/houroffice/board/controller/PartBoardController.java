@@ -77,8 +77,11 @@ public class PartBoardController {
 				
 				return "part_board/allPartBoardPage";
 			} // 부서가 없는 사람
+			Calendar cal = Calendar.getInstance();
+			int todayMon = cal.get(Calendar.MONTH) + 1;
+			
 			model.addAttribute("msg","부서가 없는 사람은 부서별 게시판을 이용할 수 없습니다.");
-			model.addAttribute("location","/main.ho");
+			model.addAttribute("location","/main.ho?todayMon="+todayMon);
 				
 			return "result";
 			
@@ -267,10 +270,10 @@ public class PartBoardController {
 	         String organizedfilePath="";        
 	         if(file!=null){
 	        
-	          System.out.println("파라미터명" + file.getName());
-	          System.out.println("파일크기" + file.getSize());
-	          System.out.println("파일 존재" + file.isEmpty());
-	          System.out.println("오리지날 파일 이름" + file.getOriginalFilename());
+	          //System.out.println("파라미터명" + file.getName());
+	          //System.out.println("파일크기" + file.getSize());
+	          //System.out.println("파일 존재" + file.isEmpty());
+	          //System.out.println("오리지날 파일 이름" + file.getOriginalFilename());
 	        
 	          // 파일이 업로드 되는 경로
 	          path = context.getRealPath("/");
@@ -278,7 +281,7 @@ public class PartBoardController {
 	          String uploadPath = "src\\main\\webapp\\resources\\file\\part_board\\";
 	          path = path + uploadPath;
 	         
-	          System.out.println(path);
+	          //System.out.println(path);
 	          
 	          InputStream inputStream = null;
 	          OutputStream outputStream = null;

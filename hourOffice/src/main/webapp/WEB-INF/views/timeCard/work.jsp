@@ -4,6 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+	
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -163,6 +164,29 @@ to {
 #back {
 	float: right;
 }
+
+@font-face {
+    font-family: 'GongGothicMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'GongGothicLight';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicLight.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#title1{
+font-family: GongGothicMedium;
+font-size:1.5rem;
+}
+
+#title2{
+font-family: GongGothicLight;
+}
+
 </style>
 <script>
 	$(function(){
@@ -208,6 +232,7 @@ to {
 						txt += "<td>"+data.list[i].endDate+"</td>";
 						txt += "</tr>";
 					}
+					$(".workData").remove();
 					$("#workList").append(txt);
 				},
 				error : function(e){
@@ -270,6 +295,14 @@ to {
 </script>
 </head>
 <body>
+	
+	<!-- 진원이꺼 근태관리 box -->
+	<!-- JSTL:C -->
+   <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+   <!-- JSTL:fmt -->
+   <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+   <!-- JSTL:fn -->
+   <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 	<% 	
 		ArrayList<Attendance> list = (ArrayList<Attendance>) request.getAttribute("list");
@@ -287,8 +320,9 @@ to {
 
 					<div id="TitleName">
 						<!--여기서 각자 id 만드시면 됩니다-->
-						<span>근태관리</span>
-                        <span>> 내근태현황</span>
+                        <span id="title1">근태관리</span>
+						<span id="title2">&nbsp;&nbsp; 내근태현황</span>
+                        
 						<!----------------------------------->
 					</div>
 					<div id="TitleContents">
@@ -308,7 +342,7 @@ to {
 							<tr>
 								<td height="30%">이번주 누적 근무시간</td>
 								<td>이번주 초과 근무시간</td>
-<!-- 								<td>이번달 누적 근무시간</td>
+								<!--<td>이번달 누적 근무시간</td>
 								<td>이번달 초과 근무시간</td> -->
 							</tr>
 							<tr>
@@ -322,35 +356,75 @@ to {
 
 
 						<div id="divbox">
-							<div class="work">
-								<div class="work-title">근태관리</div>
-								<div id="clock">시간</div>
-								<div class="work-today">오늘 근무시간</div>
-
-								<div class="work-record">
-									<span id="work-hour">0</span> 시간 <span id="work-minute">0</span>
-									분
-								</div>
-
-								<div class="record">
-									<span class="record-name">출근시간</span> <span id="go-clock"
-										class="record-clock">미등록</span>
-								</div>
-
-								<div class="record">
-									<span class="record-name">퇴근시간</span> <span id="back-clock"
-										class="record-clock">미등록</span>
-								</div>
-
-								<hr size="1" color="lightgray">
-
-								<button id="go" class="btnStyle">출근하기</button>
-								<button id="back" class="btnStyle">퇴근하기</button>
-								
-								
-
-							</div>
+             <div class="work">
+                    <div class="work-title">근태관리</div>
+                    <div id="clock">시간</div>
+                    <div class="work-today">오늘 근무시간</div>
+                    
+                    <div class="work-record">
+                        <span id="work-hour">
+                           <c:choose>
+                              <c:when test="${empty atten.todayWork }">
+                                 0
+                              </c:when>
+                              <c:otherwise>
+                              <c:set var="workHour" value="${fn:indexOf(atten.todayWork,'h') }"></c:set>
+                                 ${fn:substring(atten.todayWork,0,workHour) }
+                              </c:otherwise>
+                           </c:choose>
+                        </span> 시간
+                        <span id="work-minute">
+                           <c:choose>
+                              <c:when test="${empty atten.todayWork }">
+                                 0
+                              </c:when>
+                              <c:otherwise>
+                              <c:set var="workMin" value="${fn:indexOf(atten.todayWork,'m') }"></c:set>
+                                 ${fn:substring(atten.todayWork,(workHour+1),workMin) }
+                              </c:otherwise>
+                           </c:choose>
+                        </span> 분
+                        <input type="hidden" id="workTime" name="todayWork">
+                    </div>
+                    
+                    <div class="record">
+                        <span class="record-name">출근시간</span>
+                        <span id="go-clock" class="record-clock">
+                           <c:choose>
+                              <c:when test="${empty atten.startDate }">
+                                 미등록
+                              </c:when>
+                              <c:otherwise>
+                                 <fmt:formatDate value="${atten.startDate }" pattern="M/d HH:mm:ss"/>
+                              </c:otherwise>
+                           </c:choose>
+                        </span>
+                        <input type="hidden" id="startTime" name="startDate" value="${atten.startDate }">
+                    </div>
+                    
+                    <div class="record">
+                        <span class="record-name">퇴근시간</span>
+                        <span id="back-clock" class="record-clock">
+                           <c:choose>
+                              <c:when test="${empty atten.endDate }">
+                                 미등록
+                              </c:when>
+                              <c:otherwise>
+                                 <fmt:formatDate value="${atten.endDate }" pattern="M/d HH:mm:ss"/>
+                              </c:otherwise>
+                           </c:choose>
+                        </span>
+                        <input type="hidden" name="endDate" value="${atten.endDate }">
+                    </div>
+                    
+                    <hr size="1" color="lightgray">
+                    
+                    <button id="go" class="btnStyle">출근하기</button>
+                    <button id="back" class="btnStyle">퇴근하기</button>
+                    
+                </div>
 							<script src="/resources/js/memberMain/memberMain_work.js"></script>
+							
 
 
 

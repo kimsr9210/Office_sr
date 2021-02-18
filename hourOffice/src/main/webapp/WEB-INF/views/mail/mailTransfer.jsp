@@ -44,7 +44,7 @@
                                     </div>
                                 </div>
                                 <div class="mail-info">
-                                    <div>첨부파일</div><input type="file" name="mailFile" id="mail-file">(1개만, 용량제한 10MB )
+                                    <div>첨부파일</div><input type="file" name="mailFile" id="mail-file"><span></span><span>(1개만, 용량제한 10MB )</span>
                                 </div>
                             </fieldset>
                             <fieldset id="text-wrap">
@@ -85,6 +85,17 @@
             $(document).on('click', '.fa-times-circle', function() {
                 $(this).parent().remove();
             });
+            //파일 크기 보여주기
+            $(document).on('change', 'input[type=file]', function(){
+            	var size = this.files[0].size;
+                var printSize;
+                if(size/1024>1024){
+                    printSize = Maht.round(size/1024/1024*10)/10 +"MB ";
+                }else{
+                    printSize = Math.round(size/1024*10)/10 +"KB ";
+                }
+           		$(this).next().text(printSize);
+            });
             //제출시
             $('form').submit(function(){
                 var inputContent = oEditors.getById["mail-content"].getIR();    
@@ -93,6 +104,16 @@
                 if($('#receive-list').html()==""){
                 	alert('받는 사람이 1명 이상이어야 합니다.');
                 	return false;
+                }
+              //파일용량 체크
+                if(document.getElementById("mail-file").value!=""){
+                    var fileSize = document.getElementById("mail-file").files[0].size;
+                    var maxSize = 10 * 1024 * 1024;//2MB
+                 
+                    if(fileSize > maxSize){
+                       alert("첨부파일 사이즈는 10MB 이내로 등록 가능합니다. ");
+                       return false;
+                    }
                 }
             });
         });

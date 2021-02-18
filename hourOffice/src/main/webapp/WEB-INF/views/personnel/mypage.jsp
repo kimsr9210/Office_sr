@@ -108,6 +108,29 @@ width: 200px;}
 .tr_passChg{
 	display:none;
 }
+
+@font-face {
+    font-family: 'GongGothicMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'GongGothicLight';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicLight.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#title1{
+font-family: GongGothicMedium;
+font-size:1.5rem;
+}
+
+#title2{
+font-family: GongGothicLight;
+}
+
 </style>
 
 <script>
@@ -224,8 +247,9 @@ width: 200px;}
 
 					<div id="TitleName">
 						<!--여기서 각자 id 만드시면 됩니다-->
-						<span>인사관리</span>
-                        <span>> 내개인정보</span>
+                        <span id="title1">인사관리</span>
+						<span id="title2">&nbsp;&nbsp; 내개인정보</span>
+                        
 						<!----------------------------------->
 					</div>
 					<div id="TitleContents">

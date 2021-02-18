@@ -83,7 +83,7 @@ $(function() {
 					}, 300);
 				} else if ($name == '관리') {
 					$category.animate({
-						height : '200px'
+						height : '75px'
 					}, 300);
 				}
 				$arrow.attr('class', 'fas fa-chevron-left');

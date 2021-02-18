@@ -184,12 +184,12 @@ a:active {
 	width: 200px;
 	height: 100%;
 	float: left;
-	cursor: pointer;
 }
 
 #logoImg {
 	width: 90%;
 	margin: 10px;
+	cursor:pointer;
 }
 
 /* ------------------로그인 후 헤더------------------ */

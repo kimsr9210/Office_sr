@@ -194,7 +194,7 @@
             		}
             	<% } %>
             	//---end
-                
+                	$('#infor-div #modityDept-icon').show();
                     $('#infor-div').show(); // 정보 div 열기
                 }else{
                 	$('#infor-div #deptName-InInfor').text('(없음)');
@@ -274,7 +274,6 @@
             $('.dept-update').click(function(){
                 var newDeptName = $(this).prev().val();
                 var deptCode = $(this).parent().next().next().text();
-                
                 if($(this).children('.i-icon').attr('class').indexOf('fa-pen')>-1){
                     $(this).children('.i-icon').removeClass('fa-pen').addClass('fa-check-circle');
                     $(this).prev().show('10000').focus().prev().hide();
@@ -286,8 +285,13 @@
                     	type: 'post',
                     	success: function(result){
                     		if(result) {
-                    			$('#deptName-InInfor').text(newDeptName);
-                    			$('#deptName-'+deptCode).text(newDeptName);
+                    			$('#positionChange option').each(function(){
+                    				if($(this).val()==deptCode){
+                    					$(this).text(newDeptName); // 셀렉트 안에 있는 부서명 수정
+                    				}
+                    			});
+                    			$('#deptName-InInfor').text(newDeptName); // 부서정보 안에 있는 부서명 수정
+                    			$('#deptName-'+deptCode).text(newDeptName); // 메뉴트리 무서명 수정
                     			$('.dept-update').children('.i-icon').removeClass('fa-check-circle').addClass('fa-pen');
                                 $('.dept-update').prev().hide('10000').val('').prev().show();
                     		}else{
@@ -359,7 +363,7 @@
 	<!-- 자바 스크립트    -->
     <script>
 	$('#categoryAdmin').next().css('display','block');
-	$('#categoryAdmin').next().css('height','200px');
+	$('#categoryAdmin').next().css('height','75px');
 	$('#categoryAdmin').children().last().children().attr('class','fas fa-chevron-left');
 	
 	$('#categoryAdmin').next().children().eq(2).children().css('font-weight','800');

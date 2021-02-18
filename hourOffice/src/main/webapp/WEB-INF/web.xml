@@ -18,17 +18,7 @@
 		<filter-name>characterEncoding</filter-name>
 		<url-pattern>*.ho</url-pattern>
 	</filter-mapping>
-	<!-- 
-	<filter>
-  		<filter-name>multipart</filter-name>
-  		<filter-class>org.springframework.web.multipart.support.MultipartFilter</filter-class>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>multipart</filter-name>
-		<url-pattern>*.do</url-pattern>
-	</filter-mapping>
-	 -->
+	
 	<!-- HTTP Method Filter -->
 	<filter>
 	    <filter-name>httpMethodFilter</filter-name>
@@ -39,7 +29,8 @@
 	    <url-pattern>/*</url-pattern>
 	</filter-mapping>
 	<!-- multipart -->
-<!--<filter>
+	<!-- 
+	<filter>
     <filter-name>multipartFilter</filter-name>
     <filter-class>org.springframework.web.multipart.support.MultipartFilter
     </filter-class>
@@ -52,7 +43,8 @@
 <filter-mapping>
     <filter-name>multipartFilter</filter-name>
     <url-pattern>*.ho</url-pattern>
-</filter-mapping> -->
+</filter-mapping>
+-->
 	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>

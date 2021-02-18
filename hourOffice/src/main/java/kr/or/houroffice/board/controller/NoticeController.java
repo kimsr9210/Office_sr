@@ -161,8 +161,10 @@ public class NoticeController {
 				
 				return "admin_tap/general_affairs_department/allNoticePage";
 			}// 관리자 권한이 없다면 ↓
+			Calendar cal = Calendar.getInstance();
+			int todayMon = cal.get(Calendar.MONTH) + 1;
+			model.addAttribute("location","/main.ho?todayMon="+todayMon);
 			model.addAttribute("msg","접근 권한이 없습니다.");
-			model.addAttribute("location","/main.ho");
 			return "result";
 		}// 로그인을 하지 않았다면 ↓
 		return "redirect:login.jsp";
@@ -181,8 +183,10 @@ public class NoticeController {
 				
 				return "admin_tap/general_affairs_department/allNoticePage";
 			}// 관리자 권한이 없다면 ↓
+			Calendar cal = Calendar.getInstance();
+			int todayMon = cal.get(Calendar.MONTH) + 1;
+			model.addAttribute("location","/main.ho?todayMon="+todayMon);
 			model.addAttribute("msg","접근 권한이 없습니다.");
-			model.addAttribute("location","/main.ho");
 			return "result";
 		}// 로그인을 하지 않았다면 ↓
 		return "redirect:login.jsp";
@@ -194,8 +198,10 @@ public class NoticeController {
 			if(m.getMemRightCode()=='D'){
 				return "admin_tap/general_affairs_department/writePostNotice";
 			}// 관리자 권한이 없다면 ↓
+			Calendar cal = Calendar.getInstance();
+			int todayMon = cal.get(Calendar.MONTH) + 1;
+			model.addAttribute("location","/main.ho?todayMon="+todayMon);
 			model.addAttribute("msg","접근 권한이 없습니다.");
-			model.addAttribute("location","/main.ho");
 			return "result";
 		}// 로그인을 하지 않았다면 ↓
 		return "redirect:login.jsp";
@@ -314,8 +320,10 @@ public class NoticeController {
 				}
 				model.addAttribute("location","/admin_tap_allNoticePage.ho");
 			}else{// 관리자 권한이 없다면 ↓
+				Calendar cal = Calendar.getInstance();
+				int todayMon = cal.get(Calendar.MONTH) + 1;
+				model.addAttribute("location","/main.ho?todayMon="+todayMon);
 				model.addAttribute("msg","접근 권한이 없습니다.");
-				model.addAttribute("location","/main.ho");
 			}
 			return "result";
 		}// 로그인을 하지 않았다면 ↓
@@ -341,8 +349,10 @@ public class NoticeController {
 				return "result";
 				
 			}// 관리자 권한이 없다면 ↓
+			Calendar cal = Calendar.getInstance();
+			int todayMon = cal.get(Calendar.MONTH) + 1;
+			model.addAttribute("location","/main.ho?todayMon="+todayMon);
 			model.addAttribute("msg","접근 권한이 없습니다.");
-			model.addAttribute("location","/main.ho");
 			return "result";
 		}// 로그인을 하지 않았다면 ↓
 		return "redirect:login.jsp";
@@ -496,14 +506,16 @@ public class NoticeController {
 						// 1-2))
 					}// 글 수정에 성공했다면 ↓
 					model.addAttribute("msg","글 수정이 성공하였습니다.");
-					model.addAttribute("location","/admin_tap_noticeModify.ho?notNo="+bp.getPostNo());
+					model.addAttribute("location","/admin_tap_modifyNotice.ho?notNo="+bp.getPostNo());
 				}else{// 글 수정에 실패했다면 ↓
 					model.addAttribute("msg","글 수정에 실패하였습니다. \n지속적인 실패시 관리자에 문의하세요.");
-					model.addAttribute("location","/admin_tap_noticeModify.ho?notNo="+bp.getPostNo());
+					model.addAttribute("location","/admin_tap_modifyNotice.ho?notNo="+bp.getPostNo());
 				}
 			}else{// 관리자 권한이 없다면 ↓
+				Calendar cal = Calendar.getInstance();
+				int todayMon = cal.get(Calendar.MONTH) + 1;
+				model.addAttribute("location","/main.ho?todayMon="+todayMon);
 				model.addAttribute("msg","접근 권한이 없습니다.");
-				model.addAttribute("location","/main.ho");
 			}
 			return "result";
 			

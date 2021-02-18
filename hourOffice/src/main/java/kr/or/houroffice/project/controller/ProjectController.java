@@ -2,11 +2,15 @@ package kr.or.houroffice.project.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,11 +26,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
+import kr.or.houroffice.board.model.vo.BoardFile;
 import kr.or.houroffice.member.model.service.MemberService;
 import kr.or.houroffice.member.model.vo.Member;
 import kr.or.houroffice.project.model.service.ProjectServiceImpl;
@@ -56,6 +63,9 @@ public class ProjectController {
 	public String projectList() {
 		return "project/projectList";
 	}
+	
+	@Autowired
+	ServletContext context;
 
 	// 프로젝트 전체 리스트
 	@RequestMapping(value = "/projectAllList.ho")
@@ -234,7 +244,7 @@ public class ProjectController {
 
 		// 프로젝트 멤버 리스트 가져오기
 		ArrayList<Member> projectMemberList = mService.selectProjectMemberList(proNo);
-
+		
 		// 프로젝트 관리자 목록 가져오기
 		ArrayList<ProjectMember> projectMgrList = pService.selectProjectMemberList(proNo);
 
@@ -387,84 +397,204 @@ public class ProjectController {
 
 	// 일반 게시글 올리기
 	@RequestMapping(value = "/insertProjectBoard.ho")
-	public ModelAndView insertProjectBoard(HttpServletRequest request, HttpSession session) throws Exception {
+	public ModelAndView insertProjectBoard(HttpServletRequest request, @SessionAttribute("member") Member m) throws Exception {
+		int memNo = m.getMemNo();
+		MultipartHttpServletRequest multi = (MultipartHttpServletRequest) request;
 
-		// 업로드 유저 ID 값 가져오기(session에서 가져오기)
-		Member m = (Member) session.getAttribute("member");
-		String changedImgFileName = "";
-		String changedFileName = "";
-
-		String uploadPath = "/resources/file/project/";
-
-		ServletContext context = request.getServletContext();
-		String realUploadPath = context.getRealPath(uploadPath);
-		int uploadFileSizeLimit = 1000 * 1024 * 1024; // 1000MB
-
-		String encType = "UTF-8";
-		MultipartRequest multi = new MultipartRequest(request, realUploadPath, uploadFileSizeLimit, encType,
-				new DefaultFileRenamePolicy());
-
+		
 		int proNo = Integer.parseInt(multi.getParameter("proNo"));
 		String boardText = multi.getParameter("boardText");
+		if(boardText.equals("")){
+			boardText=" ";
+		}
+		MultipartFile file = multi.getFile("imgFile");
+		String changedImgFileName = "";
+		String path = "";
+		UUID randomeUUID = UUID.randomUUID();
+		String organizedfilePath = "";
+		if (file != null) {
 
-		// 파일 이름 가져오기
-		request.setCharacterEncoding("UTF-8");
+			System.out.println("파라미터명" + file.getName());
+			System.out.println("파일크기" + file.getSize());
+			System.out.println("파일 존재" + file.isEmpty());
+			System.out.println("오리지날 파일 이름" + file.getOriginalFilename());
 
-		String originalImgFileName = multi.getFilesystemName("imgFile");
-		int fileUser = m.getMemNo();
+			// 파일이 업로드 되는 경로
+			path = context.getRealPath("/");
+			path = path.replace("\\target\\m2e-wtp\\web-resources", "");
+			String uploadPath = "src\\main\\webapp\\resources\\file\\project\\";
+			path = path + uploadPath;
 
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); // 포멧만들기
-		long currentTime = Calendar.getInstance().getTimeInMillis(); // 시간값 가져오기
-		Timestamp uploadTime = Timestamp.valueOf(formatter.format(currentTime));
+			System.out.println(path);
 
-		File file = new File(realUploadPath + "\\" + originalImgFileName);
+			InputStream inputStream = null;
+			OutputStream outputStream = null;
 
-		file.renameTo(new File(realUploadPath + "\\" + currentTime + "_ho"));
-		changedImgFileName = currentTime + "_ho";
+			if (file.getSize() > 0) {
+				inputStream = file.getInputStream();
+				File realUploadDir = new File(path);
 
-		File reNameFile = new File(realUploadPath + "\\" + changedImgFileName);
-		String filePath = reNameFile.getPath();
+				if (!realUploadDir.exists()) {
+					realUploadDir.mkdirs();// 폴더생성.
+				}
 
-		long fileSize = reNameFile.length();
-		if (originalImgFileName != null) {
+				organizedfilePath = path + randomeUUID + "_" + file.getOriginalFilename();
+				System.out.println(organizedfilePath);// 파일이 저장된경로 + 파일 명
+
+				outputStream = new FileOutputStream(organizedfilePath);
+
+				int readByte = 0;
+				byte[] buffer = new byte[8192];
+
+				while ((readByte = inputStream.read(buffer, 0, 8120)) != -1) {
+					outputStream.write(buffer, 0, readByte); // 파일 생성 !
+				}
+			}
+
+		}
+		// 위의 코드까지 하면 파일 업로드는 완료
+		if(file.getSize() > 0){
+			
+			// 서버에 실제로 업로드 된 파일이름 가져오기
+			String originalImgFileName = file.getOriginalFilename();
+			
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); // 포멧만들기
+			long currentTime = Calendar.getInstance().getTimeInMillis(); // 현재 시간값 가져오기
+			Timestamp uploadTime = Timestamp.valueOf(formatter.format(currentTime));
+			
+			// 파일 리네임
+			File fileSave = new File(organizedfilePath); // 파일 연결
+			File copyFile = new File(path+"\\"+currentTime+"_ho");
+			changedImgFileName = currentTime+"_ho"; // DB에 저장할 파일 이름
+	
+			//아래 로직은 파일을 새로만들어서 데이터를 이동하는 작업
+			FileInputStream fis = new FileInputStream(fileSave); //읽을파일
+            FileOutputStream fos = new FileOutputStream(copyFile); //복사할파일
+            
+            int fileByte = 0; 
+            // fis.read()가 -1 이면 파일을 다 읽은것
+            while((fileByte = fis.read()) != -1) {
+                fos.write(fileByte);
+            }
+            //자원사용종료
+            fis.close();
+            fos.close();
+			
+            fileSave.delete(); //기존 원본 파일 삭제
+			
+			// File 객체를 통해 파일이름이 변경되면 새롭게 연결하는 파일 객체가 필요함
+			File reNameFile = new File(path+"\\"+changedImgFileName); // 이름이 바뀌여 다시 연결해줌
+			String filePath = reNameFile.getPath(); // 경로
+			// 해당 업로드된 file의 사이즈
+			long fileSize = reNameFile.length();
+			
+			System.out.println(changedImgFileName);
 			ProjectFileData pfd = new ProjectFileData();
 			pfd.setProNo(proNo);
-			pfd.setMemNo(fileUser);
+			pfd.setMemNo(memNo);
 			pfd.setOriginalFileName(originalImgFileName);
 			pfd.setChangedFileName(changedImgFileName);
 			pfd.setFilePath(filePath);
 			pfd.setFileSize(fileSize);
 			pfd.setUploadTime(uploadTime);
 			int resultFile = pService.insertProjectBoardFile(pfd);
-		} else {
-			changedImgFileName = "";
+			
+		} // 파일 null이 아니면 디비 저장 if 문
+		
+		//두번째 파일 업로드
+		file = multi.getFile("file");
+		path = "";
+		randomeUUID = UUID.randomUUID();
+		organizedfilePath = "";
+		if (file != null) {
+
+			System.out.println("파라미터명" + file.getName());
+			System.out.println("파일크기" + file.getSize());
+			System.out.println("파일 존재" + file.isEmpty());
+			System.out.println("오리지날 파일 이름" + file.getOriginalFilename());
+
+			// 파일이 업로드 되는 경로
+			path = context.getRealPath("/");
+			path = path.replace("\\target\\m2e-wtp\\web-resources", "");
+			String uploadPath = "src\\main\\webapp\\resources\\file\\project\\";
+			path = path + uploadPath;
+
+			System.out.println(path);
+
+			InputStream inputStream = null;
+			OutputStream outputStream = null;
+
+			if (file.getSize() > 0) {
+				inputStream = file.getInputStream();
+				File realUploadDir = new File(path);
+
+				if (!realUploadDir.exists()) {
+					realUploadDir.mkdirs();// 폴더생성.
+				}
+
+				organizedfilePath = path + randomeUUID + "_" + file.getOriginalFilename();
+				System.out.println(organizedfilePath);// 파일이 저장된경로 + 파일 명
+
+				outputStream = new FileOutputStream(organizedfilePath);
+
+				int readByte = 0;
+				byte[] buffer = new byte[8192];
+
+				while ((readByte = inputStream.read(buffer, 0, 8120)) != -1) {
+					outputStream.write(buffer, 0, readByte); // 파일 생성 !
+				}
+			}
+
 		}
-
-		String originalFileName = multi.getFilesystemName("file");
-		formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); // 포멧만들기
-		currentTime = Calendar.getInstance().getTimeInMillis(); // 시간값 가져오기
-		uploadTime = Timestamp.valueOf(formatter.format(currentTime));
-		file = new File(realUploadPath + "\\" + originalFileName);
-		file.renameTo(new File(realUploadPath + "\\" + currentTime + "_ho"));
-		changedFileName = currentTime + "_ho";
-		reNameFile = new File(realUploadPath + "\\" + changedFileName);
-		filePath = reNameFile.getPath();
-		fileSize = reNameFile.length();
-
-		if (originalFileName != null) {
+		
+		if(file.getSize() > 0){
+			
+			// 서버에 실제로 업로드 된 파일이름 가져오기
+			String originalFileName = file.getOriginalFilename();
+			
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); // 포멧만들기
+			long currentTime = Calendar.getInstance().getTimeInMillis(); // 현재 시간값 가져오기
+			Timestamp uploadTime = Timestamp.valueOf(formatter.format(currentTime));
+			
+			// 파일 리네임
+			File fileSave = new File(organizedfilePath); // 파일 연결
+			File copyFile = new File(path+"\\"+currentTime+"_ho");
+			String changedFileName = currentTime+"_ho"; // DB에 저장할 파일 이름
+	
+			//아래 로직은 파일을 새로만들어서 데이터를 이동하는 작업
+			FileInputStream fis = new FileInputStream(fileSave); //읽을파일
+            FileOutputStream fos = new FileOutputStream(copyFile); //복사할파일
+            
+            int fileByte = 0; 
+            // fis.read()가 -1 이면 파일을 다 읽은것
+            while((fileByte = fis.read()) != -1) {
+                fos.write(fileByte);
+            }
+            //자원사용종료
+            fis.close();
+            fos.close();
+			
+            fileSave.delete(); //기존 원본 파일 삭제
+			
+			// File 객체를 통해 파일이름이 변경되면 새롭게 연결하는 파일 객체가 필요함
+			File reNameFile = new File(path+"\\"+changedFileName); // 이름이 바뀌여 다시 연결해줌
+			String filePath = reNameFile.getPath(); // 경로
+			// 해당 업로드된 file의 사이즈
+			long fileSize = reNameFile.length();
+			
 			ProjectFileData pfd = new ProjectFileData();
 			pfd.setProNo(proNo);
-			pfd.setMemNo(fileUser);
+			pfd.setMemNo(memNo);
 			pfd.setOriginalFileName(originalFileName);
 			pfd.setChangedFileName(changedFileName);
 			pfd.setFilePath(filePath);
 			pfd.setFileSize(fileSize);
 			pfd.setUploadTime(uploadTime);
 			int resultFile = pService.insertProjectBoardFile(pfd);
-		} else {
-			changedFileName = "";
+			
 		}
-
+		
+		
 		ProjectBoard pb = new ProjectBoard();
 		pb.setProNo(proNo);
 		pb.setBoardText(boardText);
@@ -473,7 +603,7 @@ public class ProjectController {
 		int result = pService.insertProjectBoard(pb);
 		System.out.println(boardText);
 		ModelAndView mav = new ModelAndView();
-
+		
 		if (result > 0) {
 			mav.addObject("msg", "게시물 작성 완료");
 		} else {
@@ -515,7 +645,10 @@ public class ProjectController {
 	// 게시물 댓글 작성
 	@RequestMapping(value = "/insertBoardComment.ho")
 	public ModelAndView insertBoardComment(ProjectComment pc, @RequestParam int proNo, @RequestParam String boardType) {
-
+		
+		if(pc.getCommentCon().equals("")){
+			pc.setCommentCon("&nbsp;");
+		}
 		int result = pService.insertBoardComment(pc);
 		ModelAndView mav = new ModelAndView();
 		if (result > 0) {
@@ -637,11 +770,11 @@ public class ProjectController {
 		// 프로젝트 참가 수 감소
 		Project pro = pService.selectOneProject(pm.getProNo());
 		pro.setMemCount((pro.getMemCount() - 1));
-
+		
 		int result = pService.updateProjectMemberExit(pm);
 		Project p = pService.selectOneProject(pm.getProNo());
 		if (result > 0) {
-			int memCount = p.getMemCount();
+			int memCount = pro.getMemCount();
 			p.setMemCount(memCount);
 			pService.updateProjectMemberCount(p);
 			response.getWriter().print(true);
@@ -719,85 +852,219 @@ public class ProjectController {
 	}
 
 	@RequestMapping(value="/insertProjectCode.ho")
-	public ModelAndView insertProjectCode(HttpServletRequest request, HttpSession session)throws Exception {
-		Member m = (Member) session.getAttribute("member");
-		String changedImgFileName = "";
-		String changedFileName = "";
+	public ModelAndView insertProjectCode(HttpServletRequest request, HttpSession session, @SessionAttribute("member") Member m)throws Exception {
+		
+		int memNo = m.getMemNo();
+		MultipartHttpServletRequest multi = (MultipartHttpServletRequest) request;
 
-		String uploadPath = "/resources/file/project/";
-
-		ServletContext context = request.getServletContext();
-		String realUploadPath = context.getRealPath(uploadPath);
-		int uploadFileSizeLimit = 1000 * 1024 * 1024; // 1000MB
-
-		String encType = "UTF-8";
-		MultipartRequest multi = new MultipartRequest(request, realUploadPath, uploadFileSizeLimit, encType,
-				new DefaultFileRenamePolicy());
-
+		
 		int proNo = Integer.parseInt(multi.getParameter("proNo"));
 		String boardText = multi.getParameter("boardText");
 		String codeText = multi.getParameter("codeText");
+		if(boardText.equals("")){
+			boardText=" ";
+		}
+		if(codeText.equals("")){
+			boardText=" ";
+		}
+		MultipartFile file = multi.getFile("imgFile");
+		String changedImgFileName = "";
+		String path = "";
+		UUID randomeUUID = UUID.randomUUID();
+		String organizedfilePath = "";
+		if (file != null) {
 
-		// 파일 이름 가져오기
-		request.setCharacterEncoding("UTF-8");
+			System.out.println("파라미터명" + file.getName());
+			System.out.println("파일크기" + file.getSize());
+			System.out.println("파일 존재" + file.isEmpty());
+			System.out.println("오리지날 파일 이름" + file.getOriginalFilename());
 
-		String originalImgFileName = multi.getFilesystemName("imgFile");
-		int fileUser = m.getMemNo();
+			// 파일이 업로드 되는 경로
+			path = context.getRealPath("/");
+			path = path.replace("\\target\\m2e-wtp\\web-resources", "");
+			String uploadPath = "src\\main\\webapp\\resources\\file\\project\\";
+			path = path + uploadPath;
 
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); // 포멧만들기
-		long currentTime = Calendar.getInstance().getTimeInMillis(); // 시간값 가져오기
-		Timestamp uploadTime = Timestamp.valueOf(formatter.format(currentTime));
+			System.out.println(path);
 
-		File file = new File(realUploadPath + "\\" + originalImgFileName);
+			InputStream inputStream = null;
+			OutputStream outputStream = null;
 
-		file.renameTo(new File(realUploadPath + "\\" + currentTime + "_ho"));
-		changedImgFileName = currentTime + "_ho";
+			if (file.getSize() > 0) {
+				inputStream = file.getInputStream();
+				File realUploadDir = new File(path);
 
-		File reNameFile = new File(realUploadPath + "\\" + changedImgFileName);
-		String filePath = reNameFile.getPath();
+				if (!realUploadDir.exists()) {
+					realUploadDir.mkdirs();// 폴더생성.
+				}
 
-		long fileSize = reNameFile.length();
-		if (originalImgFileName != null) {
+				organizedfilePath = path + randomeUUID + "_" + file.getOriginalFilename();
+				System.out.println(organizedfilePath);// 파일이 저장된경로 + 파일 명
+
+				outputStream = new FileOutputStream(organizedfilePath);
+
+				int readByte = 0;
+				byte[] buffer = new byte[8192];
+
+				while ((readByte = inputStream.read(buffer, 0, 8120)) != -1) {
+					outputStream.write(buffer, 0, readByte); // 파일 생성 !
+				}
+			}
+
+		}
+		// 위의 코드까지 하면 파일 업로드는 완료
+		if(file.getSize() > 0){
+			
+			// 서버에 실제로 업로드 된 파일이름 가져오기
+			String originalImgFileName = file.getOriginalFilename();
+			
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); // 포멧만들기
+			long currentTime = Calendar.getInstance().getTimeInMillis(); // 현재 시간값 가져오기
+			Timestamp uploadTime = Timestamp.valueOf(formatter.format(currentTime));
+			
+			// 파일 리네임
+			File fileSave = new File(organizedfilePath); // 파일 연결
+			File copyFile = new File(path+"\\"+currentTime+"_ho");
+			changedImgFileName = currentTime+"_ho"; // DB에 저장할 파일 이름
+			
+			//아래 로직은 파일을 새로만들어서 데이터를 이동하는 작업
+			FileInputStream fis = new FileInputStream(fileSave); //읽을파일
+            FileOutputStream fos = new FileOutputStream(copyFile); //복사할파일
+            
+            int fileByte = 0; 
+            // fis.read()가 -1 이면 파일을 다 읽은것
+            while((fileByte = fis.read()) != -1) {
+                fos.write(fileByte);
+            }
+            //자원사용종료
+            fis.close();
+            fos.close();
+			
+            fileSave.delete(); //기존 원본 파일 삭제
+			
+			// File 객체를 통해 파일이름이 변경되면 새롭게 연결하는 파일 객체가 필요함
+			File reNameFile = new File(path+"\\"+changedImgFileName); // 이름이 바뀌여 다시 연결해줌
+			String filePath = reNameFile.getPath(); // 경로
+			// 해당 업로드된 file의 사이즈
+			long fileSize = reNameFile.length();
+			
+			System.out.println(changedImgFileName);
 			ProjectFileData pfd = new ProjectFileData();
 			pfd.setProNo(proNo);
-			pfd.setMemNo(fileUser);
+			pfd.setMemNo(memNo);
 			pfd.setOriginalFileName(originalImgFileName);
 			pfd.setChangedFileName(changedImgFileName);
 			pfd.setFilePath(filePath);
 			pfd.setFileSize(fileSize);
 			pfd.setUploadTime(uploadTime);
-			int resultFile = pService.insertProjectBoardFile(pfd);
-		} else {
-			changedImgFileName = "";
+			pService.insertProjectBoardFile(pfd);
+			
+		} // 파일 null이 아니면 디비 저장 if 문
+		
+		//두번째 파일 업로드
+		file = multi.getFile("file");
+		path = "";
+		randomeUUID = UUID.randomUUID();
+		organizedfilePath = "";
+		if (file != null) {
+
+			System.out.println("파라미터명" + file.getName());
+			System.out.println("파일크기" + file.getSize());
+			System.out.println("파일 존재" + file.isEmpty());
+			System.out.println("오리지날 파일 이름" + file.getOriginalFilename());
+
+			// 파일이 업로드 되는 경로
+			path = context.getRealPath("/");
+			path = path.replace("\\target\\m2e-wtp\\web-resources", "");
+			String uploadPath = "src\\main\\webapp\\resources\\file\\project\\";
+			path = path + uploadPath;
+
+			System.out.println(path);
+
+			InputStream inputStream = null;
+			OutputStream outputStream = null;
+
+			if (file.getSize() > 0) {
+				inputStream = file.getInputStream();
+				File realUploadDir = new File(path);
+
+				if (!realUploadDir.exists()) {
+					realUploadDir.mkdirs();// 폴더생성.
+				}
+
+				organizedfilePath = path + randomeUUID + "_" + file.getOriginalFilename();
+				System.out.println(organizedfilePath);// 파일이 저장된경로 + 파일 명
+
+				outputStream = new FileOutputStream(organizedfilePath);
+
+				int readByte = 0;
+				byte[] buffer = new byte[8192];
+
+				while ((readByte = inputStream.read(buffer, 0, 8120)) != -1) {
+					outputStream.write(buffer, 0, readByte); // 파일 생성 !
+				}
+			}
+
 		}
-
-		String originalFileName = multi.getFilesystemName("file");
-		formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); // 포멧만들기
-		currentTime = Calendar.getInstance().getTimeInMillis(); // 시간값 가져오기
-		uploadTime = Timestamp.valueOf(formatter.format(currentTime));
-		file = new File(realUploadPath + "\\" + originalFileName);
-		file.renameTo(new File(realUploadPath + "\\" + currentTime + "_ho"));
-		changedFileName = currentTime + "_ho";
-		reNameFile = new File(realUploadPath + "\\" + changedFileName);
-		filePath = reNameFile.getPath();
-		fileSize = reNameFile.length();
-
-		if (originalFileName != null) {
+		
+		if(file.getSize() > 0){
+			
+			// 서버에 실제로 업로드 된 파일이름 가져오기
+			String originalFileName = file.getOriginalFilename();
+			
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); // 포멧만들기
+			long currentTime = Calendar.getInstance().getTimeInMillis(); // 현재 시간값 가져오기
+			Timestamp uploadTime = Timestamp.valueOf(formatter.format(currentTime));
+			
+			// 파일 리네임
+			File fileSave = new File(organizedfilePath); // 파일 연결
+			File copyFile = new File(path+"\\"+currentTime+"_ho");
+			String changedFileName = currentTime+"_ho"; // DB에 저장할 파일 이름
+	
+			//아래 로직은 파일을 새로만들어서 데이터를 이동하는 작업
+			FileInputStream fis = new FileInputStream(fileSave); //읽을파일
+            FileOutputStream fos = new FileOutputStream(copyFile); //복사할파일
+            
+            int fileByte = 0; 
+            // fis.read()가 -1 이면 파일을 다 읽은것
+            while((fileByte = fis.read()) != -1) {
+                fos.write(fileByte);
+            }
+            //자원사용종료
+            fis.close();
+            fos.close();
+			
+            fileSave.delete(); //기존 원본 파일 삭제
+			
+			// File 객체를 통해 파일이름이 변경되면 새롭게 연결하는 파일 객체가 필요함
+			File reNameFile = new File(path+"\\"+changedFileName); // 이름이 바뀌여 다시 연결해줌
+			String filePath = reNameFile.getPath(); // 경로
+			// 해당 업로드된 file의 사이즈
+			long fileSize = reNameFile.length();
+			
 			ProjectFileData pfd = new ProjectFileData();
 			pfd.setProNo(proNo);
-			pfd.setMemNo(fileUser);
+			pfd.setMemNo(memNo);
 			pfd.setOriginalFileName(originalFileName);
 			pfd.setChangedFileName(changedFileName);
 			pfd.setFilePath(filePath);
 			pfd.setFileSize(fileSize);
 			pfd.setUploadTime(uploadTime);
-			int resultFile = pService.insertProjectBoardFile(pfd);
-		} else {
-			changedFileName = "";
+			pService.insertProjectBoardFile(pfd);
+			
 		}
 		
 		String[] pTag = codeText.split("\n");
 		for (int i = 0; i < pTag.length; i++) {
+
+			Pattern pattern2 = Pattern.compile("[<][a-zA-Z]+");
+			Matcher matcher2 = pattern2.matcher(pTag[i]);
+			while (matcher2.find()) {
+				String method2 = matcher2.group().substring(0, 1);
+				pTag[i] = pTag[i].replace(method2, "< ");
+			}
+			
+			
 			
 			pTag[i] = pTag[i].replace("	", "&nbsp;&nbsp;&nbsp;&nbsp;");
 			
@@ -834,6 +1101,13 @@ public class ProjectController {
 			while (matcher.find()) {
 				String method = matcher.group().substring(0, matcher.group().length() - 1);
 				pTag[i] = pTag[i].replace(method, "<span class=\"codeBlue\">" + method + "</span>");
+			}
+			
+			Pattern pattern3 = Pattern.compile("[/][/][a-zA-Z0-9]+");
+			Matcher matcher3 = pattern3.matcher(pTag[i]);
+			while (matcher3.find()) {
+				String method3 = matcher3.group().substring(0,  matcher3.group().length());
+				pTag[i] = pTag[i].replace(method3, "<span class=\"codeGray\">" + method3 + "</span>");
 			}
 
 			pTag[i] = "<pre class=\"codeLineNumber" + i + "\"><div class=\"codeLine\">"+(i+1)+"</div>" + pTag[i] + "</pre>";
@@ -894,10 +1168,10 @@ public class ProjectController {
 		}
 	}
 
-	// 게시물 댓글 작성
+	// 할일 작성
 	@RequestMapping(value = "/insertProjectWork.ho")
 	public ModelAndView insertProjectWork(ProjectWork pw, HttpSession session) {
-
+		
 		int result = pService.insertProjectWork(pw);
 		ModelAndView mav = new ModelAndView();
 		if (result > 0) {

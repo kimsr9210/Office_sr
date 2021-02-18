@@ -44,7 +44,7 @@ $(function(){
             }else{
                 checkMem.push($(this).val());
             }
-        }else{
+        }else{console.log(checkMem);
             if($(this).val()=='all'){
                 $('input[name=checkMem]').prop('checked',false);
                 checkMem = []; // 변수 비워주기
@@ -52,17 +52,18 @@ $(function(){
             	$('input[type=checkbox]').each(function(){
             		if($(this).val()=='all'){
             			$(this).prop('checked',false);
-            			checkPost.splice(checkPost.indexOf($(this).val()),1);
+            			checkMem.splice(checkMem.indexOf($(this).val()),1);
             		}
-            	});
+            	}); // all 체크 빼기
+            	console.log($(this).val());
                 checkMem.splice(checkMem.indexOf($(this).val()),1);
+                console.log(checkMem);
             }
         }
     });
     
     // 직위변경 버튼 누르면 직위 변경 영역 열림
     $('#positionChangeBtn').click(function(){
-        alert(checkMem.length);
         if(checkMem.length==1){
             $('.positionChangePlace').hide();
             $('#change'+checkMem).show();
@@ -73,6 +74,7 @@ $(function(){
     
     // 직위 변경 저장 버튼 -> update
     $('.positionChangeSaveBtn').click(function(){
+    	var $memCheckbox = $(this).parents('tr').prev().find('input[type=checkbox]');
     	var $memPositionTd = $(this).parents('tr').prev().children(':nth-child(4)'); // 현재 직위가 있는 td
         var memNo = $(this).parents('tr').attr('id').substr(6); // 사번
         var position = $(this).prev().val(); // 변경할 직위
@@ -87,6 +89,9 @@ $(function(){
                 	success: function(data){
                 		if(data){
                 			alert('직위를 변경하였습니다.');
+                			$('.positionChangePlace').hide();
+                			$memCheckbox.prop('checked',false);
+                			checkMem.splice(checkMem.indexOf($memCheckbox.val()),1);
                 			$memPositionTd.text(position);
                 		}else{
                 			alert('직위 변경을 실패하였습니다. \n지속적인 오류시 관리자에 문의하세요.');
@@ -141,6 +146,9 @@ $(function(){
 })	
 
 </script>
+<Style>
+	
+</Style>
 <body>
 	<div id="wrap">
 		<%@ include file="/WEB-INF/views/common/header.jsp" %>
@@ -197,12 +205,12 @@ $(function(){
                                     <td><a href="/admin_tap_memberInfo.ho?memNo=<%=member.getMemNo()%>"><%=member.getMemName() %></a></td>
                                     <td><%=member.getMemPosition() %></td>
                            		<% if(member.getDeptCode() != null){ %>
-                                    <td><%=member.getDeptCode() %></td>
+                                    <td><%=member.getDeptName() %></td>
                                 <% }else { %>
                                     <td>미정</td>
                                 <% } %>
                               	<% if(member.getMemEmail() != null){ %>
-                                    <td><%=member.getDeptName() %></td>
+                                    <td><%=member.getMemEmail() %></td>
                                 <% }else { %>
                                 	<td>미등록</td>
                                 <% } %>
@@ -244,7 +252,7 @@ $(function(){
     <script>
 	//관리 페이지 일 때
 	$('#categoryAdmin').next().css('display','block');
-	$('#categoryAdmin').next().css('height','200px');
+	$('#categoryAdmin').next().css('height','75px');
 	$('#categoryAdmin').children().last().children().attr('class','fas fa-chevron-left');
 	
 	$('#categoryAdmin').next().children().eq(1).children().css('font-weight','800');

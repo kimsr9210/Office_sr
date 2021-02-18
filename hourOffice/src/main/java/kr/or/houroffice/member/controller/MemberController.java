@@ -62,10 +62,5 @@ public class MemberController {
 		int result = mService.updateAttendanceMember(atten);
 		AjaxTemplate.resultTF(result, response);
 	}
-	
-	@RequestMapping(value="/proG.ho")// 퇴근 기록
-	public String proGPage() { 
-		return "projectCal";
-	}
 
 }
