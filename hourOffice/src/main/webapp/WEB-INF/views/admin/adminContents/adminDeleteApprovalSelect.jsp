@@ -47,7 +47,7 @@
 	    						<select class="optionStyle" name="searchType">
 	    							<option value="docuNo">문서번호</option>
 	    							<option value="docuType">결재 양식</option>
-	    							<option value="memNo">기안자</option>
+	    							<option value="memName">기안자</option>
 	    						</select>
 								<input type="text" name="keyword"/>
 								<button><i class="fas fa-search"></i></button>
@@ -65,12 +65,12 @@
                                 </tr>
                                 <c:forEach items="${list}" var="li" varStatus="status">
 	                                <tr>
-	                                    <td><input type="checkbox" name="checkBoard" value="checkApproval" value="${li.docuNo}"/></td>
+	                                    <td><input type="checkbox" name="checkApproval" value="${li.docuNo}"/></td>
 	                                    <td>${li.docuNo}</td>
 	                                    <td>${li.docuType}</td>
 	                                    <td>${li.title}</td>
-	                                    <td>${li.memNo}</td>
-	                                    <td><fmt:formatDate value="${li.docuDate}" type="both" pattern="yyyy년 MM월 dd일"/></td>
+	                                    <td>${li.memName}</td>
+	                                    <td><fmt:formatDate value="${li.finalDate}" type="both" pattern="yyyy년 MM월 dd일"/></td>
 	                                </tr>
                                 </c:forEach>
                     	</table>
@@ -100,7 +100,7 @@
 				if($(this).val()=='all'){//th의 전체 checkbox 체크
 					$('input[name=checkApproval]').prop('checked',true);//td의 전체 checkbox 체크
 					checkApproval = [];//비우기
-					$('input:checkbox[name=Approval]:checked').each(function(){
+					$('input:checkbox[name=checkApproval]:checked').each(function(){
 						checkApproval.push($(this).val());//배열에  전체 사번 넣어주기
 					})						
 				} else { //td의 일부 checkbox 체크	

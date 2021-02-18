@@ -34,11 +34,21 @@ public class AdminController {
 	//관리자 페이지 입장
 	@RequestMapping(value="/adminMainPage.ho")
 	public String adminMainPage(Model model) throws IOException {
-		int expireMemberCount = aService.expireDeleteMember();//데이터/문서 관리 - 경과된 사원 기록 삭제
-		int expireNotMemberCount = aService.expireNotDeleteMember();//데이터/문서 관리 - 미경과된 사원 기록 삭제		
+		int deletePaperCount = aService.deletePaperCount();//삭제 기간 경과 문서 
+		model.addAttribute("deletePaperCount",deletePaperCount);
 		
-		model.addAttribute("expireMemberCount",expireMemberCount);
-		model.addAttribute("expireNotMemberCount",expireNotMemberCount);
+		int expireMemberCount = aService.expireDeleteMember();//데이터/문서 관리 - 경과된 사원 기록 삭제
+		int expirePaperCount = aService.expirePaperCount();//게시물 - 보존 기간 경과 문서
+		int expireApprovalCount = aService.expireApprovalCount();//결재안 - 보존 기간 경과 문서
+		int expireCount = expireMemberCount + expirePaperCount + expireApprovalCount;//보존 기간 경과 문서
+		model.addAttribute("expireCount",expireCount);
+		
+		int expireNotMemberCount = aService.expireNotDeleteMember();//사원 - 보존 기간 미경과 문서 갯수
+		int deleteNotPaperCount = aService.deleteNotPaperCount();//게시물 - 삭제 대기 미경과 문서
+		int expireNotPaperCount = aService.expireNotPaperCount();//게시물 - 보존 기간 미경과된 삭제 대기 게시물
+		int expireNotApprovalCount = aService.expireNotApprovalCount();//결재안 - 보존 기간 미경과 문서
+		int allNotCount = expireNotMemberCount + deleteNotPaperCount + expireNotPaperCount + expireNotApprovalCount;
+		model.addAttribute("allNotCount",allNotCount);//미경과 문서
 		return "admin/adminMain";
 	}//adminMainPage
 	
@@ -172,7 +182,7 @@ public class AdminController {
 		
 		//페이지 네비
 		int naviCountPerPage = 10; // 페이지 네비 10개씩 (페이징 처리)
-		String pageNavi = aService.searchGetPageNavi(currentPage,recordCountPerPage,naviCountPerPage,searchCount,searchType,keyword);
+		String pageNavi = aService.searchGetPageNavi(currentPage,recordCountPerPage,naviCountPerPage,searchCount);
 	
 			if(list != null) {
 				model.addAttribute("countAll",countAll);
@@ -262,7 +272,7 @@ public class AdminController {
 			
 		//페이지 네비
 		int naviCountPerPage = 10; // 페이지 네비 10개씩 (페이징 처리)
-		String pageNavi = aService.searchGetBoardPageNavi(currentPage,recordCountPerPage,naviCountPerPage,searchCount,searchType,keyword);
+		String pageNavi = aService.searchGetBoardPageNavi(currentPage,recordCountPerPage,naviCountPerPage,searchCount);
 		
 			if(list != null) {
 				model.addAttribute("countBoard",countBoard);
@@ -276,12 +286,13 @@ public class AdminController {
 	//삭제 조회 - 삭제된 부서별 게시글 복원 (ajax)
 	@RequestMapping(value="/adminDeleteBoardCancel.ho")
 	public void deleteBoardCancel(@RequestParam(value="noList[]") List<String> noList, HttpServletResponse response) throws IOException{
+		System.out.println(noList.indexOf('p'));
 		int result = aService.deleteBoardCancel(noList);
 		if(result>0) {
 			response.getWriter().print(true);
 		} else {
 			response.getWriter().print(false);
-		}
+		}	
 	}//deleteBoardCancel
 		
 	//삭제 조회 - 삭제된 부서별 게시글 영구 삭제 (ajax)
@@ -336,7 +347,10 @@ public class AdminController {
 			searchType="DOCU_NO";
 		} else if (searchType.equals("docuType")) {//결재 양식 검색
 			searchType="DOCU_TYPE";
+		} else if (searchType.equals("memName")) {//결재 양식 검색
+			searchType="MEM_NAME";
 		}
+		
 		keyword = "%"+keyword+"%";//유사 keyword 검색 처리
 		int countApproval = aService.countDeleteApproval();//삭제된 결재안 수
 		int currentPage;//현재 페이지 값을 가지고 있는 변수 - 페이징 처리를 위한 변수
@@ -353,7 +367,7 @@ public class AdminController {
 		
 		//페이지 네비
 		int naviCountPerPage = 10;//페이지 네비 10개씩 (페이징 처리)
-		String pageNavi = aService.searchGetApprovalPageNavi(currentPage,recordCountPerPage,naviCountPerPage,searchCount,searchType,keyword);
+		String pageNavi = aService.searchGetApprovalPageNavi(currentPage,recordCountPerPage,naviCountPerPage,searchCount);
 		
 		if(list != null) {
 			model.addAttribute("countApproval",countApproval);
@@ -388,31 +402,63 @@ public class AdminController {
 	
 	//데이터/문서 관리
 	@RequestMapping(value="/adminDeleteDataPage.ho")
-	public String expireDeleteMember(HttpServletResponse response, Model model) throws IOException {
-		int expireMemberCount = aService.expireDeleteMember();//경과된 사원 기록
-		int expireNotMemberCount = aService.expireNotDeleteMember();//미경과된 사원 기록
-		
-		int deletePaperCount = aService.deletePaperCount();//경과된 삭제 대기 게시물
-		int expirePaperCount = aService.expirePaperCount();//보존 기간 경과된 삭제 대기 게시물
-		int paperCount = deletePaperCount + expirePaperCount;//게시물 기간 경과
-		
-		int deleteNotPaperCount = aService.deleteNotPaperCount();//미경과된 삭제 대기 게시물
-		int expireNotPaperCount = aService.expireNotPaperCount();//보존 기간 미경과된 삭제 대기 게시물
-		int paperNotCount = deleteNotPaperCount + expireNotPaperCount;//게시물 기간 미경과
-		
-		model.addAttribute("expireMemberCount",expireMemberCount);
-		model.addAttribute("expireNotMemberCount",expireNotMemberCount);
-		
-		model.addAttribute("deletePaperCount",deletePaperCount);
-		model.addAttribute("expirePaperCount",expirePaperCount);
-		model.addAttribute("paperCount",paperCount);
-		
-		model.addAttribute("deleteNotPaperCount",deleteNotPaperCount);
-		model.addAttribute("expireNotPaperCount",expireNotPaperCount);
-		model.addAttribute("paperNotCount",paperNotCount);
-		
-		return "admin/adminContents/adminDeleteData";
+	public String expireDeleteMember(HttpSession session, HttpServletResponse response, Model model) throws IOException {
+		if(session.getAttribute("member")!=null){ //로그인
+			int expireMemberCount = aService.expireDeleteMember();//사원 - 보존 기간 경과문서 갯수
+			int expireNotMemberCount = aService.expireNotDeleteMember();//사원 - 보존 기간 미경과 문서 갯수
+			
+			int deletePaperCount = aService.deletePaperCount();//게시물 - 삭제 대기 경과 문서
+			int deleteNotPaperCount = aService.deleteNotPaperCount();//게시물 - 삭제 대기 미경과 문서
+			int expirePaperCount = aService.expirePaperCount();//게시물 - 보존 기간 경과 문서
+			int expireNotPaperCount = aService.expireNotPaperCount();//게시물 - 보존 기간 미경과된 삭제 대기 게시물
+			
+			int paperCount = deletePaperCount + expirePaperCount;//게시물 - 경과 문서
+			int paperNotCount = deleteNotPaperCount + expireNotPaperCount;//게시물 - 미경과 문서
+			
+			int expireApprovalCount = aService.expireApprovalCount();//결재안 - 보존 기간 경과 문서
+			int expireNotApprovalCount = aService.expireNotApprovalCount();//결재안 - 보존 기간 미경과 문서
+			
+			model.addAttribute("expireMemberCount",expireMemberCount);
+			model.addAttribute("expireNotMemberCount",expireNotMemberCount);
+			
+			model.addAttribute("deletePaperCount",deletePaperCount);
+			model.addAttribute("deleteNotPaperCount",deleteNotPaperCount);
+			model.addAttribute("expirePaperCount",expirePaperCount);
+			model.addAttribute("expireNotPaperCount",expireNotPaperCount);
+			
+			model.addAttribute("paperCount",paperCount);
+			model.addAttribute("paperNotCount",paperNotCount);
+			
+			model.addAttribute("expireApprovalCount",expireApprovalCount);
+			model.addAttribute("expireNotApprovalCount",expireNotApprovalCount);
+			
+			return "admin/adminContents/adminDeleteData";
+		} else {
+			return "redirect:/login.jsp";
+		}
 	}//expireDeleteMember
+	
+	//데이터/문서 관리 - 삭제된 사원 전체 영구 삭제 (ajax)
+	@RequestMapping(value="/deleteCountMember.ho")
+	public void deleteCountMember(HttpServletResponse response) throws IOException {
+		int result = aService.deleteCountMember();
+		if(result>0) {
+			response.getWriter().print(true);
+		} else {
+			response.getWriter().print(false);
+		}
+	}//deleteCountMember
+	
+	//데이터/문서 관리 - 삭제된 결제안 전체 영구 삭제 (ajax)
+	@RequestMapping(value="/deleteCountApproval.ho")
+	public void deleteCountApproval(HttpServletResponse response) throws IOException {
+		int result = aService.deleteCountApproval();
+		if(result>0) {
+			response.getWriter().print(true);
+		} else {
+			response.getWriter().print(false);
+		}
+	}//deleteCountApproval
 		
 	//오류 관리 - 비밀번호 초기화
 	@RequestMapping(value="/adminPasswordInitPage.ho")

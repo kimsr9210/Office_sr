@@ -69,12 +69,11 @@
 								</div>
 								<div id="paymentRecord" class="float">
 									<div>결재안 기록 삭제</div>
-									<table><tr><td>삭제 대기(7일) 경과 문서</td><td>0 건</td></tr></table>
-									<table><tr><td>보존기간(5년) 경과 문서</td><td>2 건</td></tr></table>
+									<table><tr><td style="height: 106px;">보존기간(5년) 경과 문서</td><td>${expireApprovalCount} 건</td></tr></table>
 									<div>
 										<div id="myChart3" class="graph-div"></div>
 										<div>
-											[0건 / 294871939건]<br>
+											[ ${expireApprovalCount}건 / ${expireNotApprovalCount}건 ]<br>
 											<button class="agreeButtonType">삭제</button>
 										</div>
 									</div>
@@ -82,8 +81,8 @@
 							</div>						
 							<script type="text/javascript">						
 								// 데이터 연산
-								var result = [${expireMemberCount}, ${paperCount}, 7.9]; //경과
-								var result2 = [${expireNotMemberCount}, ${paperNotCount}, 10]; //미경과
+								var result = [${expireMemberCount}, ${paperCount}, ${expireApprovalCount}]; //경과
+								var result2 = [${expireNotMemberCount}, ${paperNotCount}, ${expireNotApprovalCount}]; //미경과
 						        //구글차트 
 						        google.charts.load('current', {'packages':['corechart']}); 
 						        google.charts.setOnLoadCallback(drawChart);
@@ -122,11 +121,62 @@
 			</div>
 		</div>
 		
-		<script type='text/javascript'>	    
+		<script type='text/javascript'>
+		
+			$(function(){
+				
+				//사원 기록 전체 삭제 로직
+				$('#memberRecord').children(':nth-child(3)').children(':nth-child(2)').children(':nth-child(2)').click(function(){
+					var expireMemberCount = ${expireMemberCount};
+					
+					if(expireMemberCount==0) {
+						alert('보존기간(1년)이 경과한 사원이 없습니다.');
+					} else {
+						if(confirm('보존기간(1년)이 경과한 사원 기록을 영구 삭제하시겠습니까?')){
+							$.ajax({
+								url: '/deleteCountMember.ho',
+								type : 'post',
+								success : function(result){
+									alert('보존기간(1년)이 경과한 사원 기록을 영구 삭제하였습니다.');
+									history.go(0);
+								},
+								error : function(){
+									alert('보존기간(1년)이 경과한 사원 기록의 영구 삭제가 실패하였습니다.');
+								}
+							});
+						}
+					}
+				});
+				
+				//결재안 기록 전체 삭제 로직
+				$('#paymentRecord').children(':nth-child(3)').children(':nth-child(2)').children(':nth-child(2)').click(function(){
+					alert('1');
+					var expireApprovalCount = ${expireApprovalCount};
+					
+					if(expireApprovalCount==0) {
+						alert('보존기간(5년)이 경과한 사원이 없습니다.');
+					} else {
+						if(confirm('보존기간(5년)이 경과한 사원 기록을 영구 삭제하시겠습니까?')){
+							$.ajax({
+								url: '/deleteCountApproval.ho',
+								type : 'post',
+								success : function(result){
+									alert('보존기간(5년)이 경과한 사원 기록을 영구 삭제하였습니다.');
+									history.go(0);
+								},
+								error : function(){
+									alert('보존기간(5년)이 경과한 사원 기록의 영구 삭제가 실패하였습니다.');
+								}
+							});
+						}
+					}
+				});
+			});
+			
 			// 네비 화살표 돌리기	
-				$dataList = $('#dataList');
-		        $dataList.children().eq(2).children().attr('class','iArrow fas fa-angle-left');		
-				$dataList.removeClass('hoverColor').addClass('click');
+			$dataList = $('#dataList');
+			$dataList.children().eq(2).children().attr('class','iArrow fas fa-angle-left');		
+			$dataList.removeClass('hoverColor').addClass('click');
 		</script>
 	</body>
 </html>

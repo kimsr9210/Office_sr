@@ -17,12 +17,22 @@
 	<link rel="stylesheet" type="text/css" href="/resources/css/admin/header.css" />
 </head>
 <body>
+	<!--JSTL core Tag 사용 선언  -->
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+	
 	<div id="header">
 		<span id="headerClock"></span>
 		<div id="headerMember" >
-			<a href="/memberLoginPage.ho" class="aStyle" style="color:white;"><i class="headerIcon fas fa-door-open fa-2x"></i></a>
-			<i class="headerIcon fas fa-user-circle fa-2x"></i>
-			<span id="headerText">땡땡팀, 누구님 환영합니다.</span>
+			<a href="/memberLoginPage.ho" class="aStyle" style="color:white;"><i style="position:relative; width:35px; top:-12.5px;" class=" fas fa-door-open fa-2x"></i></a>
+			<c:choose>
+            	<c:when test="${empty sessionScope.member.memProfile }">
+                    	<i class="fas fa-user-circle headerIcon"></i>
+                 </c:when>
+                 <c:otherwise>
+                    	<img style="width:40px; margin-left:5px; margin-right:5px; border-radius:40px" src="/resources/images/profile/${sessionScope.member.memProfile }">
+                 </c:otherwise>
+            </c:choose>
+			<span id="headerText">${sessionScope.member.deptName }, ${sessionScope.member.memName }님 환영합니다.</span>
 		</div>
 	</div>
 	

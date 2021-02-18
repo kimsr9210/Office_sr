@@ -131,7 +131,7 @@ public class AdminDAO {
 	}//selectSearchDeleteMember
 
 	//삭제 조회 - 삭제된 사원 조회 - 검색 - 페이징 처리
-	public String searchGetPageNavi(SqlSessionTemplate sqlSession, int currentPage, int recordCountPerPage, int naviCountPerPage, int searchCount, String searchType, String keyword) {
+	public String searchGetPageNavi(SqlSessionTemplate sqlSession, int currentPage, int recordCountPerPage, int naviCountPerPage, int searchCount) {
 		// 현재 변수
 		// currentPage			: 현재 페이지
 		// recordCountPerPage	: 1 페이지당 보여질 게시물의 개수
@@ -160,20 +160,20 @@ public class AdminDAO {
 				
 			//만약 첫번째 pageNavi가 아니라면 '<' 모양을 추가해라
 			if(startNavi != 1) {
-				sb.append("<li class='page-list'><a class='page-link' href='/adminSearchDeleteMember.ho?searchType="+searchType+"&keyword="+keyword+"&currentPage="+(startNavi-1)+"'>◀</a></li>");
+				sb.append("<li class='page-list'><a class='page-link' href='/adminSearchDeleteMember.ho?currentPage="+(startNavi-1)+"'>◀</a></li>");
 			}
 					
 			for(int i=startNavi; i<=endNavi; i++) {
 				if(i==currentPage) {
-					sb.append("<li class='page-list'><a class='page-link' href='/adminSearchDeleteMember.ho?searchType="+searchType+"&keyword="+keyword+"&currentPage="+i+"'><B>"+i+"</B></a></li>");
+					sb.append("<li class='page-list'><a class='page-link' href='/adminSearchDeleteMember.ho?currentPage="+i+"'><B>"+i+"</B></a></li>");
 				} else {
-					sb.append("<li class='page-list'><a class='page-link' href='/adminSearchDeleteMember.ho?searchType="+searchType+"&keyword="+keyword+"&currentPage="+i+"'>"+i+"</a></li>");
+					sb.append("<li class='page-list'><a class='page-link' href='/adminSearchDeleteMember.ho?currentPage="+i+"'>"+i+"</a></li>");
 				}
 			}
 					
 			//만약 마지막 pageNavi가 아니라면 '>' 모양을 추가해라
 			if(endNavi != pageTotalCount) {
-				sb.append("<li class='page-list'><a class='page-link' href='/adminSearchDeleteMember.ho?searchType="+searchType+"&keyword="+keyword+"&currentPage="+(startNavi+1)+"'>▶</a></li>");
+				sb.append("<li class='page-list'><a class='page-link' href='/adminSearchDeleteMember.ho?currentPage="+(startNavi+1)+"'>▶</a></li>");
 			}
 					
 		return sb+"";
@@ -273,7 +273,7 @@ public class AdminDAO {
 	}//selectSearchBoard
 		
 	//삭제 조회 - 삭제된 부서별 게시글 검색 - 페이징 처리
-	public String searchGetBoardPageNavi(SqlSessionTemplate sqlSession, int currentPage, int recordCountPerPage, int naviCountPerPage, int searchCount, String searchType, String keyword) {
+	public String searchGetBoardPageNavi(SqlSessionTemplate sqlSession, int currentPage, int recordCountPerPage, int naviCountPerPage, int searchCount) {
 		// 현재 변수
 		// currentPage			: 현재 페이지
 		// recordCountPerPage	: 1 페이지당 보여질 게시물의 개수
@@ -302,20 +302,20 @@ public class AdminDAO {
 						
 			//만약 첫번째 pageNavi가 아니라면 '<' 모양을 추가해라
 			if(startNavi != 1) {
-				sb.append("<li class='page-list'><a class='page-link' href='/adminSearchBoard.ho?searchType="+searchType+"&keyword="+keyword+"&currentPage="+(startNavi-1)+"'>◀</a></li>");
+				sb.append("<li class='page-list'><a class='page-link' href='/adminSearchBoard.ho?currentPage="+(startNavi-1)+"'>◀</a></li>");
 			}
 							
 			for(int i=startNavi; i<=endNavi; i++) {
 				if(i==currentPage) {
-					sb.append("<li class='page-list'><a class='page-link' href='/adminSearchBoard.ho?searchType="+searchType+"&keyword="+keyword+"&currentPage="+i+"'><B>"+i+"</B></a></li>");
+					sb.append("<li class='page-list'><a class='page-link' href='/adminSearchBoard.ho?currentPage="+i+"'><B>"+i+"</B></a></li>");
 				} else {
-					sb.append("<li class='page-list'><a class='page-link' href='/adminSearchBoard.ho?searchType="+searchType+"&keyword="+keyword+"&currentPage="+i+"'>"+i+"</a></li>");
+					sb.append("<li class='page-list'><a class='page-link' href='/adminSearchBoard.ho?currentPage="+i+"'>"+i+"</a></li>");
 				}
 			}
 							
 			//만약 마지막 pageNavi가 아니라면 '>' 모양을 추가해라
 			if(endNavi != pageTotalCount) {
-				sb.append("<li class='page-list'><a class='page-link' href='/adminSearchBoard.ho?searchType="+searchType+"&keyword="+keyword+"&currentPage="+(startNavi+1)+"'>▶</a></li>");
+				sb.append("<li class='page-list'><a class='page-link' href='/adminSearchBoard.ho?currentPage="+(startNavi+1)+"'>▶</a></li>");
 			}
 							
 		return sb+"";
@@ -328,7 +328,7 @@ public class AdminDAO {
 	
 	//삭제 조회 - 삭제된 부서별 게시글 영구 삭제 (ajax)
 	public int deleteBoard(SqlSessionTemplate sqlSession, List<String> noList) {		
-		return sqlSession.update("admin.deleteBoard",noList);
+		return sqlSession.delete("admin.deleteBoard",noList);
 	}//deleteBoard
 
 	//삭제 조회 - 삭제된 결재안 조회  - 삭제된 결재안 수
@@ -419,7 +419,7 @@ public class AdminDAO {
 
 	//삭제 조회 - 삭제된 결재안 검색 - 페이징 처리
 	public String searchGetApprovalPageNavi(SqlSessionTemplate sqlSession, int currentPage, int recordCountPerPage,
-			int naviCountPerPage, int searchCount, String searchType, String keyword) {
+			int naviCountPerPage, int searchCount) {
 		// 현재 변수
 		// currentPage			: 현재 페이지
 		// recordCountPerPage	: 1 페이지당 보여질 게시물의 개수
@@ -448,20 +448,20 @@ public class AdminDAO {
 								
 			//만약 첫번째 pageNavi가 아니라면 '<' 모양을 추가해라
 			if(startNavi != 1) {
-				sb.append("<li class='page-list'><a class='page-link' href='/adminSearchApproval.ho?searchType="+searchType+"&keyword="+keyword+"&currentPage="+(startNavi-1)+"'>◀</a></li>");
+				sb.append("<li class='page-list'><a class='page-link' href='/adminSearchApproval.ho?currentPage="+(startNavi-1)+"'>◀</a></li>");
 			}
 									
 			for(int i=startNavi; i<=endNavi; i++) {
 				if(i==currentPage) {
-					sb.append("<li class='page-list'><a class='page-link' href='/adminSearchApproval.ho?searchType="+searchType+"&keyword="+keyword+"&currentPage="+i+"'><B>"+i+"</B></a></li>");
+					sb.append("<li class='page-list'><a class='page-link' href='/adminSearchApproval.ho?currentPage="+i+"'><B>"+i+"</B></a></li>");
 				} else {
-					sb.append("<li class='page-list'><a class='page-link' href='/adminSearchApproval.ho?searchType="+searchType+"&keyword="+keyword+"&currentPage="+i+"'>"+i+"</a></li>");
+					sb.append("<li class='page-list'><a class='page-link' href='/adminSearchApproval.ho?currentPage="+i+"'>"+i+"</a></li>");
 				}
 			}
 									
 			//만약 마지막 pageNavi가 아니라면 '>' 모양을 추가해라
 			if(endNavi != pageTotalCount) {
-				sb.append("<li class='page-list'><a class='page-link' href='/adminSearchApproval.ho?searchType="+searchType+"&keyword="+keyword+"&currentPage="+(startNavi+1)+"'>▶</a></li>");
+				sb.append("<li class='page-list'><a class='page-link' href='/adminSearchApproval.ho?currentPage="+(startNavi+1)+"'>▶</a></li>");
 			}
 									
 		return sb+"";
@@ -474,7 +474,7 @@ public class AdminDAO {
 
 	//삭제 조회 - 삭제된 부서별 게시글 영구 삭제 (ajax)
 	public int deleteApproval(SqlSessionTemplate sqlSession, List<String> appNoList) {
-		return sqlSession.update("admin.deleteApproval",appNoList);
+		return sqlSession.delete("admin.deleteApproval",appNoList);
 	}//deleteApproval	
 	
 	//데이터/문서 관리 - 사원 기록 삭제
@@ -507,4 +507,24 @@ public class AdminDAO {
 		return sqlSession.selectOne("admin.expireNotPaperCount");
 	}//expireNotPaperCount
 
+	//결재안 - 보존 기간 경과 문서
+	public int expireApprovalCount(SqlSessionTemplate sqlSession) {
+		return sqlSession.selectOne("admin.expireApprovalCount");
+	}//expireApprovalCount
+
+	//결재안 - 보존 기간 미경과 문서
+	public int expireNotApprovalCount(SqlSessionTemplate sqlSession) {
+		return sqlSession.selectOne("admin.expireNotApprovalCount");
+	}//expireNotApprovalCount
+
+	//데이터/문서 관리 - 삭제된 사원 전체 영구 삭제 (ajax)
+	public int deleteCountMember(SqlSessionTemplate sqlSession) {
+		return sqlSession.delete("admin.deleteCountMember");
+	}//deleteCountMember
+
+	//데이터/문서 관리 - 삭제된 결제안 전체 영구 삭제 (ajax)
+	public int deleteCountApproval(SqlSessionTemplate sqlSession) {
+		return sqlSession.delete("admin.deleteCountApproval");
+	}//deleteCountApproval
+	
 }//AdminDAO

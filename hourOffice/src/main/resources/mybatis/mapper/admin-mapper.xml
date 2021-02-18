@@ -200,50 +200,106 @@
 	<!-- 삭제 조회 - 삭제된 부서별 게시글 조회 - 삭제된 부서별 게시판 수 -->
 	<select id="countBoard" resultType="int">
 		SELECT
-    		count(*) countBoard
-		FROM ADMIN_BOARD
-		WHERE delYN='Y'  
+		   count(*)
+		FROM (SELECT
+		        'p'||PART_NO AS noNum,
+		        PART_TITLE AS title,
+		        PART_WRITER AS writer,
+		        PART_DATE AS writeDate,
+		        PART_HITS AS hits,
+		        PART_DEL_YN AS delYN,
+		        PART_DEL_DATE AS delDate
+		        FROM PART_BOARD
+		            UNION
+		        SELECT
+		            'n'||NOT_NO AS noNum,
+		            NOT_TITLE AS title,
+		            NOT_WRITER AS writer,
+		            NOT_DATE AS writeDate,
+		            NOT_HITS AS hits,
+		            NOT_DEL_YN AS delYN,
+		            NOT_DEL_DATE AS delDate
+		        FROM ALL_NOTICE)
+		WHERE DELYN='Y' AND DELDATE IS NOT NULL
 	</select>
 	
 	<!-- 삭제 조회 - 삭제된 게시글 조회  -->
 	<select id="selectDeleteBoard" parameterType="hashmap" resultType="AdminBoard">
 		SELECT 
-   			rnum,
-    		noNum,
-    		title,
-   			writer,
-    		writeDate,
-    		hits,
-    		delYN,
-    		delDate
-		FROM ADMIN_BOARD
-		WHERE delYN='Y' AND RNUM BETWEEN ${start} AND ${end}	         		
+            *
+        FROM(
+            SELECT
+                ROW_NUMBER()OVER(ORDER BY delDate ASC) AS RNUM,
+                A.noNum,
+                A.title,
+                A.writer,
+                A.writeDate,
+                A.hits,
+                A.delYN,
+                A.delDate
+            FROM (SELECT
+                    'p'||PART_NO AS noNum,
+                    PART_TITLE AS title,
+                    PART_WRITER AS writer,
+                    PART_DATE AS writeDate,
+                    PART_HITS AS hits,
+                    PART_DEL_YN AS delYN,
+                    PART_DEL_DATE AS delDate
+                    FROM PART_BOARD
+            UNION
+                  SELECT
+                      'n'||NOT_NO AS noNum,
+                      NOT_TITLE AS title,
+                      NOT_WRITER AS writer,
+                      NOT_DATE AS writeDate,
+                      NOT_HITS AS hits,
+                      NOT_DEL_YN AS delYN,
+                      NOT_DEL_DATE AS delDate
+                  FROM ALL_NOTICE) A
+            WHERE DELYN='Y' AND DELDATE IS NOT NULL)
+        WHERE (RNUM BETWEEN ${start} AND ${end})	         		
 	</select>
 	
 	<!-- 삭제 조회 - 삭제된부서별 게시글 검색 -->
 	<select id="selectSearchBoard" parameterType="hashmap" resultType="AdminBoard">
 		SELECT 
-   			rnum,
-    		noNum,
-    		title,
-   			writer,
-    		writeDate,
-    		hits,
-    		delYN,
-    		delDate
-		FROM ADMIN_BOARD
-		WHERE ${searchType} LIKE #{keyword} AND delYN='Y' AND (RNUM BETWEEN ${start} AND ${end})
+            *
+        FROM(
+            SELECT
+                ROW_NUMBER()OVER(ORDER BY delDate ASC) AS RNUM,
+                A.noNum,
+                A.title,
+                A.writer,
+                A.writeDate,
+                A.hits,
+                A.delYN,
+                A.delDate
+            FROM (SELECT
+                    'p'||PART_NO AS noNum,
+                    PART_TITLE AS title,
+                    PART_WRITER AS writer,
+                    PART_DATE AS writeDate,
+                    PART_HITS AS hits,
+                    PART_DEL_YN AS delYN,
+                    PART_DEL_DATE AS delDate
+                    FROM PART_BOARD
+            UNION
+                  SELECT
+                      'n'||NOT_NO AS noNum,
+                      NOT_TITLE AS title,
+                      NOT_WRITER AS writer,
+                      NOT_DATE AS writeDate,
+                      NOT_HITS AS hits,
+                      NOT_DEL_YN AS delYN,
+                      NOT_DEL_DATE AS delDate
+                  FROM ALL_NOTICE) A
+            WHERE DELYN='Y' AND DELDATE IS NOT NULL AND ${searchType} LIKE #{keyword})
+        WHERE (RNUM BETWEEN ${start} AND ${end})
 	</select>
 	
 	<!-- 삭제 조회 - 삭제된 부서별 게시글 복원 (ajax) -->
-	<update id="deleteBoardCancel" parameterType="java.util.List">
-		UPDATE
-			PART_BOARD
-		SET
-			PART_DEL_YN='N', PART_DEL_DATE=NULL
-		<foreach collection="list" item="item" open="WHERE (PART_DEL_YN='Y') AND (" close=")" separator="OR">
-			
-		</foreach>
+	<update id="deleteBoardCancel" parameterType="String">
+		 update part_board set part_del_date=SYSTIMESTAMP  where part_no='3'
 	</update>
 	
 	<!-- 삭제 조회 - 삭제된 부서별 게시글 영구 삭제 (ajax) -->
@@ -254,35 +310,96 @@
 			PART_NO=#{item}
 		</foreach>
 	</delete>
+
+	<!-- 삭제 조회 - 삭제 조회 - 삭제된 결재안 조회  - 삭제된 결재안 수 -->
+	<select id="countDeleteApproval" resultType="int">
+		<![CDATA[
+			SELECT
+				count(*) as countApproval
+			FROM APPROVAL
+			WHERE del_YN='Y' OR (DEL_YN='N' AND ADD_MONTHS(FINAL_DATE,60) < SYSTIMESTAMP)
+		]]>
+	</select>
 		
+	<!-- 삭제 조회 - 삭제된 결재안 조회  -->
+	<select id="selectDeleteApproval" parameterType="hashmap" resultType="Approval">
+		<![CDATA[
+			SELECT 
+	    		DOCU_NO as docuNo,
+	    		MEM_NO as memNo,
+	    		DEPT_CODE as deptCode,
+	    		DOCU_DATE as decuDate,
+	    		DOCU_TYPE as docuType,
+	    		TITLE as title,
+	   		 	APR_TYPE as aprType,
+	    		URGENCY_YN as urgencyYN,
+	    		LOCK_YN as lockYN,
+	    		DEL_YN as delYN,
+	    		FINAL_DATE as finalDate,
+	    		MEM_NAME AS memNAME
+			FROM (SELECT ROW_NUMBER()OVER(ORDER BY A.DEL_YN DESC) AS RNUM, A.*, M.MEM_NAME
+	        		FROM APPROVAL A
+	        		LEFT JOIN MEMBER M ON (A.MEM_NO=M.MEM_NO)
+	        		WHERE DEL_YN='Y' OR (DEL_YN='N' AND ADD_MONTHS(FINAL_DATE,60) < SYSTIMESTAMP))
+			WHERE RNUM BETWEEN ${start} AND ${end}
+		]]>    		
+	</select>	
 		
+	<!-- 삭제 조회 - 삭제 조회 - 삭제된 결재안 검색 -->
+	<select id="selectSearchDeleteApproval" parameterType="hashmap" resultType="Approval">
+		<![CDATA[
+			SELECT 
+	    		DOCU_NO as docuNo,
+	    		MEM_NO as memNo,
+	    		DEPT_CODE as deptCode,
+	    		DOCU_DATE as decuDate,
+	    		DOCU_TYPE as docuType,
+	    		TITLE as title,
+	   		 	APR_TYPE as aprType,
+	    		URGENCY_YN as urgencyYN,
+	    		LOCK_YN as lockYN,
+	    		DEL_YN as delYN,
+	    		FINAL_DATE as finalDate,
+	    		MEM_NAME AS memNAME
+			FROM (SELECT ROW_NUMBER()OVER(ORDER BY A.DEL_YN DESC) AS RNUM, A.*, M.MEM_NAME
+	        		FROM APPROVAL A
+	        		LEFT JOIN MEMBER M ON (A.MEM_NO=M.MEM_NO)
+	        		WHERE ${searchType} LIKE #{keyword} AND DEL_YN='Y' OR (DEL_YN='N' AND ADD_MONTHS(FINAL_DATE,60) < SYSTIMESTAMP))
+			WHERE RNUM BETWEEN ${start} AND ${end}
+		]]>
+	</select>	
 		
+	<!-- 삭제 조회 - 삭제된 결재안 복원 (ajax) -->
+	<update id="deleteApprovalCancel" parameterType="java.util.List">
+		UPDATE
+			APPROVAL
+		SET
+			DEL_YN='N'
+		<foreach collection="list" item="item" open="WHERE DEL_YN='Y' AND (" close=")" separator="OR">
+			DOCU_NO=#{item}
+		</foreach>
+	</update>	
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+	<!-- 삭제 조회 - 삭제된 결재안 영구 삭제 (ajax) -->
+	<delete id="deleteApproval" parameterType="java.util.List">		
+		DELETE
+		FROM APPROVAL
+		<![CDATA[
+			WHERE ((DEL_YN='N' AND ADD_MONTHS(FINAL_DATE,60) < SYSTIMESTAMP) OR (DEL_YN='Y')) AND
+		]]>
+		  
+		<foreach collection="list" item="item" open="(" close=")" separator="OR">
+			DOCU_NO=#{item}
+		</foreach>
+
+	</delete>	
 		
 	<!-- 데이터/문서 관리 - 사원 기록 삭제 -->
 	<select id="expireDeleteMember" resultType="int">
 		<![CDATA[
 			SELECT COUNT(*) as expireDeleteMember
 			FROM MEMBER
-			WHERE MEM_RESIGN_YN='Y' AND ADD_MONTHS(MEM_RESIGN_DATE,12) > SYSTIMESTAMP
+			WHERE MEM_RESIGN_YN='Y' AND ADD_MONTHS(MEM_RESIGN_DATE,12) < SYSTIMESTAMP
 		]]>
 	</select>
 	
@@ -291,7 +408,7 @@
 		<![CDATA[
 			SELECT COUNT(*) as expireDeleteMember
 			FROM MEMBER
-			WHERE MEM_RESIGN_YN='Y' AND ADD_MONTHS(MEM_RESIGN_DATE,12) <= SYSTIMESTAMP
+			WHERE MEM_RESIGN_YN='Y' AND ADD_MONTHS(MEM_RESIGN_DATE,12) >= SYSTIMESTAMP
 		]]>
 	</select>
 	
@@ -304,21 +421,21 @@
 		]]>
 	</select>
 	
-	<!-- 데이터/문서 관리 - 보존 기간 경과된 삭제 대기 게시물 -->
-	<select id="expirePaperCount" resultType="int">
-		<![CDATA[
-			SELECT COUNT(*) as expirePaperCount
-			FROM PART_BOARD
-			WHERE PART_DEL_YN='N' AND ADD_MONTHS(PART_DATE,60) < SYSTIMESTAMP
-		]]>
-	</select>
-	
 	<!-- 데이터/문서 관리 - 미경과된 삭제 대기 게시물 -->
 	<select id="deleteNotPaperCount" resultType="int">
 		<![CDATA[
 			SELECT COUNT(*) as deletePaperCount
 			FROM PART_BOARD
 			WHERE PART_DEL_YN='Y' AND (PART_DEL_DATE + 7) >= SYSTIMESTAMP
+		]]>
+	</select>
+	
+	<!-- 데이터/문서 관리 - 보존 기간 경과된 삭제 대기 게시물 -->
+	<select id="expirePaperCount" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) as expirePaperCount
+			FROM PART_BOARD
+			WHERE PART_DEL_YN='N' AND ADD_MONTHS(PART_DATE,60) < SYSTIMESTAMP
 		]]>
 	</select>
 	
@@ -330,4 +447,40 @@
 			WHERE PART_DEL_YN='N' AND ADD_MONTHS(PART_DATE,60) >= SYSTIMESTAMP
 		]]>
 	</select>
+	
+	<!-- 데이터/문서 관리 - 보존 기간 경과된 삭제 대기 결재안 -->
+	<select id="expireApprovalCount" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) as expireApprovalCount
+			FROM APPROVAL
+			WHERE (DEL_YN='N' AND ADD_MONTHS(FINAL_DATE,60) < SYSTIMESTAMP) OR DEL_YN='Y'
+		]]>
+	</select>
+	
+	<!-- 데이터/문서 관리 - 보존 기간 미경과된 삭제 대기 결재안 -->
+	<select id="expireNotApprovalCount" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) as expireNotApprovalCount
+			FROM APPROVAL
+			WHERE DEL_YN='N' AND ADD_MONTHS(FINAL_DATE,60) >= SYSTIMESTAMP
+		]]>
+	</select>
+	
+	<!-- 데이터/문서 관리 - 삭제된 사원 전체 영구 삭제 (ajax) -->
+	<delete id="deleteCountMember" parameterType="int">
+		<![CDATA[
+			DELETE
+			FROM MEMBER
+			WHERE MEM_RESIGN_YN='Y' AND ADD_MONTHS(MEM_RESIGN_DATE,12) < SYSTIMESTAMP
+		]]>
+	</delete>
+	
+	<!-- 데이터/문서 관리 - 삭제된 결제안 전체 영구 삭제 (ajax) -->
+	<delete id="deleteCountApproval" parameterType="int">	
+		<![CDATA[
+			DELETE
+			FROM APPROVAL
+			WHERE (DEL_YN='N' AND ADD_MONTHS(FINAL_DATE,60) < SYSTIMESTAMP) OR DEL_YN='Y'
+		]]>
+	</delete>
 </mapper>

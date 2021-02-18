@@ -77,8 +77,8 @@ public class AdminService {
 	}//selectSearchDeleteMember
 
 	//삭제 조회 - 삭제된 사원 조회 - 검색 - 페이징 처리
-	public String searchGetPageNavi(int currentPage, int recordCountPerPage, int naviCountPerPage, int searchCount, String searchType, String keyword) {
-		return aDAO.searchGetPageNavi(sqlSession,currentPage,recordCountPerPage,naviCountPerPage,searchCount,searchType, keyword);
+	public String searchGetPageNavi(int currentPage, int recordCountPerPage, int naviCountPerPage, int searchCount) {
+		return aDAO.searchGetPageNavi(sqlSession,currentPage,recordCountPerPage,naviCountPerPage,searchCount);
 	}//searchGetPageNavi
 
 	//삭제 조회  - 삭제된 사원 조회 - 삭제된 사원 복원 (ajax)
@@ -114,8 +114,8 @@ public class AdminService {
 	
 	//삭제 조회 - 삭제된 부서별 게시글 검색 - 페이징 처리
 	public String searchGetBoardPageNavi(int currentPage, int recordCountPerPage, int naviCountPerPage,
-			int searchCount, String searchType, String keyword) {
-		return aDAO.searchGetBoardPageNavi(sqlSession, currentPage,recordCountPerPage,naviCountPerPage,searchCount,searchType, keyword);
+			int searchCount) {
+		return aDAO.searchGetBoardPageNavi(sqlSession, currentPage,recordCountPerPage,naviCountPerPage,searchCount);
 	}//searchGetPageNavi
 	
 	//삭제 조회 - 삭제된 부서별 게시글 복원 (ajax)
@@ -151,8 +151,8 @@ public class AdminService {
 
 	//삭제 조회 - 삭제된 결재안 검색 - 페이징 처리
 	public String searchGetApprovalPageNavi(int currentPage, int recordCountPerPage, int naviCountPerPage,
-			int searchCount, String searchType, String keyword) {
-		return aDAO.searchGetApprovalPageNavi(sqlSession, currentPage,recordCountPerPage,naviCountPerPage,searchCount,searchType, keyword);
+			int searchCount) {
+		return aDAO.searchGetApprovalPageNavi(sqlSession, currentPage,recordCountPerPage,naviCountPerPage,searchCount);
 	}//searchGetApprovalPageNavi
 
 	//삭제 조회 - 삭제된 결재안 복원 (ajax)
@@ -160,7 +160,7 @@ public class AdminService {
 		return aDAO.deleteApprovalCancel(sqlSession, appNoList);
 	}//deleteApprovalCancel
 
-	//삭제 조회 - 삭제된 부서별 게시글 영구 삭제 (ajax)
+	//삭제 조회 - 삭제된 결재안 영구 삭제 (ajax)
 	public int deleteApproval(List<String> appNoList) {
 		return aDAO.deleteApproval(sqlSession, appNoList);
 	}//deleteApproval
@@ -194,5 +194,25 @@ public class AdminService {
 	public int expireNotPaperCount() {
 		return aDAO.expireNotPaperCount(sqlSession);
 	}//expireNotPaperCount
+
+	//결재안 - 보존 기간 경과 문서
+	public int expireApprovalCount() {
+		return aDAO.expireApprovalCount(sqlSession);
+	}//expireApprovalCount
+
+	//결재안 - 보존 기간 미경과 문서
+	public int expireNotApprovalCount() {
+		return aDAO.expireNotApprovalCount(sqlSession);
+	}//expireNotApprovalCount
+
+	//데이터/문서 관리 - 삭제된 사원 전체 영구 삭제 (ajax)
+	public int deleteCountMember() {
+		return aDAO.deleteCountMember(sqlSession);
+	}//deleteCountMember
+
+	//데이터/문서 관리 - 삭제된 결제안 전체 영구 삭제 (ajax)
+	public int deleteCountApproval() {
+		return aDAO.deleteCountApproval(sqlSession);
+	}//deleteCountApproval
 
 }//AdminService

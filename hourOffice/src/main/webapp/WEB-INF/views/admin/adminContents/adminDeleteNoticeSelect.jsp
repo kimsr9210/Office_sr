@@ -55,7 +55,7 @@
 						<table id="noticeList" class="tblStyle">
                                 <tr>
                                     <th><input type="checkbox" name="checkBoard" value="all"/></th>
-                                    <th>번호</th>
+                                    <th>게시글 코드</th>
                                     <th>제목</th>
                                     <th>작성자</th>
                                     <th>작성일</th>
@@ -64,7 +64,7 @@
                                 </tr>
                                 <c:forEach items="${list}" var="li" varStatus="status">
 	                                <tr>
-	                                	<td><input type="checkbox" name="checkBoard" value="${li.rnum}"/></td>
+	                                	<td><input type="checkbox" name="checkBoard" value="${li.noNum}"/></td>
 	                                    <td>${li.noNum}</td>
 	                                    <td>${li.title}</td>
 	                                    <td>${li.writer}</td>

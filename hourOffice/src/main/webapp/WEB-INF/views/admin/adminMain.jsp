@@ -52,13 +52,13 @@
 								<table class="toDoList">
 									<tr><td>　</td></tr>
 									<tr><td><span>삭제 기간 경과 문서</span></td></tr>
-									<tr><td><p>10건</p></td></tr>
+									<tr><td><p>${deletePaperCount}건</p></td></tr>
 									<tr><td>　</td></tr>
 									<tr><td><span>보존 기간 경과 문서</span></td></tr>
-									<tr><td><p>${expireMemberCount}건</p></td></tr>
+									<tr><td><p>${expireCount}건</p></td></tr>
 									<tr><td>　</td></tr>
 									<tr><td><span>미경과 문서</span></td></tr>
-									<tr><td><p>${expireNotMemberCount}건</p></td></tr>
+									<tr><td><p>${allNotCount}건</p></td></tr>
 									<tr><td>　</td></tr>
 								</table>
 							</td></tr>
