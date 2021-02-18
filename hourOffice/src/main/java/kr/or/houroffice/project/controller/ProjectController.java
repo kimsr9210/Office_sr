@@ -404,6 +404,9 @@ public class ProjectController {
 		
 		int proNo = Integer.parseInt(multi.getParameter("proNo"));
 		String boardText = multi.getParameter("boardText");
+		if(boardText.equals("")){
+			boardText=" ";
+		}
 		MultipartFile file = multi.getFile("imgFile");
 		String changedImgFileName = "";
 		String path = "";
@@ -858,6 +861,12 @@ public class ProjectController {
 		int proNo = Integer.parseInt(multi.getParameter("proNo"));
 		String boardText = multi.getParameter("boardText");
 		String codeText = multi.getParameter("codeText");
+		if(boardText.equals("")){
+			boardText=" ";
+		}
+		if(codeText.equals("")){
+			boardText=" ";
+		}
 		MultipartFile file = multi.getFile("imgFile");
 		String changedImgFileName = "";
 		String path = "";
@@ -1044,88 +1053,6 @@ public class ProjectController {
 			pService.insertProjectBoardFile(pfd);
 			
 		}
-		
-		/*
-		Member m = (Member) session.getAttribute("member");
-		String changedImgFileName = "";
-		String changedFileName = "";
-
-		String uploadPath = "/resources/file/project/";
-
-		ServletContext context = request.getServletContext();
-		String realUploadPath = context.getRealPath(uploadPath);
-		int uploadFileSizeLimit = 1000 * 1024 * 1024; // 1000MB
-
-		String encType = "UTF-8";
-		MultipartRequest multi = new MultipartRequest(request, realUploadPath, uploadFileSizeLimit, encType,
-				new DefaultFileRenamePolicy());
-
-		int proNo = Integer.parseInt(multi.getParameter("proNo"));
-		String boardText = multi.getParameter("boardText");
-		String codeText = multi.getParameter("codeText");
-		if(boardText.equals("")){
-			boardText=" ";
-		}
-		if(codeText.equals("")){
-			codeText=" ";
-		}
-		// 파일 이름 가져오기
-		request.setCharacterEncoding("UTF-8");
-
-		String originalImgFileName = multi.getFilesystemName("imgFile");
-		int fileUser = m.getMemNo();
-
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); // 포멧만들기
-		long currentTime = Calendar.getInstance().getTimeInMillis(); // 시간값 가져오기
-		Timestamp uploadTime = Timestamp.valueOf(formatter.format(currentTime));
-
-		File file = new File(realUploadPath + "\\" + originalImgFileName);
-
-		file.renameTo(new File(realUploadPath + "\\" + currentTime + "_ho"));
-		changedImgFileName = currentTime + "_ho";
-
-		File reNameFile = new File(realUploadPath + "\\" + changedImgFileName);
-		String filePath = reNameFile.getPath();
-
-		long fileSize = reNameFile.length();
-		if (originalImgFileName != null) {
-			ProjectFileData pfd = new ProjectFileData();
-			pfd.setProNo(proNo);
-			pfd.setMemNo(fileUser);
-			pfd.setOriginalFileName(originalImgFileName);
-			pfd.setChangedFileName(changedImgFileName);
-			pfd.setFilePath(filePath);
-			pfd.setFileSize(fileSize);
-			pfd.setUploadTime(uploadTime);
-			int resultFile = pService.insertProjectBoardFile(pfd);
-		} else {
-			changedImgFileName = "";
-		}
-
-		String originalFileName = multi.getFilesystemName("file");
-		formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); // 포멧만들기
-		currentTime = Calendar.getInstance().getTimeInMillis(); // 시간값 가져오기
-		uploadTime = Timestamp.valueOf(formatter.format(currentTime));
-		file = new File(realUploadPath + "\\" + originalFileName);
-		file.renameTo(new File(realUploadPath + "\\" + currentTime + "_ho"));
-		changedFileName = currentTime + "_ho";
-		reNameFile = new File(realUploadPath + "\\" + changedFileName);
-		filePath = reNameFile.getPath();
-		fileSize = reNameFile.length();
-
-		if (originalFileName != null) {
-			ProjectFileData pfd = new ProjectFileData();
-			pfd.setProNo(proNo);
-			pfd.setMemNo(fileUser);
-			pfd.setOriginalFileName(originalFileName);
-			pfd.setChangedFileName(changedFileName);
-			pfd.setFilePath(filePath);
-			pfd.setFileSize(fileSize);
-			pfd.setUploadTime(uploadTime);
-			int resultFile = pService.insertProjectBoardFile(pfd);
-		} else {
-			changedFileName = "";
-		}*/
 		
 		String[] pTag = codeText.split("\n");
 		for (int i = 0; i < pTag.length; i++) {

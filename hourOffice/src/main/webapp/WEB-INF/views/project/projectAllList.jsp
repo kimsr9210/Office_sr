@@ -156,7 +156,7 @@
 							%>
 								<div class="requestBox">
 									<a>
-										<div class="requestSubject">제목 : <%=pr.getProSubject() %></div>
+										<div class="requestSubject"><%=pr.getProSubject() %></div>
 										<div class="requestMember">요청자 : <%=name %>(<%=position %>)</div>
 										<div class="requestBtnBox">
 											<div class="joinBtn">참가하기</div>

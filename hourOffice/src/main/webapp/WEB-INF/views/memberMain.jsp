@@ -377,7 +377,7 @@
                 <div class="pro-graph">
                     <div id="columnchart_values"></div>
                     <div class="pro-graph-count" style="width:25%;">
-                        <span id="cTitle">이번달 프로젝트 수</span>
+                        <span id="cTitle">이번 달 프로젝트 수</span>
                         <span id="cValue">${monthlyList[0].monthlyCount}</span><!--4자리까지-->
                     </div>
                     
@@ -434,7 +434,7 @@
                                         			var ruleData;
                                         			
                                         			for(var i=0; i<data.length; i++){
-                                        				/* 추가 */
+                                        				
                                         				ruleData += "<tr>";
                                         				
                                         				ruleData += "<td>"+data[i].ruleNo+"</td>";
@@ -582,7 +582,7 @@
                         			${fn:substring(atten.todayWork,0,workHour) }
                         		</c:otherwise>
                         	</c:choose>
-                        </span> 시간
+                        </span> <a>시간</a>
                         <span id="work-minute">
                         	<c:choose>
                         		<c:when test="${empty atten.todayWork }">
@@ -593,7 +593,7 @@
                         			${fn:substring(atten.todayWork,(workHour+1),workMin) }
                         		</c:otherwise>
                         	</c:choose>
-                        </span> 분
+                        </span> <a>분</a>
                         <input type="hidden" id="workTime" name="todayWork">
                     </div>
                     

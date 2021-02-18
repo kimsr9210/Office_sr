@@ -30,6 +30,7 @@
     	font-weight: bold;
     	background-color: #F7F4BC;
     	opacity: 0.9;
+    	font-family: 'GongGothicMedium';
     }
     .attendBtn:active{
     	opacity: 1.0;
@@ -51,6 +52,7 @@
         font-weight: bold;
         color: white;
         cursor: pointer;
+        font-family: 'GongGothicLight';
     }
     
     .in-pro-top>span{

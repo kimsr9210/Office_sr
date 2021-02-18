@@ -90,6 +90,7 @@ public class MainController {
 		// 즐겨찾기 목록
 		ArrayList<Project> favorList = projectS.selectProjectFavoriteList(m.getMemNo());
 		
+		// 통계
 		int monthly = 4; // 5개월 전까지(이번달은 세지 않음)
 		int todayMon = Integer.parseInt(request.getParameter("todayMon"));
 		ArrayList<MonthlyProject> monthlyList = projectS.selectMonthlyProject(monthly);

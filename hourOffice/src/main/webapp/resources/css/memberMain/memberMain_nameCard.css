@@ -35,8 +35,9 @@
     }
     .nc-name{
         color: white;
-        font-size: 17px;
+        font-size: 19px;
         font-weight: 700;
+        font-family: 'GongGothicLight';
     }
     .nc-dept{
         color: lightgray;

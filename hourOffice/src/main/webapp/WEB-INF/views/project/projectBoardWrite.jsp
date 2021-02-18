@@ -33,6 +33,23 @@
 	src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
 <body>
 <style>
+@font-face {
+    font-family: 'GongGothicMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+	@font-face {
+    font-family: 'GongGothicLight';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10@1.0/GongGothicLight.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+#boardWriteTitle{
+	font-family: GongGothicLight;
+	font-size: 1.2rem;
+	font-weight: 100;
+}
 #codeTextBox {
 	width: 100%;
 	height: auto;
@@ -392,11 +409,6 @@
             <span id="inviteExit"><i class="fas fa-times"></i></span>
             <div id="inviteName">초대하기</div>
         </div>
-        <div id="inviteSearchBox">
-            <form id="memberSearchForm" action="#" method="get">
-                <input id="memberSearch" type="text" name="memberNo" placeholder=" 프로젝트를 함께할 친구를 찾아보세요!"/><i id="memberSearchImg" class="fas fa-search"></i>
-            </form>
-        </div>
         <div id="inviteContents">
             
             <!--얘가 여러개 생겨남-->
@@ -444,11 +456,6 @@
         <div id="memberAllListHeader" class="displayNone">
             <span id="memberAllListExit"><i class="fas fa-times"></i></span>
             <div id="memberAllListName">프로젝트 참가자</div>
-        </div>
-        <div id="memberAllListSearchBox" class="displayNone">
-            <form class="displayNone" id="memberAllListSearchForm" action="#" method="get">
-                <input id="memberAllListSearch" type="text" name="memberNo" placeholder=" 참여자 명으로 검색"/><i id="memberAllListSearchImg" class="fas fa-search"></i>
-            </form>
         </div>
         <div id="memberAllListContents">
             

@@ -44,11 +44,15 @@
       height:17px;
       display:inline-block;
     }
+    #root{
+    	font-family: 'GongGothicLight';
+    }
     .tree label{
         display: block;
         font-size: 15px;
         cursor: pointer;
         margin-top: 5px;
+        font-family: 'GongGothicLight';
     }
     .tree #root:before{ /*회사건물 아이콘*/
       content:'\f1ad';
@@ -87,26 +91,4 @@
      content:'\f0fe';
         font-family: "Font Awesome 5 Free";
     }
-    /*#treeMenu li{
-        line-height:18px; padding:0 0 10px 0px;
-        margin-top:-2px;
-        background:url(http://cfile9.uf.tistory.com/image/22601F4B569457FF051E7E) no-repeat 0px 0px;
-    }*/
-
-    /* 마지막 부서 */ 
-    #treeMenu li.end{
-        background: none;
-    }
-    /* 조직도 목록 중 사원 */
-    #treeMenu li.member{
-        background:url(http://cfile8.uf.tistory.com/image/2456D34B569457FC14828D) no-repeat 24.5px 1px;
-    }
-    /* 조직도 목록 중 마지막 사원 */
-    #treeMenu li.member.end{
-        background:url(http://cfile23.uf.tistory.com/image/2272CF4B5694580418FF9C) no-repeat 24.5px 1px;
-    }
-    /* 사원 li 안 i 태그 */
-    .member i{
-        margin-left: 15px;
-    }
-
+    
