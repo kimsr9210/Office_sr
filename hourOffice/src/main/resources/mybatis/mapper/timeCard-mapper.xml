@@ -28,7 +28,7 @@
         ))
 	</select>
 	
-	<!-- 근태 조회 -->
+	<!--근태 조회-->
 	<select id="selectWork" resultType="Attendance" parameterType="hashmap">
     	 SELECT
             ATTENDANCE_BOOK.MEM_NO AS memNo,

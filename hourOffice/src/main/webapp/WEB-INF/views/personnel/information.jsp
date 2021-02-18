@@ -207,7 +207,7 @@ font-family: GongGothicLight;
         <tr>
         
             <td><%=md.getCarPlace() %></td>
-              <%carPlace=md.getCarPlace() ;%>
+            <%carPlace=md.getCarPlace() ;%>
               
             <td><%=md.getCarPosition() %></td>
             <td><%=md.getCarContent() %></td>

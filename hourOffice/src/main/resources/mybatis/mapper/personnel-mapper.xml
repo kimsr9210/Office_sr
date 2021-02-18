@@ -119,7 +119,7 @@
 
 	</select>
 
-	<!-- 개인주소록 insert -->
+	<!-- 개인주소록 insert-->
 	<select id="insertMyaddbook" parameterType="hashmap" resultType="int">
 		INSERT INTO contact
 		VALUES(#{memNo},CONTACT_SEQ.NEXTVAL,#{name},#{company},#{position},#{tell},#{ph},#{email},DEFAULT,'N')
