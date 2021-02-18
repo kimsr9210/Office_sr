@@ -19,11 +19,12 @@
 	crossorigin="anonymous"></script>
 
 <!-- CSS -->
-<link rel="stylesheet" type="text/css"
-	href="/resources/css/header&sideNavi.css" />
+<link rel="stylesheet" type="text/css" href="/resources/css/header&sideNavi.css" />
+<link rel="stylesheet" type="text/css" href="/resources/css/memberMain/memberMain_work.css">
 	
-<!--  -->
-<script src="/resources/js/memberMain/memberMain_work.js"></script>	
+<!--근태관리 js-->
+<script src="/resources/js/memberMain/memberMain_work.js"></script>
+	
 <style>
 .approval {
 	background-color: #1D9F8E;
@@ -423,8 +424,7 @@ font-family: GongGothicLight;
                     <button id="back" class="btnStyle">퇴근하기</button>
                     
                 </div>
-							<script src="/resources/js/memberMain/memberMain_work.js"></script>
-							
+	
 
 
 

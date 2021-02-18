@@ -203,6 +203,7 @@ public class PersonnelDAO {
 	// 인사정보
 	public ArrayList<MemDept> information(SqlSessionTemplate sqlSession, int memNo) {
 		List list = sqlSession.selectList("personnel.information", memNo);
+		System.out.println("----- 테스트 영역 : " + list);
 		return (ArrayList<MemDept>)list; 
 	}
 

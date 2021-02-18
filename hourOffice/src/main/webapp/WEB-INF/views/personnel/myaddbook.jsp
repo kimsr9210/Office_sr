@@ -67,6 +67,7 @@
 
 tr {
 	height: 30px;
+	border: 1px solid #ccc;
 }
 
 select {

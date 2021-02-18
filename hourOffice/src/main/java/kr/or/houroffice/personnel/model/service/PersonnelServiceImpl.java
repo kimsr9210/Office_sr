@@ -44,7 +44,7 @@ public class PersonnelServiceImpl implements PersonnelService {
 
 		// 페이지 네비
 		int naviCountPerPage = 5; // PageNavi 값이 몇개씩 보여줄 것인지
-		int recordCountPerpage = 15; // 한 페이지당 몇개씩 게시물이 보이게 할 것인지를 정함.
+		int recordCountPerpage = 10; // 한 페이지당 몇개씩 게시물이 보이게 할 것인지를 정함.
 
 		// 웹상에서 가져온 데이터 저장
 		String selectBox = request.getParameter("selectBox");
@@ -80,7 +80,7 @@ public class PersonnelServiceImpl implements PersonnelService {
 	public PageList<Contact> myaddbook(HttpServletRequest request, int memNo) {
 
 		int naviCountPerPage = 5; // PageNavi 값이 몇개씩 보여줄 것인지
-		int recordCountPerpage = 20; // 한 페이지당 몇개씩 게시물이 보이게 할 것인지를 정함.
+		int recordCountPerpage = 10; // 한 페이지당 몇개씩 게시물이 보이게 할 것인지를 정함.
 
 		// 웹상에서 가져온 데이터 저장
 		String selectBox = request.getParameter("selectBox");

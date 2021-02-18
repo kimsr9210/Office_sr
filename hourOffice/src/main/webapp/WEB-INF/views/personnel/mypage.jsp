@@ -220,9 +220,10 @@ font-family: GongGothicLight;
 					$(".tr_passChg").css("display","none");
 				},
 				error : function(e){
-					console.log("비밀번호 변경 불가");
 					alert("비밀번호  변경이 불가합니다. 다시 확인해주세요.");
+					//alert("비밀번호  변경이 불가합니다. 다시 확인해주세요.");
 				}
+				
 			});	
 		});
 	});
@@ -345,7 +346,7 @@ font-family: GongGothicLight;
 										<span class="text_span"><%=md.getMemEmail() %></span>
 										<input type="text" class="text_input"  value="<%=md.getMemEmail() %>" style="display:none;">-->
 						
-										<input type="text" class="text_input" id="addEmail" value="<%=md.getMemEmail() %>" style="border:none; text-align:center; ">
+										<input type="text" class="text_input" id="addEmail" value="<%=md.getMemEmail() == null ? "(입력된 정보가 없습니다)" : md.getMemEmail() %>" style="border:none; text-align:center; ">
 									</td>
 									<td></td>
 									<td></td>

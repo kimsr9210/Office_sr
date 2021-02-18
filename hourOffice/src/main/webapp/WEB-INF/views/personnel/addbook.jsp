@@ -83,6 +83,11 @@ font-size:1.5rem;
 font-family: GongGothicLight;
 }
 
+a:hover{text-decoration:underline; color:blue;}
+
+
+tr{border: 1px solid #ccc;}
+.td{border: 1px solid #ccc;}
     
 </style>
 
@@ -116,7 +121,7 @@ font-family: GongGothicLight;
                     <div id="TitleContents">
                         <!--여기서 각자 id 만드시면 됩니다-->
                         
-        <table width="100%" style="margin:auto;">
+        <table width="100%" style="margin:auto; " >
                             
         <tr style="text-align:right;">
             <td>
@@ -136,7 +141,7 @@ font-family: GongGothicLight;
     </table>
     <br><br>
 
-    <table border="1px" width="100%" style="text-align:center; margin:auto; border-collapse:collapse;">
+    <table width="100%" style="text-align:center; margin:auto; border-collapse:collapse;">
         <tr style="background-color:#1D9F8E; color:white;">
   			<th>순서</th>
             <th>프로필</th>
@@ -152,18 +157,17 @@ font-family: GongGothicLight;
         <!-- 탈퇴자는 리스트에서 안보이게 만들어야됨 -->
         <c:forEach var="result" items="${requestScope.result.list}">
         <tr>
-        	<td>${result.rnum}</td>
-            <td><img src="/resources/images/profile/${result.memProfile}" class="pic"></td>
-            <td>${result.memName}</td>
-            <td>${result.deptName}</td>
-            <td>${result.memPosition}</td>
-            <td>${result.memTell}</td>
-            <td>${result.memPhone}</td>
-            <td><a href="/transferMail.ho?mailNo=4">${result.memEmail}</a></td>
-
+        	<td class="td">${result.rnum}</td>
+            <td class="td"><img src="/resources/images/profile/${result.memProfile}" class="pic"></td>
+            <td class="td">${result.memName}</td>
+            <td class="td">${result.deptName}</td>
+            <td class="td">${result.memPosition}</td>
+            <td class="td">${result.memTell}</td>
+            <td class="td">${result.memPhone}</td>
+            <td class="td"><a href="/mailWritePage.ho?">${result.memEmail}</a></td>
         </tr>
         </c:forEach>
-
+		
 
     </table><br>
     

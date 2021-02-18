@@ -128,9 +128,9 @@ font-family: GongGothicLight;
         <tr>
             
             <th>이메일</th>
-            <td><%= m.getMemEmail() ==  null ? "" : m.getMemEmail() %></td>
+            <td><%= m.getMemEmail() ==  null ? "(미등록)" : m.getMemEmail() %></td>
             <th>내선번호</th>
-            <td><%= m.getMemTell() ==  null ? "" : m.getMemTell() %></td>
+            <td><%= m.getMemTell() ==  null ? "(미등록)" : m.getMemTell() %></td>
         </tr>
         <tr>
             
@@ -168,14 +168,24 @@ font-family: GongGothicLight;
             <th>등급</th>
             <th>취득일</th>
         </tr>
+        <%
+        	//임시 구분하기 위한 변수
+        	String licName = "";
+        %>
         <%for(MemDept md : list){ %>
+        <%System.out.println(list); %>
+        <%if(!md.getLicName().equals(licName)){ %>
         <tr>
+        	
             <td><%=md.getLicName() %></td>
-            <td>12345678</td>
+            <%licName=md.getLicName() ;%>
+            <td>(미등록)</td>
             <td><%=md.getLicOrigin() %></td>
-            <td>A</td>
+            <td>(미등록)</td>
             <td><%=md.getLicDate()%></td>
+            
         </tr>
+        <%} %>
         <%} %>
     </table><br><br>
 
@@ -187,14 +197,26 @@ font-family: GongGothicLight;
             <th>입사일</th>
             <th>퇴사일</th>
         </tr>
+        <%
+        	//임시 구분하기 위한 변수
+        	String carPlace = "";
+        %>
+        
          <%for(MemDept md : list){ %>
+         <%if(!md.getCarPlace().equals(carPlace)){ %>
         <tr>
+        
             <td><%=md.getCarPlace() %></td>
+              <%carPlace=md.getCarPlace() ;%>
+              
             <td><%=md.getCarPosition() %></td>
             <td><%=md.getCarContent() %></td>
             <td><%=md.getCarJoinDate() %></td>
             <td><%=md.getCarResignDate() %></td>
+             
         </tr>
+        <%} %>
+        
         <%} %>
     </table><br>
 
