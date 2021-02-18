@@ -411,7 +411,7 @@
 	<!-- 자바 스크립트    -->
     <script>
 	$('#categoryAdmin').next().css('display','block');
-	$('#categoryAdmin').next().css('height','200px');
+	$('#categoryAdmin').next().css('height','75px');
 	$('#categoryAdmin').children().last().children().attr('class','fas fa-chevron-left');
 	
 	$('#categoryAdmin').next().children().eq(1).children().css('font-weight','800');

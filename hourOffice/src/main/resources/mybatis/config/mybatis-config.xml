@@ -63,6 +63,8 @@
 		<typeAlias type="kr.or.houroffice.main.model.vo.MainMailPage" alias="MainMailPage"/>
 		<typeAlias type="kr.or.houroffice.main.model.vo.MainMailGetter" alias="MainMailGetter"/>
 		<typeAlias type="kr.or.houroffice.common.Page" alias="Page"/>
+		
+		<typeAlias type="kr.or.houroffice.admin.model.vo.AdminBoard" alias="AdminBoard"/>
 	</typeAliases>
 </configuration>
 

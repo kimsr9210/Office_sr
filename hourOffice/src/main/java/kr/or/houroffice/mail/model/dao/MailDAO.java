@@ -43,6 +43,7 @@ public class MailDAO {
 	public int insertMail(SqlSessionTemplate sqlSession, SendingMail sm) throws IllegalStateException, IOException {
 		//넣어야 할 테이블 4개
 		MultipartFile mpf = sm.getMailFile(); //받아온 파일 객체
+		
 		if(mpf.getOriginalFilename().length()>0) sm.setFileYN('Y');//파일이 있으면
 
 		int result1 = sqlSession.insert("mail.insertMail", sm);

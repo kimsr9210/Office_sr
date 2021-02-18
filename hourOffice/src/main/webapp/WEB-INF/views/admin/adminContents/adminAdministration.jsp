@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="kr.or.houroffice.member.model.vo.Member" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -19,6 +21,12 @@
 
 </head>
 <body>
+	<!--JSTL core Tag 사용 선언  -->
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+	
+	<!-- JSTL format Tag 사용 선언 -->
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+	
 	<div id="wrap">
 		<%@ include file ="../adminForm/header.jsp" %>
 		
@@ -38,22 +46,26 @@
                             <span class="adminText">관리자 페이지 관리, 메뉴 관리 등을 관리합니다.</span>
                             
                             <div class="buttonSet">
-                                <button id="adminAgree" class="agreeButtonType">추가</button>
+                                <button class="agreeButtonType">추가</button>
                                 <button class="refuseButtonType">삭제</button>
                             </div>
                             <table id="adminList" class="tblStyle">
                                 <tr>
-                                    <th><input type="checkbox"/></th>
+                                    <th></th>
                                     <th>이름 (이메일)</th>
                                     <th>부서</th>
                                     <th>관리자 등록일</th>
-                                </tr>
-                                <tr>
-                                    <td><input type="checkbox"/></td>
-                                    <td>다주빈 (zoodabin@hourOffice.com)</td>
-                                    <td>전산팀</td>
-                                    <td>2020-02-02</td>
-                                </tr>
+                                </tr>                                
+                                <c:forEach items="${list}" var="li" varStatus="status">  
+                                	<c:if test="${li.memRightCode eq 'B'.charAt(0)}">	                                                                	  
+	                                	<tr>
+		                                    <td><input type="checkbox" name="adCheckMem" value="${li.memNo}"/></td>
+		                                    <td>${li.memName} (${li.memEmail})</td>
+		                                    <td>${li.deptName}</td>
+		                                    <td><fmt:formatDate value="${li.memRightDate}" type="both" pattern="yyyy년 MM월 dd일"/></td>
+		                            	</tr>
+		                            </c:if>	
+		                       	</c:forEach>           	 								                             
                             </table>
                         </div>                     
                         <div class="adminSpace">
@@ -67,23 +79,27 @@
                             </div>
                             <table id="personnelList" class="tblStyle">
                                 <tr>
-                                    <th><input type="checkbox"/></th>
+                                    <th></th>
                                     <th>이름 (이메일)</th>
                                     <th>부서</th>
                                     <th>관리자 등록일</th>
                                 </tr>
-                                <tr>
-                                    <td><input type="checkbox"/></td>
-                                    <td>안인사 (hello@hourOffice.com)</td>
-                                    <td>인사팀</td>
-                                    <td>2020-02-18</td>
-                                </tr>
+                                <c:forEach items="${list}" var="li" varStatus="status">  
+                                	<c:if test="${li.memRightCode eq 'C'.charAt(0)}">	                                                                	  
+	                                	<tr>
+		                                    <td><input type="checkbox" name="peCheckMem" value="${li.memNo}"/></td>
+		                                    <td>${li.memName} (${li.memEmail})</td>
+		                                    <td>${li.deptName}</td>
+		                                    <td><fmt:formatDate value="${li.memRightDate}" type="both" pattern="yyyy년 MM월 dd일"/></td>
+		                            	</tr>
+		                            </c:if>	
+		                       	</c:forEach>
                             </table>
                         </div>                       
                        <div class="adminSpace">
                             <span class="adminName">총무관리자</span>
                             <hr class="adminLine"/>
-                            <span class="adminTitle">문서 관리</span>
+                            <span class="adminTitle">문서 관리</span> 	
                             <span class="adminText">사내 규정, 문서 등을 관리합니다.</span>
                             <div class="buttonSet">
                                 <button class="agreeButtonType">추가</button>
@@ -91,46 +107,46 @@
                             </div>
                             <table id="generalList" class="tblStyle">
                                 <tr>
-                                    <th><input type="checkbox"/></th>
+                                    <th></th>
                                     <th>이름 (이메일)</th>
                                     <th>부서</th>
                                     <th>관리자 등록일</th>
                                 </tr>
-                                <tr>
-                                    <td><input type="checkbox"/></td>
-                                    <td>정총무 (money@hourOffice.com)</td>
-                                    <td>총무팀</td>
-                                    <td>2018-12-12</td>
-                                </tr>
+                                <c:forEach items="${list}" var="li" varStatus="status">  
+                                	<c:if test="${li.memRightCode eq 'D'.charAt(0)}">	                                                                	  
+	                                	<tr>
+		                                    <td><input type="checkbox" name="geCheckMem" value="${li.memNo}"/></td>
+		                                    <td>${li.memName} (${li.memEmail})</td>
+		                                    <td>${li.deptName}</td>
+		                                    <td><fmt:formatDate value="${li.memRightDate}" type="both" pattern="yyyy년 MM월 dd일"/></td>
+		                            	</tr>
+		                            </c:if>	
+		                       	</c:forEach>
                             </table>
                         </div>                       
                         <div id="modal">
 							<div class="modal-content">
-								<div class="exit-icon"><i class="iModal far fa-times-circle"></i></div>
-								<div class="searchStyle">
-									<input type="text" name="#"/>
+								<center><span class="exit-icon"><i class="fas fa-times"></i></span></center><br/>
+								<div class="searchStyle selectStyle formStyle">
+									<input placeholder="검색어를 입력하세요" type="text" id="keyword" name="keyword" style="padding-left:5px;"/>
 									<button><i class="fas fa-search"></i></button>
-								</div>
-								<form>			
-									<table class="modal-table">
+								</div><br/><br/>		
+								<table class="modal-table">
+									<thead>
 										<tr>
 											<th></th>
 											<th>사번</th>
 											<th>이름</th>
 											<th>직위</th>
-										</tr>				
-										<tr>
-											<td><input type="checkbox" name="#"/></td>
-											<td>M1000</td>
-											<td>장진장</td>
-											<td>사원</td>	
-										</tr>        
-									</table>
-								</form>
+										</tr>
+									</thead>		
+									<tbody id="tbody">
+									</tbody>     
+								</table><br/>
 								<button class="agreeButtonType">저장</button>
 							</div>
 							<div class="modal-layer"></div>
-						</div>                                               
+						</div>						                                               
     				</div>
 				</div>
 			</div>
@@ -139,76 +155,317 @@
 		
 	<script type='text/javascript'>	
 		$(function(){
-			// 전산관리자 checkbox 전부 누르기		
-			$('#adminList').find('input').first().click(function(){
-							
-				if($(this).prop('checked')) { 
-					$('#adminList input').each(function(){
-						$(this).prop('checked',true);
-					});
+		
+			// 전산관리자 checkbox 누르기
+			var adCheckMem = [];//체크한 사번 넣을 곳
+			$('#adminList tr td input[name=adCheckMem]').click(function(){				
+				if($(this).is(':checked')){
+					adCheckMem.push($(this).val());
 				} else {
-					$('#adminList input').each(function(){
-						$(this).prop('checked',false);
-					});
-				}	
+					adCheckMem.splice(adCheckMem.indexOf($(this).val()),1);	
+				}
 			});
 			
-			// 인사관리자 checkbox 전부 누르기		
-			$('#personnelList').find('input').first().click(function(){
-							
-				if($(this).prop('checked')) { 
-					$('#personnelList input').each(function(){
-						$(this).prop('checked',true);
-					});
+			// 인사관리자 checkbox 누르기
+			var peCheckMem = [];//체크한 사번 넣을 곳
+			$('#personnelList tr td input[name=peCheckMem]').click(function(){				
+				if($(this).is(':checked')){
+					peCheckMem.push($(this).val());
 				} else {
-					$('#personnelList input').each(function(){
-						$(this).prop('checked',false);
-					});
-				}	
+					peCheckMem.splice(peCheckMem.indexOf($(this).val()),1);	
+				}
 			});
 			
-			// 총무관리자 checkbox 전부 누르기		
-			$('#generalList').find('input').first().click(function(){
-							
-				if($(this).prop('checked')) { 
-					$('#generalList input').each(function(){
-						$(this).prop('checked',true);
-					});
+			// 총무관리자 checkbox 누르기
+			var geCheckMem = [];//체크한 사번 넣을 곳
+			$('#generalList tr td input[name=geCheckMem]').click(function(){				
+				if($(this).is(':checked')){
+					geCheckMem.push($(this).val());
 				} else {
-					$('#generalList input').each(function(){
-						$(this).prop('checked',false);
-					});
-				}	
+					geCheckMem.splice(geCheckMem.indexOf($(this).val()),1);	
+				}
 			});
 			
-			// 모달 열기
+			$('#tbody').on('click','.mCheck',function(){
+				checkboxClick($(this));	
+			});
+			var rightData = "";
+			// 모달 열기 
 			$('.agreeButtonType').click(function(){
+				rightData+=$(this).parents('.adminSpace').children().first().text();
+			
+				<% ArrayList<Member> list = (ArrayList<Member>)request.getAttribute("list"); %>
 				var modatop = $(this).offset().top;
+				
 				if($(this).parents('.adminSpace').children().first().text()=='전산관리자') {
+					mCheck = [];
 					$('#modal').css('top',modatop);
+					$("#tbody *").remove();
+						<% for(Member m : list){%>
+							var deptCode = '<%=m.getDeptCode()%>';
+							var memRightCode = '<%=m.getMemRightCode()%>';
+							if((deptCode.indexOf('D3')>-1)&&(memRightCode!='B')){
+								var tr = $("<tr></tr>").appendTo("#tbody");
+								$("<td><input type='checkbox' class='mCheck' value='<%=m.getMemNo()%>'/></td>").appendTo(tr);
+								$("<td></td>").text('<%=m.getMemNo()%>').appendTo(tr);
+								$("<td></td>").text('<%=m.getMemName()%>').appendTo(tr);
+								$("<td></td>").text('<%=m.getMemPosition()%>').appendTo(tr);
+							}
+						<%}%>
+						
+					$('#keyword').next().children().click(function(){
+						mCheck = [];
+						var keyword = $('#keyword').val();
+						$.ajax({
+							url : '/adminSearchModal.ho',
+							data : {'keyword':keyword},
+							type : 'post',
+							success : function(data) {
+								 		$("#tbody *").remove();
+										for(var i=0; i<data.length; i++) {
+											var deptCode = data[i].deptCode;
+											var memRightCode = data[i].memRightCode;
+											if((deptCode.indexOf('D3')>-1)&&(memRightCode!='B')){
+												var tr = $("<tr></tr>").appendTo("#tbody");
+												$("<td><input type='checkbox' class='mCheck' value=" + data[i].memNo + "></td>").appendTo(tr);
+												$("<td></td>").text(data[i].memNo).appendTo(tr);
+												$("<td></td>").text(data[i].memName).appendTo(tr);
+												$("<td></td>").text(data[i].memPosition).appendTo(tr);
+											}
+										}
+									},
+							error : function(){
+								alert('오류가 발생하였습니다.');
+							}		
+						});
+					});
 				} else if ($(this).parents('.adminSpace').children().first().text()=='인사관리자') {
-					$('#modal').css('top',modatop);
+					mCheck = [];
+					$('#modal').css('top',modatop);				
+					$("#tbody *").remove();
+					<% for(Member m : list){%>
+						var deptCode = '<%=m.getDeptCode()%>';
+						var memRightCode = '<%=m.getMemRightCode()%>';
+						if((deptCode.indexOf('D1')>-1)&&(memRightCode!='C')){
+							var tr = $("<tr></tr>").appendTo("#tbody");
+							$("<td><input type='checkbox' class='mCheck' value='<%=m.getMemNo()%>'/></td>").appendTo(tr);
+							$("<td></td>").text('<%=m.getMemNo()%>').appendTo(tr);
+							$("<td></td>").text('<%=m.getMemName()%>').appendTo(tr);
+							$("<td></td>").text('<%=m.getMemPosition()%>').appendTo(tr);
+						}
+					<%}%>
+					
+					$('#keyword').next().children().click(function(){
+						var keyword = $('#keyword').val();
+						$.ajax({
+							url : '/adminSearchModal.ho',
+							data : {'keyword':keyword},
+							type : 'post',
+							success : function(data) {
+								 		$("#tbody *").remove();
+										for(var i=0; i<data.length; i++) {
+											var deptCode = data[i].deptCode;
+											var memRightCode = data[i].memRightCode;
+											if((deptCode.indexOf('D1')>-1)&&(memRightCode!='C')){
+												var tr = $("<tr></tr>").appendTo("#tbody");
+												$("<td><input type='checkbox' class='mCheck' value=" + data[i].memNo + "></td>").appendTo(tr);
+												$("<td></td>").text(data[i].memNo).appendTo(tr);
+												$("<td></td>").text(data[i].memName).appendTo(tr);
+												$("<td></td>").text(data[i].memPosition).appendTo(tr);
+											}
+										}
+									},
+							error : function(){
+								alert('오류가 발생하였습니다.');
+							}
+						});
+					});
 				} else if ($(this).parents('.adminSpace').children().first().text()=='총무관리자') {
+					mCheck = [];
 					$('#modal').css('top',modatop);
-				};
-				$('#modal').show();				
-			});			
+					$("#tbody *").remove();
+					<% for(Member m : list){%>
+						var deptCode = '<%=m.getDeptCode()%>';
+						var memRightCode = '<%=m.getMemRightCode()%>';
+						if((deptCode.indexOf('D2')>-1)&&(memRightCode!='D')){
+							var tr = $("<tr></tr>").appendTo("#tbody");
+							$("<td><input type='checkbox' class='mCheck' value='<%=m.getMemNo()%>'/></td>").appendTo(tr);
+							$("<td></td>").text('<%=m.getMemNo()%>').appendTo(tr);
+							$("<td></td>").text('<%=m.getMemName()%>').appendTo(tr);
+							$("<td></td>").text('<%=m.getMemPosition()%>').appendTo(tr);
+						}
+					<%}%>
+
+					
+					$('#keyword').next().children().click(function(){
+						var keyword = $('#keyword').val();
+						$.ajax({
+							url : '/adminSearchModal.ho',
+							data : {'keyword':keyword},
+							type : 'post',
+							success : function(data) {
+								 		$("#tbody *").remove();
+										for(var i=0; i<data.length; i++) {
+											var deptCode = data[i].deptCode;
+											var memRightCode = data[i].memRightCode;
+											if((deptCode.indexOf('D2')>-1)&&(memRightCode!='D')){
+												var tr = $("<tr></tr>").appendTo("#tbody");
+												$("<td><input type='checkbox' class='mCheck' value=" + data[i].memNo + "></td>").appendTo(tr);
+												$("<td></td>").text(data[i].memNo).appendTo(tr);
+												$("<td></td>").text(data[i].memName).appendTo(tr);
+												$("<td></td>").text(data[i].memPosition).appendTo(tr);
+											}
+										}
+
+									},
+							error : function(){
+								alert('오류가 발생하였습니다.');
+							}
+						});
+					});
+				}
+				$('#modal').show();
+			});
+			
 			// 모달 닫기
-            $('#modal .iModal').click(function(){
+            $('#modal .exit-icon').click(function(){
+            	rightData = "";
                 $('#modal').hide();
                 $('#modal input').val('');
+                $("#tbody *").remove();
             });
 			
-		});
+			//모달 checkbox
+			function checkboxClick(data){
+				if(data.prop('checked')){					
+					mCheck.push(data.val());
+				} else {
+					mCheck.splice(mCheck.indexOf(data.val()),1);
+				}
+			}		
 		
-		$(document).ready(function(){
+			//모달 권한 부여
+			$('#modal').children().children().last().click(function(){
+				alert(rightData);
+				if(mCheck.length==0){
+					alert('권한을 부여할 사원을 선택해주세요.');
+				} else {
+					if(rightData=='전산관리자'){			
+						if(confirm('해당 사원에게 전산관리자 권한을 부여하시겠습니까?')){
+							$.ajax({
+								url: '/adminUpdateAdRight.ho',
+								data : {'memNoList':mCheck},
+								type : 'post',
+								success : function(result){
+									alert('전산관리자 권한 부여를 성공하였습니다.');
+									history.go(0);
+								},
+								error : function(){
+									alert('전산관리자 권한 부여를 실패하였습니다.');
+								} // 하이 근데 뭐를 찾아야해요? 다빈님 행아웃오실수 있어요? 말로 빠른 설명ㄱ
+							});
+						}
+					} else if(rightData=='인사관리자'){
+						if(confirm('해당 사원에게 인사관리자 권한을 부여하시겠습니까?')){
+							$.ajax({
+								url: '/adminUpdatePeRight.ho',
+								data : {'memNoList':mCheck},
+								type : 'post',
+								success : function(result){
+									alert('인사관리자 권한 부여를 성공하였습니다.');
+									history.go(0);
+								},
+								error : function(){
+									alert('인사관리자 권한 부여를 실패하였습니다.');
+								}
+							});
+						}
+					} else if(rightData=='총무관리자'){
+						if(confirm('해당 사원에게 총무관리자 권한을 부여하시겠습니까?')){
+							$.ajax({
+								url: 'adminUpdateGeRight.ho',
+								data : {'memNoList':mCheck},
+								type : 'post',
+								success : function(result){
+									alert('총무관리자 권한 부여를 성공하였습니다.');
+									history.go(0);
+								},
+								error : function(){
+									alert('총무관리자 권한 부여를 실패하였습니다.');
+								}
+							});
+						}
+					}
+					
+				}
+			});
+		
+		//관리자 권한 삭제
+		$('.refuseButtonType').click(function(){
+			if($(this).parents('.adminSpace').children().first().text()=='전산관리자') {
+				if(adCheckMem.length==0){
+					alert('권한을 삭제할 사원을 선택해주세요.');
+				} else {
+					if(confirm('해당 사원의 권한을 삭제하시겠습니까?')){
+						$.ajax({
+							url: '/adminDeleteRight.ho',
+							data : {'memNoList':adCheckMem},
+							type : 'post',
+							success : function(result){
+								alert('사원의 권한을 삭제하였습니다.');
+								history.go(0);
+							},
+							error : function(){
+								alert('사원의 권한 삭제를 실패하였습니다.');
+							}
+						});
+					}
+				}
+			} else if ($(this).parents('.adminSpace').children().first().text()=='인사관리자') {
+				if(peCheckMem.length==0){
+					alert('권한을 삭제할 사원을 선택해주세요.');
+				} else {
+					if(confirm('해당 사원의 권한을 삭제하시겠습니까?')){
+						$.ajax({
+							url: '/adminDeleteRight.ho',
+							data : {'memNoList':peCheckMem},
+							type : 'post',
+							success : function(result){
+								alert('사원의 권한을 삭제하였습니다.');
+								history.go(0);
+							},
+							error : function(){
+								alert('사원의 권한 삭제를 실패하였습니다.');
+							}
+						});
+					}
+				}
+			} else if ($(this).parents('.adminSpace').children().first().text()=='총무관리자') {
+				if(geCheckMem.length==0){
+					alert('권한을 삭제할 사원을 선택해주세요.');
+				} else {
+					if(confirm('해당 사원의 권한을 삭제하시겠습니까?')){
+						$.ajax({
+							url: '/adminDeleteRight.ho',
+							data : {'memNoList':geCheckMem},
+							type : 'post',
+							success : function(result){
+								alert('사원의 권한을 삭제하였습니다.');
+								history.go(0);
+							},
+							error : function(){
+								alert('사원의 권한 삭제를 실패하였습니다.');
+							}
+						});
+					}
+				}
+			}		
+		});
+	});
 			$adminUpdate = $('#adminUpdate');
 	        $adminUpdate.children().eq(2).children().addClass('fa-rotate-180');		
 			$adminUpdate.removeClass('hoverColor').addClass('click');
 	        $adminUpdate.children().eq(2).children().attr('class','iArrow fas fa-angle-left');		
-
-		});
-		
 
 	</script>
 </body>

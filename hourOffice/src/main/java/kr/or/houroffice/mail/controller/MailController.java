@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,6 @@ import com.google.gson.Gson;
 
 import kr.or.houroffice.common.PageList;
 import kr.or.houroffice.mail.model.service.MailServiceImpl;
-import kr.or.houroffice.mail.model.vo.Mail;
 import kr.or.houroffice.mail.model.vo.MailFile;
 import kr.or.houroffice.mail.model.vo.MailGetter;
 import kr.or.houroffice.mail.model.vo.MailInfo;
@@ -78,8 +77,8 @@ public class MailController {
 		return "mail/mailWrite";
 	}
 	
-	@RequestMapping("/sendMail.ho") //메일 보내기
-	public String sendMail(@SessionAttribute("member") Member m, SendingMail sm, Model model) throws Exception, IOException{
+	@RequestMapping("/sendMail.ho") //메일 보내기 여기요
+	public String sendMail(@SessionAttribute("member") Member m, SendingMail sm, Model model, HttpServletRequest request) throws Exception, IOException{
 		//필요한 정보 : 보내는 사람, 받는 사람[], 파일, 제목, 내용, 참조목록[]  
 		sm.setSender(m.getMemNo());
 		int result = mailService.insertMail(sm);
@@ -97,7 +96,6 @@ public class MailController {
 			@RequestParam(value="searchType",required=false, defaultValue="") String searchType,
 			@RequestParam(value="keyword",required=false,defaultValue="") String keyword, ModelAndView mav){
 		//필요정보 : 리스트 타입, 사번, 총 갯수, 메일 정보, 페이지 네비
-		
 		MailListPage mlp = new MailListPage(); //페이징 처리 정보를 위한 객체
 		mlp.setCurrentPage(page);
 		mlp.setRecordCountPerPage(10);//한페이지에 10개
@@ -149,9 +147,12 @@ public class MailController {
 		MailReceive mr = new MailReceive();
 		mr.setMailNo(mailNo);
 		mr.setMemNo(memNo);
-		
-		if(listType.length()==2){ mr.setListType(listType.charAt(0));
-		}else{ mr.setListType(listType.charAt(0)); }
+
+		if(listType.length()==2){ 
+			mr.setListType(listType.charAt(0)); 
+			if(listType.charAt(1)=='D')	mr.setDelYN('Y'); //삭제메일
+			else mr.setDelYN('N'); //보관메일
+		}else{ mr.setListType(listType.charAt(0)); mr.setDelYN('N');}
 		
 		if(readYN.charAt(0)=='N'){//읽음 처리
 			mr.setReadYN('Y');

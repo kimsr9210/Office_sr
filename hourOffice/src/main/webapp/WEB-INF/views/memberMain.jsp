@@ -97,7 +97,7 @@
                 
                 <div class="notice">
                     <div class="notice-top">
-                        <a href="#">공지</a>
+                        <a href="/allNoticePage.ho">공지</a>
                     </div>
                     <div class="notice-bottom">
                     	<c:choose>
@@ -105,7 +105,7 @@
                     			<span>등록된 공지가 없습니다...</span>
                     		</c:when>
                     		<c:otherwise>
-                    			<a href="#">
+                    			<a href="/notice.ho?notNo=${noticeList[0].notNo }">
                     				<span>${noticeList[0].notTitle }</span>
 		                            <span>${noticeList[0].notContent }</span>
 		                        </a>
@@ -386,7 +386,7 @@
                 
                 <div class="role">
                     <div class="role-top">
-                        <a href="#">사내규정</a>
+                        <a href="/allCompanyRulePage.ho">사내규정</a>
                         <div id="roleBtn">
                             <button id="preRule"><i class="fas fa-chevron-left"></i></button>
                             <button id="nextRule"><i class="fas fa-chevron-right"></i></button>
@@ -414,7 +414,7 @@
                             		<c:forEach items="${ruleList }" var="rl">
                             			<tr>
 			                                <td>${rl.ruleNo }</td>
-			                                <td><a href="#">${rl.ruleTitle }</a></td>
+			                                <td><a href="/companyRule.ho?ruleNo=${rl.ruleNo }">${rl.ruleTitle }</a></td>
 			                                <td><fmt:formatDate value="${rl.ruleDate }" pattern="yyyy-MM-dd"/></td>
 			                            </tr>
                             		</c:forEach>
@@ -434,11 +434,11 @@
                                         			var ruleData;
                                         			
                                         			for(var i=0; i<data.length; i++){
-                                        				
+                                        				/* 추가 */
                                         				ruleData += "<tr>";
                                         				
                                         				ruleData += "<td>"+data[i].ruleNo+"</td>";
-                                        				ruleData += "<td><a href='#'>"+data[i].ruleTitle+"</a></td>";
+                                        				ruleData += "<td><a href='/companyRule.ho?ruleNo="+data[i].ruleNo+"'>"+data[i].ruleTitle+"</a></td>";
                                         				ruleData += "<td>"+data[i].ruleDateFormat+"</td>";
                                         				
                                         				ruleData += "</tr>";

@@ -814,7 +814,7 @@
     		
     		//이전화면 누르기
     		$('#backward').click(function(){
-    			location.replace('/projectDatail.ho?proNo=<%=p.getProNo()%>');
+    			history.back(-1);
     		});
 		});
 	</script>

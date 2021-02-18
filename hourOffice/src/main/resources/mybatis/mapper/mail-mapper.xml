@@ -210,7 +210,7 @@
 	MR ON ML.MAIL_NO = MR.MAIL_NO JOIN MEMBER M ON MR.MEM_NO = M.MEM_NO
 	JOIN MEMBER M2 ON ML.MEM_NO = M2.MEM_NO
 	LEFT JOIN MAIL_FILE MF ON ML.MAIL_NO = MF.MAIL_NO
-	WHERE MR.MEM_NO = #{memNo} AND ML.MAIL_NO = #{mailNo} AND MR.DEL_YN = 'N'
+	WHERE MR.MEM_NO = #{memNo} AND ML.MAIL_NO = #{mailNo} AND MR.DEL_YN = #{delYN}
   </select>
   
   <update id="deleteMail" parameterType="MailInfo">

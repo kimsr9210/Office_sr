@@ -95,6 +95,16 @@
 		</div>
 
 	<!-- 자바 스크립트    -->
+	<script>
+		$(function(){
+			$('#categoryBoard').next().css('display','block');
+			$('#categoryBoard').next().css('height','150px');
+			$('#categoryBoard').children().last().children().attr('class','fas fa-chevron-left');
+			
+			$('#categoryBoard').next().children().eq(1).children().css('font-weight','800');
+			$('#categoryBoard').next().children().eq(1).children().css('color','#ffcc29');
+		})
+	</script>
 	<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>
 
 	</div>

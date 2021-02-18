@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="admin">
+
+	<!-- 관리자 관리 - 부서별 관리자 리스트 전체 조회  -->
+	<select id="allMemberList" parameterType="Member" resultType="Member">
+		SELECT
+			MEM_NO as memNo,
+			MEM_PWD as memPwd,
+			MEM_POSITION as memPosition,
+			DEPT_CODE as deptCode,
+			MEM_NAME as memName,
+			MEM_BIRTH as memBirth,
+			MEM_GENDER as memGender,
+			MEM_ADDRESS as memAddress,
+			MEM_PHONE as memPhone,
+			MEM_TELL as memTell,
+			MEM_EMAIL as memEmail,
+			MEM_PROFILE as memProfile,
+			MEM_HOLIDAY_COUNT as memHolidayCount,
+			MEM_JOIN_DATE as memJoinDate,
+			MEM_RESIGN_YN as memResignYN,
+			MEM_RESIGN_DATE as memResignDate,
+			MEM_DEL_YN as memDelYN,
+			MEM_DEL_DATE as memDelDate,
+			MEM_RIGHT_CODE as memRightCode,
+			MEM_RIGHT_DATE as memRightDate,
+            DEPT_NAME as deptName		
+        FROM MEMBER
+		INNER JOIN DEPARTMENT USING (DEPT_CODE)
+		WHERE MEM_DEL_YN='N' AND MEM_RESIGN_YN='N'
+		ORDER BY MEM_NO DESC
+	</select>
+	
+	<!-- 관리자 관리 - 모달 - 사원 검색 (ajax) -->
+	<select id="adminSearchModal" parameterType="Member" resultType="Member">
+		SELECT
+			MEM_NO as memNo,
+			MEM_PWD as memPwd,
+			MEM_POSITION as memPosition,
+			DEPT_CODE as deptCode,
+			MEM_NAME as memName,
+			MEM_BIRTH as memBirth,
+			MEM_GENDER as memGender,
+			MEM_ADDRESS as memAddress,
+			MEM_PHONE as memPhone,
+			MEM_TELL as memTell,
+			MEM_EMAIL as memEmail,
+			MEM_PROFILE as memProfile,
+			MEM_HOLIDAY_COUNT as memHolidayCount,
+			MEM_JOIN_DATE as memJoinDate,
+			MEM_RESIGN_YN as memResignYN,
+			MEM_RESIGN_DATE as memResignDate,
+			MEM_DEL_YN as memDelYN,
+			MEM_DEL_DATE as memDelDate,
+			MEM_RIGHT_CODE as memRightCode,
+			MEM_RIGHT_DATE as memRightDate,
+            DEPT_NAME as deptName		
+        FROM MEMBER
+		INNER JOIN DEPARTMENT USING (DEPT_CODE)
+		WHERE (MEM_NO LIKE #{keyword} OR MEM_NAME LIKE #{keyword} OR MEM_POSITION LIKE #{keyword}) AND (MEM_DEL_YN='N' AND MEM_RESIGN_YN='N') 
+		ORDER BY MEM_NO DESC
+	</select>
+	
+	<!-- 관리자 관리 - 모달 - 전산관리자 권한 추가 (ajax)  -->
+	<update id="adminUpdateAdRight" parameterType="java.util.List">
+		UPDATE
+			MEMBER
+		SET
+			MEM_RIGHT_CODE='B', MEM_RIGHT_DATE=SYSTIMESTAMP
+		<foreach collection="list" item="item" open="WHERE (MEM_RESIGN_YN='N' OR MEM_DEL_YN='N') AND DEPT_CODE='D3' AND (" close=")" separator="OR">
+			MEM_NO=#{item}
+		</foreach>
+	</update>
+	
+	<!-- 관리자 관리 - 모달 - 인사관리자 권한 추가 (ajax)  -->
+	<update id="adminUpdatePeRight" parameterType="java.util.List">
+		UPDATE
+			MEMBER
+		SET
+			MEM_RIGHT_CODE='C', MEM_RIGHT_DATE=SYSTIMESTAMP
+		<foreach collection="list" item="item" open="WHERE (MEM_RESIGN_YN='N' OR MEM_DEL_YN='N') AND DEPT_CODE='D1' AND (" close=")" separator="OR">
+			MEM_NO=#{item}
+		</foreach>
+	</update>
+	
+	<!-- 관리자 관리 - 모달 - 총무관리자 권한 추가 (ajax)  -->
+	<update id="adminUpdateGeRight" parameterType="java.util.List">
+		UPDATE
+			MEMBER
+		SET
+			MEM_RIGHT_CODE='D', MEM_RIGHT_DATE=SYSTIMESTAMP
+		<foreach collection="list" item="item" open="WHERE (MEM_RESIGN_YN='N' OR MEM_DEL_YN='N') AND DEPT_CODE='D2' AND  (" close=")" separator="OR">
+			MEM_NO=#{item}
+		</foreach>
+	</update>
+	
+	<!-- 관리자 관리 - 선택된 사원 권한 삭제 (ajax) -->
+	<update id="adminDeleteRight" parameterType="java.util.List">
+		UPDATE
+			MEMBER
+		SET
+			MEM_RIGHT_CODE=NULL, MEM_RIGHT_DATE=NULL
+		<foreach collection="list" item="item" open="WHERE (MEM_RESIGN_YN='N' OR MEM_DEL_YN='N') AND (" close=")" separator="OR">
+			MEM_NO=#{item}
+		</foreach>
+	</update>
+			
+	<!-- 삭제 조회 - 삭제된 사원 조회  -->
+	<select id="selectDeleteMember" parameterType="hashmap" resultType="Member">
+		SELECT
+			MEM_NO as memNo,
+			MEM_PWD as memPwd,
+			MEM_POSITION as memPosition,
+			DEPT_CODE as deptCode,
+			MEM_NAME as memName,
+			MEM_BIRTH as memBirth,
+			MEM_GENDER as memGender,
+			MEM_ADDRESS as memAddress,
+			MEM_PHONE as memPhone,
+			MEM_TELL as memTell,
+			MEM_EMAIL as memEmail,
+			MEM_PROFILE as memProfile,
+			MEM_HOLIDAY_COUNT as memHolidayCount,
+			MEM_JOIN_DATE as memJoinDate,
+			MEM_RESIGN_YN as memResignYN,
+			MEM_RESIGN_DATE as memResignDate,
+			MEM_DEL_YN as memDelYN,
+			MEM_DEL_DATE as memDelDate,
+			MEM_RIGHT_CODE as memRightCode,
+			MEM_RIGHT_DATE as memRightDate,
+            DEPT_NAME as deptName
+        FROM (SELECT ROW_NUMBER()OVER(ORDER BY M.MEM_RESIGN_DATE DESC) AS RNUM, M.*, D.DEPT_NAME
+                FROM MEMBER M
+                INNER JOIN DEPARTMENT D ON (M.DEPT_CODE=D.DEPT_CODE)
+                WHERE (MEM_DEL_YN='Y' OR MEM_RESIGN_YN='Y'))
+        WHERE RNUM BETWEEN ${start} AND ${end} 		
+	</select>
+	
+	<!-- 삭제 조회 - 삭제된 사원 조회 - 삭제된 사원 수 -->
+	<select id="countDeleteMemberCount" resultType="int">
+		SELECT
+			COUNT(*) as memDeleteCount
+		FROM MEMBER
+		WHERE MEM_DEL_YN='Y' OR MEM_RESIGN_YN='Y'
+	</select>
+	
+	<!-- 삭제 조회 - 삭제된 사원 조회 - 검색 -->
+	<select id="selectSearchDeleteMember" parameterType="hashmap" resultType="Member">
+		SELECT
+		    MEM_NO as memNo,
+		    MEM_PWD as memPwd,
+		    MEM_POSITION as memPosition,
+		    DEPT_CODE as deptCode,
+		    MEM_NAME as memName,
+		    MEM_BIRTH as memBirth,
+		    MEM_GENDER as memGender,
+		    MEM_ADDRESS as memAddress,
+		    MEM_PHONE as memPhone,
+		    MEM_TELL as memTell,
+		    MEM_EMAIL as memEmail,
+		    MEM_PROFILE as memProfile,
+		    MEM_HOLIDAY_COUNT as memHolidayCount,
+		    MEM_JOIN_DATE as memJoinDate,
+		    MEM_RESIGN_YN as memResignYN,
+		    MEM_RESIGN_DATE as memResignDate,
+		    MEM_DEL_YN as memDelYN,
+		    MEM_DEL_DATE as memDelDate,
+		    MEM_RIGHT_CODE as memRightCode,
+		    MEM_RIGHT_DATE as memRightDate,
+		    DEPT_NAME as deptName
+		FROM (SELECT ROW_NUMBER() OVER(ORDER BY O.MEM_RESIGN_DATE DESC) AS RNUM, O.*
+		        FROM (SELECT M.*, D.DEPT_NAME
+		                FROM MEMBER M
+		                INNER JOIN DEPARTMENT D ON (M.DEPT_CODE=D.DEPT_CODE)
+		                WHERE ${searchType} LIKE #{keyword} AND (M.MEM_DEL_YN='Y' OR M.MEM_RESIGN_YN='Y')) O)
+		WHERE RNUM BETWEEN ${start} AND ${end}
+	</select>
+	
+	<!-- 삭제 조회 - 삭제된 사원 복원 (ajax) -->
+	<update id="deleteMemberCancel" parameterType="java.util.List">
+		UPDATE
+			MEMBER
+		SET
+			MEM_RESIGN_YN='N', MEM_RESIGN_DATE=NULL, MEM_DEL_YN='N', MEM_DEL_DATE=NULL
+		<foreach collection="list" item="item" open="WHERE (MEM_RESIGN_YN='Y' OR MEM_DEL_YN='Y') AND (" close=")" separator="OR">
+			MEM_NO=#{item}
+		</foreach>
+	</update>
+	
+	<!-- 삭제 조회 - 삭제된 사원 영구 삭제 (ajax) -->
+	<delete id="deleteMember" parameterType="java.util.List">
+		DELETE
+		FROM MEMBER
+		<foreach collection="list" item="item" open="WHERE (MEM_RESIGN_YN='Y' OR MEM_DEL_YN='Y') AND (" close=")" separator="OR">
+			MEM_NO=#{item}
+		</foreach>
+	</delete>
+	
+	<!-- 삭제 조회 - 삭제된 부서별 게시글 조회 - 삭제된 부서별 게시판 수 -->
+	<select id="countBoard" resultType="int">
+		SELECT
+    		count(*) countBoard
+		FROM ADMIN_BOARD
+		WHERE delYN='Y'  
+	</select>
+	
+	<!-- 삭제 조회 - 삭제된 게시글 조회  -->
+	<select id="selectDeleteBoard" parameterType="hashmap" resultType="AdminBoard">
+		SELECT 
+   			rnum,
+    		noNum,
+    		title,
+   			writer,
+    		writeDate,
+    		hits,
+    		delYN,
+    		delDate
+		FROM ADMIN_BOARD
+		WHERE delYN='Y' AND RNUM BETWEEN ${start} AND ${end}	         		
+	</select>
+	
+	<!-- 삭제 조회 - 삭제된부서별 게시글 검색 -->
+	<select id="selectSearchBoard" parameterType="hashmap" resultType="AdminBoard">
+		SELECT 
+   			rnum,
+    		noNum,
+    		title,
+   			writer,
+    		writeDate,
+    		hits,
+    		delYN,
+    		delDate
+		FROM ADMIN_BOARD
+		WHERE ${searchType} LIKE #{keyword} AND delYN='Y' AND (RNUM BETWEEN ${start} AND ${end})
+	</select>
+	
+	<!-- 삭제 조회 - 삭제된 부서별 게시글 복원 (ajax) -->
+	<update id="deleteBoardCancel" parameterType="java.util.List">
+		UPDATE
+			PART_BOARD
+		SET
+			PART_DEL_YN='N', PART_DEL_DATE=NULL
+		<foreach collection="list" item="item" open="WHERE (PART_DEL_YN='Y') AND (" close=")" separator="OR">
+			PART_NO=#{item}
+		</foreach>
+	</update>
+	
+	<!-- 삭제 조회 - 삭제된 부서별 게시글 영구 삭제 (ajax) -->
+	<delete id="deleteBoard" parameterType="java.util.List">
+		DELETE
+		FROM PART_BOARD
+		<foreach collection="list" item="item" open="WHERE (PART_DEL_YN='Y') AND (" close=")" separator="OR">
+			PART_NO=#{item}
+		</foreach>
+	</delete>
+		
+	<!-- 데이터/문서 관리 - 사원 기록 삭제 -->
+	<select id="expireDeleteMember" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) as expireDeleteMember
+			FROM MEMBER
+			WHERE MEM_RESIGN_YN='Y' AND ADD_MONTHS(MEM_RESIGN_DATE,12) > SYSTIMESTAMP
+		]]>
+	</select>
+	
+	<!-- 데이터/문서 관리 - 미경과된 사원 기록 삭제 -->
+	<select id="expireNotDeleteMember" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) as expireDeleteMember
+			FROM MEMBER
+			WHERE MEM_RESIGN_YN='Y' AND ADD_MONTHS(MEM_RESIGN_DATE,12) <= SYSTIMESTAMP
+		]]>
+	</select>
+	
+	<!-- 데이터/문서 관리 - 경과된 삭제 대기 게시물 -->
+	<select id="deletePaperCount" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) as deletePaperCount
+			FROM PART_BOARD
+			WHERE PART_DEL_YN='Y' AND (PART_DEL_DATE + 7) < SYSTIMESTAMP
+		]]>
+	</select>
+	
+	<!-- 데이터/문서 관리 - 보존 기간 경과된 삭제 대기 게시물 -->
+	<select id="expirePaperCount" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) as expirePaperCount
+			FROM PART_BOARD
+			WHERE PART_DEL_YN='N' AND ADD_MONTHS(PART_DATE,60) < SYSTIMESTAMP
+		]]>
+	</select>
+	
+	<!-- 데이터/문서 관리 - 미경과된 삭제 대기 게시물 -->
+	<select id="deleteNotPaperCount" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) as deletePaperCount
+			FROM PART_BOARD
+			WHERE PART_DEL_YN='Y' AND (PART_DEL_DATE + 7) >= SYSTIMESTAMP
+		]]>
+	</select>
+	
+	<!-- 데이터/문서 관리 - 보존 기간 미경과된 삭제 대기 게시물 -->
+	<select id="expireNotPaperCount" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*) as expirePaperCount
+			FROM PART_BOARD
+			WHERE PART_DEL_YN='N' AND ADD_MONTHS(PART_DATE,60) >= SYSTIMESTAMP
+		]]>
+	</select>
+</mapper>

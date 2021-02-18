@@ -122,6 +122,16 @@
 		</div>
 
 	<!-- 자바 스크립트    -->
+	<script>
+		$(function(){
+			$('#categoryAdmin').next().css('display','block');
+			$('#categoryAdmin').next().css('height','75px');
+			$('#categoryAdmin').children().last().children().attr('class','fas fa-chevron-left');
+			
+			$('#categoryAdmin').next().children().eq(2).children().css('font-weight','800');
+			$('#categoryAdmin').next().children().eq(2).children().css('color','#ffcc29');
+		});
+	</script>
 	<script type="text/javascript" src="/resources/js/header&sideNavi.js"></script>
 
 	</div>

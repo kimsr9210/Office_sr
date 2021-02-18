@@ -78,7 +78,7 @@
                                <c:otherwise>(제목없음)</c:otherwise>
                                </c:choose> 
                                	<c:if test="${listType!='S' }">
-                               <c:choose><c:when test="${keepYN=='Y'.charAt(0) }"><i class="fas fa-star"></i></c:when>
+                               <c:choose><c:when test="${mail.keepYN=='Y'.charAt(0) }"><i class="fas fa-star"></i></c:when>
                                <c:otherwise><i class="far fa-star"></i></c:otherwise></c:choose>
                                </c:if>
                                </div></div>
