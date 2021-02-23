@@ -322,13 +322,65 @@ public class AdminDAO {
 	}//searchGetPageNavi
 
 	//삭제 조회 - 삭제된 부서별 게시글 복원 (ajax)
-	public int deleteBoardCancel(SqlSessionTemplate sqlSession, List<String> noList) {		
-		return sqlSession.update("admin.deleteBoardCancel",noList);
+	public int deleteBoardCancel(SqlSessionTemplate sqlSession, List<Integer> noList, List<String> typeList) {
+		ArrayList<Integer> nList = new ArrayList<Integer>();
+		ArrayList<Integer> pList = new ArrayList<Integer>();	
+		
+		for(int i=0; i<typeList.size(); i++){
+			if(typeList.get(i).equals('N')){
+				nList.add(noList.get(i));
+			} else if(typeList.get(i).equals('P')){
+				pList.add(noList.get(i));
+			}
+		}
+		int pResult =0;
+		int nResult =0;
+		if(pList.size()>0){
+			pResult  = sqlSession.update("admin.deletePartCancel",pList);
+		}
+		if(nList.size()>0){
+			nResult = sqlSession.update("admin.deleteNoticeCancel",nList);
+		}
+	
+		if(pResult+nResult>0){
+			return 1;
+		}
+		return 0; 
 	}//deleteBoardCancel
 	
 	//삭제 조회 - 삭제된 부서별 게시글 영구 삭제 (ajax)
-	public int deleteBoard(SqlSessionTemplate sqlSession, List<String> noList) {		
-		return sqlSession.delete("admin.deleteBoard",noList);
+	public int deleteBoard(SqlSessionTemplate sqlSession, List<Integer> noList, List<String> typeList) {		
+		ArrayList<Integer> nList = new ArrayList<Integer>();
+		ArrayList<Integer> pList = new ArrayList<Integer>();
+		
+		
+		
+		for(int i=0; i<typeList.size(); i++){
+			if(typeList.get(i).equals('N')){
+				nList.add(noList.get(i));
+				System.out.println(nList);
+			} else if(typeList.get(i).equals('P')){
+				pList.add(noList.get(i));
+				System.out.println(pList);
+			}
+		}
+		
+		System.out.println(nList);
+		System.out.println(pList);
+		
+		int pResult =0;
+		int nResult =0;
+		if(pList.size()>0){
+			pResult  = sqlSession.delete("admin.deletePartBoard",pList);
+		}
+		if(nList.size()>0){
+			nResult = sqlSession.delete("admin.deleteNoticeBoard",nList);
+		}
+	
+		if(pResult+nResult>0){
+			return 1;
+		}
+		return 0; 
 	}//deleteBoard
 
 	//삭제 조회 - 삭제된 결재안 조회  - 삭제된 결재안 수
@@ -526,5 +578,5 @@ public class AdminDAO {
 	public int deleteCountApproval(SqlSessionTemplate sqlSession) {
 		return sqlSession.delete("admin.deleteCountApproval");
 	}//deleteCountApproval
-	
+
 }//AdminDAO

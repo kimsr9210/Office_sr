@@ -58,15 +58,6 @@
 					</div>
 				</a>
 			</li>
-			<li>
-				<a href="/adminPasswordInitPage.ho" class="aStyle">
-					<div class="naviNo hoverColor" id="error">
-						<div class="naviIcon"><i class="fas fa-question"></i></div>
-						<span class="naviText">오류 관리</span>
-						<span class="naviClick"><i class="iArrow fa fa-angle-right"></i></span>
-					</div>
-				</a>
-			</li>
 		</ul>
 	</div>
     <script type='text/javascript'>	    

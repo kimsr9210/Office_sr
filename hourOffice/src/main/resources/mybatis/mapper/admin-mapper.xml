@@ -200,9 +200,9 @@
 	<!-- 삭제 조회 - 삭제된 부서별 게시글 조회 - 삭제된 부서별 게시판 수 -->
 	<select id="countBoard" resultType="int">
 		SELECT
-		   count(*)
-		FROM (SELECT
-		        'p'||PART_NO AS noNum,
+		 count(*)
+		FROM (SELECT 'P' as TYPE,
+		        PART_NO AS noNum,
 		        PART_TITLE AS title,
 		        PART_WRITER AS writer,
 		        PART_DATE AS writeDate,
@@ -211,8 +211,8 @@
 		        PART_DEL_DATE AS delDate
 		        FROM PART_BOARD
 		            UNION
-		        SELECT
-		            'n'||NOT_NO AS noNum,
+		        SELECT 'N' as TYPE,
+		            NOT_NO AS noNum,
 		            NOT_TITLE AS title,
 		            NOT_WRITER AS writer,
 		            NOT_DATE AS writeDate,
@@ -230,6 +230,7 @@
         FROM(
             SELECT
                 ROW_NUMBER()OVER(ORDER BY delDate ASC) AS RNUM,
+                A.type,
                 A.noNum,
                 A.title,
                 A.writer,
@@ -238,26 +239,29 @@
                 A.delYN,
                 A.delDate
             FROM (SELECT
-                    'p'||PART_NO AS noNum,
-                    PART_TITLE AS title,
-                    PART_WRITER AS writer,
-                    PART_DATE AS writeDate,
-                    PART_HITS AS hits,
-                    PART_DEL_YN AS delYN,
-                    PART_DEL_DATE AS delDate
-                    FROM PART_BOARD
-            UNION
-                  SELECT
-                      'n'||NOT_NO AS noNum,
-                      NOT_TITLE AS title,
-                      NOT_WRITER AS writer,
-                      NOT_DATE AS writeDate,
-                      NOT_HITS AS hits,
-                      NOT_DEL_YN AS delYN,
-                      NOT_DEL_DATE AS delDate
-                  FROM ALL_NOTICE) A
-            WHERE DELYN='Y' AND DELDATE IS NOT NULL)
-        WHERE (RNUM BETWEEN ${start} AND ${end})	         		
+		 			*
+					FROM (SELECT 'P' as type,
+					        PART_NO AS noNum,
+					        PART_TITLE AS title,
+					        PART_WRITER AS writer,
+					        PART_DATE AS writeDate,
+					        PART_HITS AS hits,
+					        PART_DEL_YN AS delYN,
+					        PART_DEL_DATE AS delDate
+					        FROM PART_BOARD
+					            UNION
+					        SELECT 'N' as type,
+					            NOT_NO AS noNum,
+					            NOT_TITLE AS title,
+					            NOT_WRITER AS writer,
+					            NOT_DATE AS writeDate,
+					            NOT_HITS AS hits,
+					            NOT_DEL_YN AS delYN,
+					            NOT_DEL_DATE AS delDate
+					        FROM ALL_NOTICE)
+					WHERE DELYN='Y' AND DELDATE IS NOT NULL) A
+           	WHERE DELYN='Y' AND DELDATE IS NOT NULL)
+        WHERE RNUM BETWEEN #{start} AND #{end}         		
 	</select>
 	
 	<!-- 삭제 조회 - 삭제된부서별 게시글 검색 -->
@@ -267,6 +271,7 @@
         FROM(
             SELECT
                 ROW_NUMBER()OVER(ORDER BY delDate ASC) AS RNUM,
+                A.type,
                 A.noNum,
                 A.title,
                 A.writer,
@@ -275,42 +280,84 @@
                 A.delYN,
                 A.delDate
             FROM (SELECT
-                    'p'||PART_NO AS noNum,
-                    PART_TITLE AS title,
-                    PART_WRITER AS writer,
-                    PART_DATE AS writeDate,
-                    PART_HITS AS hits,
-                    PART_DEL_YN AS delYN,
-                    PART_DEL_DATE AS delDate
-                    FROM PART_BOARD
-            UNION
-                  SELECT
-                      'n'||NOT_NO AS noNum,
-                      NOT_TITLE AS title,
-                      NOT_WRITER AS writer,
-                      NOT_DATE AS writeDate,
-                      NOT_HITS AS hits,
-                      NOT_DEL_YN AS delYN,
-                      NOT_DEL_DATE AS delDate
-                  FROM ALL_NOTICE) A
-            WHERE DELYN='Y' AND DELDATE IS NOT NULL AND ${searchType} LIKE #{keyword})
-        WHERE (RNUM BETWEEN ${start} AND ${end})
+		 			*
+					FROM (SELECT 'P' as type,
+					        PART_NO AS noNum,
+					        PART_TITLE AS title,
+					        PART_WRITER AS writer,
+					        PART_DATE AS writeDate,
+					        PART_HITS AS hits,
+					        PART_DEL_YN AS delYN,
+					        PART_DEL_DATE AS delDate
+					        FROM PART_BOARD
+					            UNION
+					        SELECT 'N' as type,
+					            NOT_NO AS noNum,
+					            NOT_TITLE AS title,
+					            NOT_WRITER AS writer,
+					            NOT_DATE AS writeDate,
+					            NOT_HITS AS hits,
+					            NOT_DEL_YN AS delYN,
+					            NOT_DEL_DATE AS delDate
+					        FROM ALL_NOTICE)
+					WHERE DELYN='Y' AND DELDATE IS NOT NULL) A
+           	WHERE DELYN='Y' AND DELDATE IS NOT NULL AND ${searchType} LIKE #{keyword})
+        WHERE RNUM BETWEEN #{start} AND #{end}
 	</select>
 	
 	<!-- 삭제 조회 - 삭제된 부서별 게시글 복원 (ajax) -->
-	<update id="deleteBoardCancel" parameterType="String">
-		 update part_board set part_del_date=SYSTIMESTAMP  where part_no='3'
+	<update id="deletePartCancel" parameterType="java.util.ArrayList">
+		 UPDATE
+            Part_board
+        set
+            PART_DEL_YN='N',
+            PART_DEL_DATE = NULL
+        WHERE PART_DEL_YN='Y'
+    	AND PART_NO IN
+        <foreach collection="list" item="item" open=" (" close=")" separator=",">
+            #{item}
+        </foreach>
+    
 	</update>
 	
+	<update id="deleteNoticeCancel" parameterType="java.util.ArrayList">
+        UPDATE
+            ALL_NOTICE
+        set
+            NOT_DEL_YN='N',
+            NOT_DEL_DATE = NULL
+        WHERE NOT_DEL_YN='Y'
+    	AND NOT_NO IN
+        <foreach collection ="list" item="item" open=" (" close=")" separator=",">
+            #{item}
+        </foreach>		 	
+	</update>
+		
 	<!-- 삭제 조회 - 삭제된 부서별 게시글 영구 삭제 (ajax) -->
-	<delete id="deleteBoard" parameterType="java.util.List">
+	<delete id="deletePartBoard" parameterType="java.util.ArrayList">
 		DELETE
-		FROM PART_BOARD
-		<foreach collection="list" item="item" open="WHERE (PART_DEL_YN='Y') AND (" close=")" separator="OR">
-			PART_NO=#{item}
-		</foreach>
+			FROM part_board
+		<![CDATA[
+			WHERE (part_DEL_YN='Y')AND part_NO IN
+		]]>
+		  
+		<foreach collection="list" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>   
 	</delete>
-
+	
+	<delete id="deleteNoticeBoard" parameterType="java.util.ArrayList">
+        DELETE
+			FROM all_Notice
+		<![CDATA[
+			WHERE (NOT_DEL_YN='Y') AND NOT_NO IN
+		]]>
+		  
+		<foreach collection="list" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach> 	 	
+	</delete>
+	
 	<!-- 삭제 조회 - 삭제 조회 - 삭제된 결재안 조회  - 삭제된 결재안 수 -->
 	<select id="countDeleteApproval" resultType="int">
 		<![CDATA[

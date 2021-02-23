@@ -33,7 +33,9 @@ public class AdminController {
 
 	//관리자 페이지 입장
 	@RequestMapping(value="/adminMainPage.ho")
-	public String adminMainPage(Model model) throws IOException {
+	public String adminMainPage(HttpSession session, Model model) throws IOException {
+		if(session.getAttribute("member")!=null){ //로그인
+		
 		int deletePaperCount = aService.deletePaperCount();//삭제 기간 경과 문서 
 		model.addAttribute("deletePaperCount",deletePaperCount);
 		
@@ -49,7 +51,14 @@ public class AdminController {
 		int expireNotApprovalCount = aService.expireNotApprovalCount();//결재안 - 보존 기간 미경과 문서
 		int allNotCount = expireNotMemberCount + deleteNotPaperCount + expireNotPaperCount + expireNotApprovalCount;
 		model.addAttribute("allNotCount",allNotCount);//미경과 문서
+		
+		int countAll = mService.selectCountAllMember();
+		model.addAttribute("countAll",countAll);
+		
 		return "admin/adminMain";
+		} else {
+			return "redirect:/login.jsp";
+		}
 	}//adminMainPage
 	
 	//관리자 관리 - 부서별 관리자 리스트 전체 조회
@@ -285,9 +294,9 @@ public class AdminController {
 	
 	//삭제 조회 - 삭제된 부서별 게시글 복원 (ajax)
 	@RequestMapping(value="/adminDeleteBoardCancel.ho")
-	public void deleteBoardCancel(@RequestParam(value="noList[]") List<String> noList, HttpServletResponse response) throws IOException{
-		System.out.println(noList.indexOf('p'));
-		int result = aService.deleteBoardCancel(noList);
+	public void deleteBoardCancel(@RequestParam(value="noList[]") List<Integer> noList, @RequestParam(value="typeList[]") List<String> typeList, HttpServletResponse response) throws IOException{
+
+		int result = aService.deleteBoardCancel(noList,typeList);
 		if(result>0) {
 			response.getWriter().print(true);
 		} else {
@@ -297,13 +306,17 @@ public class AdminController {
 		
 	//삭제 조회 - 삭제된 부서별 게시글 영구 삭제 (ajax)
 	@RequestMapping(value="/adminDeleteBoard.ho")
-	public void deleteBoard(@RequestParam(value="noList[]") List<String> noList, HttpServletResponse response) throws IOException{
-		int result = aService.deleteBoard(noList);
+	public void deleteBoard(@RequestParam(value="noList[]") List<Integer> noList, @RequestParam(value="typeList[]") List<String> typeList, HttpServletResponse response) throws IOException{
+		System.out.println(noList);
+		System.out.println(typeList);
+		
+		int result = aService.deleteBoard(noList,typeList);
 		if(result>0) {
 			response.getWriter().print(true);
 		} else {
 			response.getWriter().print(false);
 		}
+		
 	}//deleteBoard
 	
 	//삭제 조회 - 결재안 조회

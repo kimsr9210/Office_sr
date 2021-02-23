@@ -119,13 +119,13 @@ public class AdminService {
 	}//searchGetPageNavi
 	
 	//삭제 조회 - 삭제된 부서별 게시글 복원 (ajax)
-	public int deleteBoardCancel(List<String> noList) {			
-		return aDAO.deleteBoardCancel(sqlSession, noList);
+	public int deleteBoardCancel(List<Integer> noList, List<String> typeList) {		
+		return aDAO.deleteBoardCancel(sqlSession, noList, typeList);
 	}//deleteBoardCancel
 
 	//삭제 조회 - 삭제된 부서별 게시글 영구 삭제 (ajax)
-	public int deleteBoard(List<String> noList) {		
-		return aDAO.deleteBoard(sqlSession, noList);
+	public int deleteBoard(List<Integer> noList, List<String> typeList) {		
+		return aDAO.deleteBoard(sqlSession, noList, typeList);
 	}//deleteBoard
 	
 	//삭제 조회 - 삭제된 결재안 조회  - 삭제된 결재안 수

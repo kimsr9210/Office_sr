@@ -150,7 +150,6 @@
 				
 				//결재안 기록 전체 삭제 로직
 				$('#paymentRecord').children(':nth-child(3)').children(':nth-child(2)').children(':nth-child(2)').click(function(){
-					alert('1');
 					var expireApprovalCount = ${expireApprovalCount};
 					
 					if(expireApprovalCount==0) {

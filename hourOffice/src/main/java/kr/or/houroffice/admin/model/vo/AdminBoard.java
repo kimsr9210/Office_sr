@@ -3,6 +3,7 @@ package kr.or.houroffice.admin.model.vo;
 import java.sql.Timestamp;
 
 public class AdminBoard {
+	private String type; //타입 순서대로 정렬
 	private int rnum; //삭제 순서대로 정렬
 	private String noNum; //게시물 번호
 	private String title; //게시물 제목
@@ -11,15 +12,14 @@ public class AdminBoard {
 	private int hits; //게시글 조회수
 	private char delYN; //게시글 삭제 여부
 	private Timestamp delDate; //게시글 삭제일
-	
 	public AdminBoard() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
-	public AdminBoard(int rnum, String noNum, String title, String writer, Timestamp writeDate, int hits, char delYN,
-			Timestamp delDate) {
+	public AdminBoard(String type, int rnum, String noNum, String title, String writer, Timestamp writeDate, int hits,
+			char delYN, Timestamp delDate) {
 		super();
+		this.type = type;
 		this.rnum = rnum;
 		this.noNum = noNum;
 		this.title = title;
@@ -29,69 +29,59 @@ public class AdminBoard {
 		this.delYN = delYN;
 		this.delDate = delDate;
 	}
-
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 	public int getRnum() {
 		return rnum;
 	}
-
 	public void setRnum(int rnum) {
 		this.rnum = rnum;
 	}
-
 	public String getNoNum() {
 		return noNum;
 	}
-
 	public void setNoNum(String noNum) {
 		this.noNum = noNum;
 	}
-
 	public String getTitle() {
 		return title;
 	}
-
 	public void setTitle(String title) {
 		this.title = title;
 	}
-
 	public String getWriter() {
 		return writer;
 	}
-
 	public void setWriter(String writer) {
 		this.writer = writer;
 	}
-
 	public Timestamp getWriteDate() {
 		return writeDate;
 	}
-
 	public void setWriteDate(Timestamp writeDate) {
 		this.writeDate = writeDate;
 	}
-
 	public int getHits() {
 		return hits;
 	}
-
 	public void setHits(int hits) {
 		this.hits = hits;
 	}
-
 	public char getDelYN() {
 		return delYN;
 	}
-
 	public void setDelYN(char delYN) {
 		this.delYN = delYN;
 	}
-
 	public Timestamp getDelDate() {
 		return delDate;
 	}
-
 	public void setDelDate(Timestamp delDate) {
 		this.delDate = delDate;
 	}
-	
+
 }//AdminBoard

@@ -64,7 +64,7 @@
                                 </tr>
                                 <c:forEach items="${list}" var="li" varStatus="status">
 	                                <tr>
-	                                	<td><input type="checkbox" name="checkBoard" value="${li.noNum}"/></td>
+	                                	<td><input type="checkbox" name="checkBoard" value="${li.noNum}"/><input type="hidden" name="checkType" value="${li.type }"/></td>
 	                                    <td>${li.noNum}</td>
 	                                    <td>${li.title}</td>
 	                                    <td>${li.writer}</td>
@@ -74,7 +74,7 @@
 	                                </tr>
                                 </c:forEach>
                     	</table>
-                    	<ul id="page-navi">${pageNavi }</ul>
+                    	<ul id="page-navi" style="color:black;">${pageNavi }</ul>
     					<div class="buttonSet buttonStyle">
                         	<button class="agreeButtonType">복원</button>
                             <button class="refuseButtonType">삭제</button>
@@ -90,7 +90,8 @@
 	$(function(){
 
 		//checkbox
-		var checkBoard = [];//체크한 사번 넣을 곳			
+		var checkBoard = [];//체크한 사번 넣을 곳	
+		var checkType = [];
 		$('input[name=checkBoard]').click(function(){//checkbox 클릭하면
 			
 			var countBoard = "<c:out value='${countBoard}'/>"
@@ -99,12 +100,15 @@
 			if($(this).is(':checked')){ 
 				if($(this).val()=='all'){//th의 전체 checkbox 체크
 					$('input[name=checkBoard]').prop('checked',true);//td의 전체 checkbox 체크
+					
 					checkBoard = [];//비우기
 					$('input:checkbox[name=checkBoard]:checked').each(function(){
 						checkBoard.push($(this).val());//배열에  전체 사번 넣어주기
+						checkType.pust($(this).next().val());//그 옆 Type 넣기						
 					})						
 				} else { //td의 일부 checkbox 체크	
 					checkBoard.push($(this).val());//배열에 사번 넣어주기
+					checkType.push($(this).next().val());//그 옆 Type넣기
 
 					if(searchCount=="") {
 						if(countBoard==($('input:checkbox[name=checkBoard]:checked')).length){
@@ -123,6 +127,7 @@
 				} else {//td의 체크가 아니라면
 					$('input[name=checkBoard][value=all]').prop('checked',false);
 					checkBoard.splice(checkBoard.indexOf($(this).val()),1);
+					checkType.splice(checkType.indexOf($(this).val()),1);
 				}
 			}
 		});
@@ -134,11 +139,12 @@
 			} else {
 				if(checkBoard[0]=='all'){
 					checkBoard.splice(checkBoard.indexOf(checkBoard[0]),1);
+					checkType.splice(checkType.indexOf(checkType[0]),1);
 				}
 				if(confirm('해당 게시글을 복원하시겠습니까?')){
 					$.ajax({
 						url: '/adminDeleteBoardCancel.ho',
-						data : {'noList':checkBoard},
+						data : {'noList':checkBoard, 'typeList':checkType},
 						type : 'post',
 						success : function(result){
 							alert('게시글 복원을 성공하였습니다.');
@@ -159,11 +165,12 @@
 			} else {
 				if(checkBoard[0]=='all'){
 					checkBoard.splice(checkBoard.indexOf(checkBoard[0]),1);
+					checkType.splice(checkType.indexOf(checkType[0]),1);
 				}
 				if(confirm('해당 게시글을 영구 삭제하시겠습니까?')){
 					$.ajax({
 						url: '/adminDeleteBoard.ho',
-						data : {'noList':checkBoard},
+						data : {'noList':checkBoard, 'typeList':checkType},
 						type : 'post',
 						success : function(result){
 							alert('게시글을 영구 삭제하였습니다.');
@@ -175,6 +182,8 @@
 					});
 				}
 			}
+			console.log(noList);
+			console.log(typeList);
 		});
 	});	
 	
