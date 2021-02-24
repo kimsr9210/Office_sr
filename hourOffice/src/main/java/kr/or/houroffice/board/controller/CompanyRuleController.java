@@ -1,6 +1,7 @@
 package kr.or.houroffice.board.controller;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -95,8 +96,10 @@ public class CompanyRuleController {
 				
 				return "admin_tap/general_affairs_department/allCompanyRulePage";
 			}// 관리자 권한이 없다면 ↓
+			Calendar cal = Calendar.getInstance();
+			int todayMon = cal.get(Calendar.MONTH) + 1;
+			model.addAttribute("location","/main.ho?todayMon="+todayMon);
 			model.addAttribute("msg","접근 권한이 없습니다.");
-			model.addAttribute("location","/main.ho");
 			return "result";
 		}// 로그인을 하지 않았다면 ↓
 		return "redirect:login.jsp";
@@ -115,8 +118,10 @@ public class CompanyRuleController {
 				
 				return "admin_tap/general_affairs_department/allCompanyRulePage";
 			}// 관리자 권한이 없다면 ↓
+			Calendar cal = Calendar.getInstance();
+			int todayMon = cal.get(Calendar.MONTH) + 1;
+			model.addAttribute("location","/main.ho?todayMon="+todayMon);
 			model.addAttribute("msg","접근 권한이 없습니다.");
-			model.addAttribute("location","/main.ho");
 			return "result";
 		}// 로그인을 하지 않았다면 ↓
 		return "redirect:login.jsp";
@@ -129,8 +134,10 @@ public class CompanyRuleController {
 			if(m.getMemRightCode()=='D'){
 				return "admin_tap/general_affairs_department/writePostCompanyRule";
 			}// 관리자 권한이 없다면 ↓
+			Calendar cal = Calendar.getInstance();
+			int todayMon = cal.get(Calendar.MONTH) + 1;
+			model.addAttribute("location","/main.ho?todayMon="+todayMon);
 			model.addAttribute("msg","접근 권한이 없습니다.");
-			model.addAttribute("location","/main.ho");
 			return "result";
 		}// 로그인을 하지 않았다면 ↓
 		return "redirect:login.jsp";
@@ -149,8 +156,10 @@ public class CompanyRuleController {
 				}
 				model.addAttribute("location","/admin_tap_allCompanyRulePage.ho");
 			}else{// 관리자 권한이 없다면 ↓
+				Calendar cal = Calendar.getInstance();
+				int todayMon = cal.get(Calendar.MONTH) + 1;
+				model.addAttribute("location","/main.ho?todayMon="+todayMon);
 				model.addAttribute("msg","접근 권한이 없습니다.");
-				model.addAttribute("location","/main.ho");
 			}
 			return "result";
 		}// 로그인을 하지 않았다면 ↓
@@ -172,8 +181,10 @@ public class CompanyRuleController {
 				model.addAttribute("msg","해당 게시물이 없습니다.");
 				model.addAttribute("location","/allNoticePage.ho");
 			}else{// 관리자 권한이 없다면 ↓
+				Calendar cal = Calendar.getInstance();
+				int todayMon = cal.get(Calendar.MONTH) + 1;
+				model.addAttribute("location","/main.ho?todayMon="+todayMon);
 				model.addAttribute("msg","접근 권한이 없습니다.");
-				model.addAttribute("location","/main.ho");
 			}
 			return "result";
 		}// 로그인을 하지 않았다면 ↓
@@ -195,8 +206,10 @@ public class CompanyRuleController {
 					model.addAttribute("location","/admin_tap_companyRuleModify.ho?ruleNo="+bp.getPostNo());
 				}
 			}else{// 관리자 권한이 없다면 ↓
+				Calendar cal = Calendar.getInstance();
+				int todayMon = cal.get(Calendar.MONTH) + 1;
+				model.addAttribute("location","/main.ho?todayMon="+todayMon);
 				model.addAttribute("msg","접근 권한이 없습니다.");
-				model.addAttribute("location","/main.ho");
 			}
 			return "result";
 		}// 로그인을 하지 않았다면 ↓

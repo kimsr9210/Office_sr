@@ -146,7 +146,7 @@
 			COMP_DATE as compDate,
 			MEM_COUNT as memCount
 		FROM PROJECT
-		WHERE PRO_NO IN
+		WHERE DEL_YN='N' AND PRO_NO IN
         (SELECT PRO_NO FROM PRO_FAVOR WHERE MEM_NO=#{MEM_NO})
 	</select>
 	

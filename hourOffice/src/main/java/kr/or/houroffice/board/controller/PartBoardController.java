@@ -77,8 +77,11 @@ public class PartBoardController {
 				
 				return "part_board/allPartBoardPage";
 			} // 부서가 없는 사람
+			Calendar cal = Calendar.getInstance();
+			int todayMon = cal.get(Calendar.MONTH) + 1;
+			
 			model.addAttribute("msg","부서가 없는 사람은 부서별 게시판을 이용할 수 없습니다.");
-			model.addAttribute("location","/main.ho");
+			model.addAttribute("location","/main.ho?todayMon="+todayMon);
 				
 			return "result";
 			

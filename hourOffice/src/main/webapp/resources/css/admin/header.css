@@ -7,13 +7,16 @@
 	border: 0;
 	background-color: #22294A;
 	color: white;
-	font-weight: bold;}
+	font-weight: bold;
+	text-decoration : none;}
 	
 #header #headerClock {margin-left: 210px;}
 
 #header #headerMember {
 	height: 40px;
-	float: right;}
+	float: right;
+	text-decoration : none;
+	color: white;}
 	
 #header .headerIcon {
 	margin-top: 8px;

@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -13,39 +12,14 @@
 
 	<!-- 관리자 페이지 공통 css -->
 	<link rel="stylesheet" type="text/css" href="/resources/css/admin/style.css" />
-<style>
-/*페이지 네비 css*/
-#page-navi {
-    height: 30px;
-    margin-top: 50px;
-    margin-bottom: 50px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-}
-
-.page-list {
-    width: 30px;
-    height: 30px;
-    border: 1px solid darkgray;
-    text-align: center;
-}
-.page-link {
-    width: 100%;
-    height: 100%;
-    line-height: 28px;
-    display: inline-block;
-}
-
-.page-link:hover{
-    background: #eaeaea;
-}
-</style>
 
 </head>
 <body>
 	<!--JSTL core Tag 사용 선언  -->
 	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+	
+	<!-- JSTL format Tag 사용 선언 -->
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 	
 	<div id="wrap">
 		<%@ include file ="../adminForm/header.jsp" %>
@@ -104,7 +78,7 @@
 		                                </tr>
                                 </c:forEach>
                     	</table>
-						<center><ul id="page-navi">${pageNavi }</ul></center>    					
+						<ul id="page-navi">${pageNavi }</ul>    					
 						<div class="buttonSet buttonStyle">
                         	<button class="agreeButtonType">복원</button>
                             <button class="refuseButtonType">삭제</button>
@@ -169,7 +143,7 @@
 							data : {'memNoList':checkMem},
 							type : 'post',
 							success : function(result){
-								alert(memName+'의 사원 복원을 성공하였습니다.');
+								alert('사원 복원을 성공하였습니다.');
 								history.go(0);
 							},
 							error : function(){

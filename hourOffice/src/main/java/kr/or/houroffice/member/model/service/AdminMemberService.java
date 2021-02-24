@@ -178,6 +178,10 @@ public class AdminMemberService {
 	public int updateDepartmentDelete(String deptCode) {
 		return mDAO.updateDepartmentDelete(sqlSession,deptCode);
 	}
+	//BY 다빈 조직도 - 부서 삭제 사원 부서코드 update
+	public int updateMemDeptCode(String deptCode) {
+		return mDAO.updateMemberDeptCode(sqlSession,deptCode);
+	}
 	
 	//BY 진원   조직도 - 부서목록
 	public ArrayList<Department> selectAllDepartment(){
@@ -187,16 +191,6 @@ public class AdminMemberService {
 	public ArrayList<Department> selectAllDeptCode() {
 		return mDAO.selectAllDeptCode(sqlSession);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 

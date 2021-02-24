@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -55,8 +54,8 @@
     				
 						<table id="noticeList" class="tblStyle">
                                 <tr>
-                                    <th><input type="checkbox" value="all" style="margin-right:20px;"/></th>
-                                    <th>게시글 번호</th>
+                                    <th><input type="checkbox" name="checkBoard" value="all"/></th>
+                                    <th>번호</th>
                                     <th>제목</th>
                                     <th>작성자</th>
                                     <th>작성일</th>
@@ -65,7 +64,7 @@
                                 </tr>
                                 <c:forEach items="${list}" var="li" varStatus="status">
 	                                <tr>
-	                                	<td><input type="checkbox" name="checkBoard" value="${li.rnum}" style="margin-right:20px;"/></td>
+	                                	<td><input type="checkbox" name="checkBoard" value="${li.rnum}"/></td>
 	                                    <td>${li.noNum}</td>
 	                                    <td>${li.title}</td>
 	                                    <td>${li.writer}</td>
@@ -75,7 +74,7 @@
 	                                </tr>
                                 </c:forEach>
                     	</table>
-                    	<center><div id="pageNavi">${pageNavi }</div></center>
+                    	<ul id="page-navi">${pageNavi }</ul>
     					<div class="buttonSet buttonStyle">
                         	<button class="agreeButtonType">복원</button>
                             <button class="refuseButtonType">삭제</button>

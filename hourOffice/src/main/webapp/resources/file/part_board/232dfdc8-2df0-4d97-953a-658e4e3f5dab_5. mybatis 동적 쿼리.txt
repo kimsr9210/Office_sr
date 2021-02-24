@@ -1,0 +1,243 @@
+
+@ 동적 쿼리
+-> 일반적으로 검색 기능이나 다중 입력 처리 등을 수행해야 하는 경우
+SQL을 실행하는 DAO를 여러번 호출하여 실행하였지만 마이바티스에선느 이를 동적으로 제어할 수 있는
+구문을 제공하여 좀 더 쉽게 쿼리를 구현할 수 있도록 함
+
+## 동적 쿼리 지원 기본 구문 종류 ##
+1. if
+2. choose
+3. trim
+4. foreach
+
+※ 위 4가지는 기본 동적 쿼리 (마이바티스에서는 더욱 많은걸 지원하고 있음)
+
+
+@ if 구문
+-> 동적 쿼리를 구현할 때 가장 기본적으로 사용되는 구문
+-> 특정 조건을 만족할 경우 / 특정 구문을 쿼리에 포함 시킴
+-> 필요로 하는 조건이 1개 이상일시 if 구문을 여러개 사용할 수도 있음
+
+ex)
+<if test="조건식">
+	...
+</if>
+
+
+@ choose (when, otherwise)
+-> 자바의 if-else 혹은 switch, 오라클의 choose 구문과 매우 유사하며
+주어진 구문 중 한가지만 수행하고자 할 때 사용
+-> when 은 if, else if 문과 흡사하며 otherwise를 사용하여 else 구문처럼 사용할 수 있음
+
+ex) 
+<choose>
+	<when test="조건식1">
+		...
+	</when>
+	<when test="조건식2">
+		...
+	</when>
+	<otherwise>
+		...
+	</otherwise>
+</choose>
+
+
+
+
+
+
+
+@ trim 구문
+-> trim은 쿼리 구문의 특정 부분을 없앨 거나 붙일때 사용 됨
+-> 태그 안에 내용이 완성될 때 처음 시작할 단어와 시작시 제거해야 할 단어를 명시함
+
+ex) 
+<trim prefix="WHERE" prefixOverrides="AND|OR">
+	...
+</trim>
+
+※ prefix : <trim> 구문 안에 있는 쿼리가 실행 될때 가장 앞에 자동으로 붙여 줌
+※ prefixOverrides : <trim> 구문 안에 있는 쿼리가 실행 될 때 가장 앞에 있는 키워드를 자동으로 삭제
+※ suffix : <trim> 구문 안에 있는 쿼리가 실행 될 때 가장 뒤에 자동으로 붙여줌
+※ suffixOverrides : <trim> 구문 안에 있는 쿼리가 실행 될 때 가장 뒤에 있는 키워드를 자동으로 삭제
+
+ex) 
+	SELECT * FROM MEMBER WHERE user_Id = #{userId}
+		<trim prefix="AND (" prefixOverrides ="OR" suffix=")">
+			<if test="userNo != null">
+				OR user_No = #{userNo}
+			</if>
+			
+			<if test="userName != null">
+				OR user_Name = #{userName}
+			</if>
+		</trim>
+
+
+
+예시 설명)
+
+SELECT 
+	user_no as userNo,
+	user_id as userId,
+	user_pw as userPw,
+	user_name as userName,
+	user_addr as userAddr,
+	reg_date as regDate,
+	end_yn as endYN
+	FROM MEMBER 
+	<trim prefix="WHERE" prefixOverrides="AND|OR">
+		<if test="userName!=null and userName!='' ">
+			 user_name like '%'||#{userName}||'%'
+		</if>
+		<if test="userAddr!=null and userAddr!=''">
+			AND user_addr like '%'||#{userAddr}||'%'
+		</if>
+	</trim>
+		
+
+-> Query 구문을 동작시키는데 userName이 있으면 userName을 검색하고, 
+userAddr도 있으면 같이 WHERE절을 완성해서 완성 시켜라 (trim 구문이 있다면!)
+
+이름 : 
+주소 : 
+-> SELECT * FROM MEMBER
+
+
+이름 : 
+주소 : 경기도
+-> SELECT * FROM MEMBER WHERE user_addr like '%'||#{userAddr}||'%'
+
+
+이름 : 홍길동
+주소 : 
+-> SELECT * FROM MEMBER  WHERE user_name like '%'||#{userName}||'%'
+
+
+이름 : 홍길동
+주소 : 경기도
+
+-> SELECT * FROM MEMBER WHERE user_name like '%'||#{userName}||'%' AND user_addr like '%'||#{userAddr}||'%'
+
+
+
+
+
+
+
+-> Query 구문을 동작시키는데 userName이 있으면 userName을 검색하고, 
+userAddr도 있으면 같이 WHERE절을 완성해서 완성 시켜라 (trim 구문이 없다면!)
+
+
+이름 : 
+주소 : 
+-> SELECT * FROM MEMBER 
+
+
+이름 : 
+주소 : 경기도
+-> SELECT * FROM MEMBER WHERE AND user_addr like '%'||#{userAddr}||'%'
+-> Error 발생!! WHERE 구문 다음에는 AND가 올 수 없습니다.
+
+이름 : 노민수
+주소 : 
+-> SELECT * FROM MEMBER WHERE user_name like '%'||#{userName}||'%'
+
+
+이름 : 홍길동
+주소 : 경기도
+
+->SELECT * FROM MEMBER WHERE user_name like '%'||#{userName}||'%' AND user_addr like '%'||#{userAddr}||'%'
+	
+
+
+
+
+
+@ foreach 구문
+-> 동적 쿼리를 구현할 때 collection에 대한 반복 처리를 제공
+
+## foreach 속성 ##
+item	: 반복 될 때 접근 가능한 객체 변수
+index	: 반복되는 횟수를 가리키는 변수 (횟수를 정하지 않는다면 생략 가능)
+collection	: 반복에 쓰일 Collection (array, list, map 등등)
+open	: 첫 반복시 여는 문자열 ex) '('
+separator	: 반복되는 객체를 나열 할 때 구분하기 위한 구분자 ex) ','
+close	: 마지막 반복시 포함할 닫는 문자열 ex) ')'
+
+ex)
+<foreach item="data" collection="array" open="(" separator="," close=")">
+	...
+</foreach>
+
+
+
+ex)
+
+SELECT 
+	user_no as userNo,
+	user_id as userId,
+	user_pw as userPw,
+	user_name as userName,
+	user_addr as userAddr,
+	reg_date as regDate,
+	end_yn as endYN
+	FROM MEMBER 
+
+	
+	WHERE user_addr IN
+	<foreach item="location" collection="array" open="(" separator="," close=")">
+		#{location}
+	</foreach>
+	
+
+※ SQL 구문에서 IN은 or와 같음
+->  SELECT * FROM MEMBER WHERE user_addr IN ('경기도','서울시','충청도')
+->  SELECT * FROM MEMBER WHERE user_addr ='경기도' OR user_addr='서울시' OR user_addr='충청도'
+
+
+* array 안에 '경기도' 랑 '서울시' 랑 '충청도' 가 있다고 가정
+-> SELECT * FROM MEMBER WHERE user_addr IN ('경기도','서울시','충청도')
+
+
+
+
+* array 안에 '경기도' 랑 '서울시' 있다고 가정
+-> SELECT * FROM MEBER WHERE user_addr IN ('경기도','서울시')
+
+
+
+
+* array 안에 '경기도'만 있다고 가정
+-> SELECT * FROM MEBER WHERE user_addr IN ('경기도')
+
+
+
+회원 검색
+
+주소 체크
+* 경기도만 체크 되었을 경우
+-> SELECT * FROM MEMBER USER_ADDR IN ('경기도')
+
+* 경기도, 서울시 체크 되었을 경우
+-> SELECT * FROM MEMBER USER_ADDR IN ('경기도','서울시')
+
+* 경기도, 서울시, 충청도 가 체크되었을 경우
+-> SELECT * FROM MEMBER USER_ADDR IN ('경기도','서울시','충청도')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

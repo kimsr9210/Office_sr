@@ -75,8 +75,10 @@ public class AdminMemberController {
 				
 				return "admin_tap/personnel_department/allListMember";
 			}// 관리자 권한이 없다면 ↓
+			Calendar cal = Calendar.getInstance();
+			int todayMon = cal.get(Calendar.MONTH) + 1;
+			model.addAttribute("location","/main.ho?todayMon="+todayMon);
 			model.addAttribute("msg","접근 권한이 없습니다.");
-			model.addAttribute("location","/main.ho");
 			return "result";
 		} // 로그인을 하지 않았다면 ↓
 		return "redirect:/login.jsp"; 
@@ -134,8 +136,10 @@ public class AdminMemberController {
 				
 				return "admin_tap/personnel_department/allListMember";
 			}// 관리자 권한이 없다면 ↓
+			Calendar cal = Calendar.getInstance();
+			int todayMon = cal.get(Calendar.MONTH) + 1;
+			model.addAttribute("location","/main.ho?todayMon="+todayMon);
 			model.addAttribute("msg","접근 권한이 없습니다.");
-			model.addAttribute("location","/main.ho");
 			return "result";
 		} // 로그인을 하지 않았다면 ↓
 		return "redirect:/login.jsp"; 
@@ -151,8 +155,10 @@ public class AdminMemberController {
 				model.addAttribute("deptList",deptList);
 				return "admin_tap/personnel_department/memberJoin";
 			}// 관리자 권한이 없다면 ↓
+			Calendar cal = Calendar.getInstance();
+			int todayMon = cal.get(Calendar.MONTH) + 1;
+			model.addAttribute("location","/main.ho?todayMon="+todayMon);
 			model.addAttribute("msg","접근 권한이 없습니다.");
-			model.addAttribute("location","/main.ho");
 			return "result";
 		} // 로그인을 하지 않았다면 ↓
 		return "redirect:/login.jsp"; 		
@@ -174,10 +180,10 @@ public class AdminMemberController {
 		         String organizedfilePath="";        
 		         if(file!=null){
 		        
-		          System.out.println("파라미터명" + file.getName());
-		          System.out.println("파일크기" + file.getSize());
-		          System.out.println("파일 존재" + file.isEmpty());
-		          System.out.println("오리지날 파일 이름" + file.getOriginalFilename());
+		          //System.out.println("파라미터명" + file.getName());
+		          //System.out.println("파일크기" + file.getSize());
+		          //System.out.println("파일 존재" + file.isEmpty());
+		          //System.out.println("오리지날 파일 이름" + file.getOriginalFilename());
 		          
 		          // 파일이 업로드 되는 경로
 		         
@@ -344,8 +350,10 @@ public class AdminMemberController {
 				model.addAttribute("location", "/admin_tap_allListMember.ho");
 				return "result";
 			}// 관리자 권한이 없다면 ↓
+			Calendar cal = Calendar.getInstance();
+			int todayMon = cal.get(Calendar.MONTH) + 1;
+			model.addAttribute("location","/main.ho?todayMon="+todayMon);
 			model.addAttribute("msg","접근 권한이 없습니다.");
-			model.addAttribute("location","/main.ho");
 			return "result";
 		} // 로그인을 하지 않았다면 ↓
 		return "redirect:/login.jsp"; 
@@ -510,8 +518,10 @@ public class AdminMemberController {
 				model.addAttribute("location", "/admin_tap_memberJoin.ho");
 				return "result";
 			}// 관리자 권한이 없다면 ↓
+			Calendar cal = Calendar.getInstance();
+			int todayMon = cal.get(Calendar.MONTH) + 1;
+			model.addAttribute("location","/main.ho?todayMon="+todayMon);
 			model.addAttribute("msg","접근 권한이 없습니다.");
-			model.addAttribute("location","/main.ho");
 			return "result";
 		} // 로그인을 하지 않았다면 ↓
 		return "redirect:/login.jsp"; 
@@ -552,8 +562,10 @@ public class AdminMemberController {
 					model.addAttribute("location","/admin_tap_allListMember.ho");
 				}
 			}else{// 관리자 권한이 없다면 ↓
+				Calendar cal = Calendar.getInstance();
+				int todayMon = cal.get(Calendar.MONTH) + 1;
+				model.addAttribute("location","/main.ho?todayMon="+todayMon);
 				model.addAttribute("msg","접근 권한이 없습니다.");
-				model.addAttribute("location","/main.ho");
 			}
 			return "result";
 		} // 로그인을 하지 않았다면 ↓
@@ -651,8 +663,10 @@ public class AdminMemberController {
 					model.addAttribute("location","/admin_tap_memberInfo.ho"); // 통합사원 목록으로 이동
 				}
 			}else{// 관리자 권한이 없다면 ↓
+				Calendar cal = Calendar.getInstance();
+				int todayMon = cal.get(Calendar.MONTH) + 1;
+				model.addAttribute("location","/main.ho?todayMon="+todayMon);
 				model.addAttribute("msg","접근 권한이 없습니다.");
-				model.addAttribute("location","/main.ho");
 			}
 			return "result";
 		} // 로그인을 하지 않았다면 ↓
@@ -679,8 +693,10 @@ public class AdminMemberController {
 				model.addAttribute("deptListAll",deptListAll);
 				return "admin_tap/personnel_department/organizationChart";
 			}// 관리자 권한이 없다면 ↓
+			Calendar cal = Calendar.getInstance();
+			int todayMon = cal.get(Calendar.MONTH) + 1;
+			model.addAttribute("location","/main.ho?todayMon="+todayMon);
 			model.addAttribute("msg","접근 권한이 없습니다.");
-			model.addAttribute("location","/main.ho");
 			return "result";
 		} // 로그인을 하지 않았다면 ↓
 		return "redirect:/login.jsp"; 
@@ -698,8 +714,10 @@ public class AdminMemberController {
 				model.addAttribute("location","/admin_tap_organizationChart.ho");
 				
 			}else{// 관리자 권한이 없다면 ↓
+				Calendar cal = Calendar.getInstance();
+				int todayMon = cal.get(Calendar.MONTH) + 1;
+				model.addAttribute("location","/main.ho?todayMon="+todayMon);
 				model.addAttribute("msg","접근 권한이 없습니다.");
-				model.addAttribute("location","/main.ho");
 			}
 			return "result";
 		} // 로그인을 하지 않았다면 ↓
@@ -721,8 +739,10 @@ public class AdminMemberController {
 				}
 				model.addAttribute("location", "/admin_tap_organizationChart.ho");
 			}else{// 관리자 권한이 없다면 ↓
+				Calendar cal = Calendar.getInstance();
+				int todayMon = cal.get(Calendar.MONTH) + 1;
+				model.addAttribute("location","/main.ho?todayMon="+todayMon);
 				model.addAttribute("msg","접근 권한이 없습니다.");
-				model.addAttribute("location","/main.ho");
 			}
 			return "result";
 		} // 로그인을 하지 않았다면 ↓
@@ -752,6 +772,7 @@ public class AdminMemberController {
 			if(m.getMemRightCode()=='C'){
 				int result = mService.updateDepartmentDelete(deptCode+" ");
 				if(result>0){
+					mService.updateMemDeptCode(deptCode+" "); // 부서원들의 부서코드를 null로 변경해줌
 					return organizationChart(model,m);
 				}else{
 					model.addAttribute("msg","해당 부서 삭제를 실패하였습니다. \n지속적인 오류시 관리자에 문의하세요.");
@@ -759,8 +780,10 @@ public class AdminMemberController {
 					return "result";
 				}
 			}// 관리자 권한이 없다면 ↓
+			Calendar cal = Calendar.getInstance();
+			int todayMon = cal.get(Calendar.MONTH) + 1;
+			model.addAttribute("location","/main.ho?todayMon="+todayMon);
 			model.addAttribute("msg","접근 권한이 없습니다.");
-			model.addAttribute("location","/main.ho");
 			return "result";
 		} // 로그인을 하지 않았다면 ↓
 		return "redirect:/login.jsp"; 

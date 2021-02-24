@@ -1,7 +1,6 @@
 package kr.or.houroffice.admin.controller;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +18,7 @@ import com.google.gson.Gson;
 
 import kr.or.houroffice.admin.model.service.AdminService;
 import kr.or.houroffice.admin.model.vo.AdminBoard;
+import kr.or.houroffice.approval.model.vo.Approval;
 import kr.or.houroffice.member.model.service.AdminMemberService;
 import kr.or.houroffice.member.model.vo.Member;
 
@@ -172,7 +172,7 @@ public class AdminController {
 		
 		//페이지 네비
 		int naviCountPerPage = 10; // 페이지 네비 10개씩 (페이징 처리)
-		String pageNavi = aService.searchGetPageNavi(currentPage,recordCountPerPage,naviCountPerPage,searchCount);
+		String pageNavi = aService.searchGetPageNavi(currentPage,recordCountPerPage,naviCountPerPage,searchCount,searchType,keyword);
 	
 			if(list != null) {
 				model.addAttribute("countAll",countAll);
@@ -210,7 +210,7 @@ public class AdminController {
 	public String selectDeleteNotice(HttpSession session, HttpServletRequest request, Model model) {
 		if(session.getAttribute("member")!=null){ //로그인
 			
-			int countBoard = aService.countBoard();//삭제된 부서별 게시판 수	
+			int countBoard = aService.countBoard();//삭제된 게시판 수	
 			int currentPage; //현재 페이지 값을 가지고 있는 변수 - 페이징 처리를 위한 변수
 				
 				if(request.getParameter("currentPage")==null){
@@ -247,7 +247,7 @@ public class AdminController {
 			searchType="writer";
 		}
 		keyword = "%"+keyword+"%"; //유사 keyword 검색 처리	
-		int countBoard = aService.countBoard();//삭제된 부서별 게시판 수	
+		int countBoard = aService.countBoard();//삭제된 게시판 수	
 		int currentPage; //현재 페이지 값을 가지고 있는 변수 - 페이징 처리를 위한 변수
 			
 			if(request.getParameter("currentPage")==null){
@@ -262,7 +262,7 @@ public class AdminController {
 			
 		//페이지 네비
 		int naviCountPerPage = 10; // 페이지 네비 10개씩 (페이징 처리)
-		String pageNavi = aService.searchGetBoardPageNavi(currentPage,recordCountPerPage,naviCountPerPage,searchCount);
+		String pageNavi = aService.searchGetBoardPageNavi(currentPage,recordCountPerPage,naviCountPerPage,searchCount,searchType,keyword);
 		
 			if(list != null) {
 				model.addAttribute("countBoard",countBoard);
@@ -297,9 +297,94 @@ public class AdminController {
 	
 	//삭제 조회 - 결재안 조회
 	@RequestMapping(value="/adminDeleteApprovalPage.ho")
-	public String selectDeleteApproval() {
-		return "admin/adminContents/adminDeleteApprovalSelect";
+	public String selectDeleteApproval(HttpSession session, HttpServletRequest request, Model model) {
+		if(session.getAttribute("member")!=null){//로그인
+			
+			int countApproval = aService.countDeleteApproval();//삭제된 결재안 수
+			int currentPage; //현재 페이지 값을 가지고 있는 변수 - 페이징 처리를 위한 변수
+		
+			if(request.getParameter("currentPage")==null){
+				currentPage=1;
+			} else {
+				currentPage = Integer.parseInt(request.getParameter("currentPage"));
+			}
+			
+			int recordCountPerPage = 10; // 1 페이지당 10개의 게시물 (페이징 처리)
+			ArrayList<Approval> list = aService.selectDeleteApproval(currentPage,recordCountPerPage);
+		
+			//페이지 네비
+			int naviCountPerPage = 10; // 페이지 네비 10개씩 (페이징 처리)
+			String pageNavi = aService.getApprovalPageNavi(currentPage,recordCountPerPage,naviCountPerPage);
+		
+			if(list != null) {
+				model.addAttribute("countApproval",countApproval);
+				model.addAttribute("list", list);
+				model.addAttribute("pageNavi",pageNavi);
+			}
+			
+			return "admin/adminContents/adminDeleteApprovalSelect";
+		} else {
+			return "redirect:/login.jsp";
+		}
 	}//selectDeleteApproval
+	
+	//삭제 조회 - 삭제된 결재안 검색
+	@RequestMapping(value="/adminSearchApproval.ho")
+	public String adminSearhApproval(@RequestParam("searchType") String searchType, @RequestParam("keyword") String keyword, HttpServletRequest request, Model model){
+		
+		if(searchType.equals("docuNo")) {//문서 번호 검색
+			searchType="DOCU_NO";
+		} else if (searchType.equals("docuType")) {//결재 양식 검색
+			searchType="DOCU_TYPE";
+		}
+		keyword = "%"+keyword+"%";//유사 keyword 검색 처리
+		int countApproval = aService.countDeleteApproval();//삭제된 결재안 수
+		int currentPage;//현재 페이지 값을 가지고 있는 변수 - 페이징 처리를 위한 변수
+		
+		if(request.getParameter("currentPage")==null) {
+			currentPage=1;
+		} else {
+			currentPage = Integer.parseInt(request.getParameter("currentPage"));
+		}
+		
+		int recordCountPerPage = 10;//1페이지당 10개의 게시물 (페이징 처리)
+		ArrayList<Approval> list = aService.selectSearchDeleteApproval(searchType, keyword, currentPage, recordCountPerPage);
+		int searchCount = list.size();//검색된 수
+		
+		//페이지 네비
+		int naviCountPerPage = 10;//페이지 네비 10개씩 (페이징 처리)
+		String pageNavi = aService.searchGetApprovalPageNavi(currentPage,recordCountPerPage,naviCountPerPage,searchCount,searchType,keyword);
+		
+		if(list != null) {
+			model.addAttribute("countApproval",countApproval);
+			model.addAttribute("searchCount",searchCount);
+			model.addAttribute("list",list);
+			model.addAttribute("pageNavi",pageNavi);
+		}
+		return "admin/adminContents/adminDeleteApprovalSelect";
+	}//adminSearhApproval
+	
+	//삭제 조회 - 삭제된 결재안 복원 (ajax)
+	@RequestMapping(value="/adminDeleteApprovalCancel.ho")
+	public void deleteApprovalCancel(@RequestParam(value="appNoList[]") List<String> appNoList, HttpServletResponse response) throws IOException {
+		int result = aService.deleteApprovalCancel(appNoList);
+		if(result>0) {
+			response.getWriter().print(true);
+		} else {
+			response.getWriter().print(false);
+		}
+	}//deleteApprovalCancel
+	
+	//삭제 조회 - 삭제된 결재안 영구 삭제 (ajax)
+	@RequestMapping(value="/adminDeleteApproval.ho")
+	public void deleteApproval(@RequestParam(value="appNoList[]") List<String> appNoList, HttpServletResponse response) throws IOException {
+		int result = aService.deleteApproval(appNoList);
+		if(result>0) {
+			response.getWriter().print(true);
+		} else {
+			response.getWriter().print(false);
+		}
+	}//deleteApproval
 	
 	//데이터/문서 관리
 	@RequestMapping(value="/adminDeleteDataPage.ho")

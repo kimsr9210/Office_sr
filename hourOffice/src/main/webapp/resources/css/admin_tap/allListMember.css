@@ -54,6 +54,14 @@
             margin: 0 auto;
             width: 100%;
         }
+        #memAllListTbl td:first-child{width:5%;}
+		#memAllListTbl td:nth-child(2){width:9%;}
+		#memAllListTbl td:nth-child(3){width:9%;}
+		#memAllListTbl td:nth-child(4){width:9%;}
+		#memAllListTbl td:nth-child(5){width:9%;}
+		#memAllListTbl td:nth-child(6){width:20%;}
+		#memAllListTbl td:nth-child(7){width:15%;}
+		#memAllListTbl td:last-child{width:15%;}
         
         /* table tr 크기 */
         /* 사원정보 tr */

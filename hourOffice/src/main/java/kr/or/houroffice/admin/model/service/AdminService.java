@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import kr.or.houroffice.admin.model.dao.AdminDAO;
 import kr.or.houroffice.admin.model.vo.AdminBoard;
+import kr.or.houroffice.approval.model.vo.Approval;
 import kr.or.houroffice.member.model.vo.Member;
 
 @Service("adminService")
@@ -76,8 +77,8 @@ public class AdminService {
 	}//selectSearchDeleteMember
 
 	//삭제 조회 - 삭제된 사원 조회 - 검색 - 페이징 처리
-	public String searchGetPageNavi(int currentPage, int recordCountPerPage, int naviCountPerPage, int searchCount) {
-		return aDAO.searchGetPageNavi(sqlSession,currentPage,recordCountPerPage,naviCountPerPage,searchCount);
+	public String searchGetPageNavi(int currentPage, int recordCountPerPage, int naviCountPerPage, int searchCount, String searchType, String keyword) {
+		return aDAO.searchGetPageNavi(sqlSession,currentPage,recordCountPerPage,naviCountPerPage,searchCount,searchType, keyword);
 	}//searchGetPageNavi
 
 	//삭제 조회  - 삭제된 사원 조회 - 삭제된 사원 복원 (ajax)
@@ -102,7 +103,7 @@ public class AdminService {
 	
 	//삭제 조회 - 삭제된 부서별 게시글 조회 - 페이징 처리
 	public String getBoardPageNavi(int currentPage, int recordCountPerPage, int naviCountPerPage) {
-		return aDAO.getPageNavi(sqlSession, currentPage,recordCountPerPage,naviCountPerPage);
+		return aDAO.getBoardPageNavi(sqlSession, currentPage,recordCountPerPage,naviCountPerPage);
 	}//getPageNavi
 	
 	//삭제 조회 - 삭제된 부서별 게시글 검색
@@ -113,8 +114,8 @@ public class AdminService {
 	
 	//삭제 조회 - 삭제된 부서별 게시글 검색 - 페이징 처리
 	public String searchGetBoardPageNavi(int currentPage, int recordCountPerPage, int naviCountPerPage,
-			int searchCount) {
-		return aDAO.searchGetPageNavi(sqlSession, currentPage,recordCountPerPage,naviCountPerPage,searchCount);
+			int searchCount, String searchType, String keyword) {
+		return aDAO.searchGetBoardPageNavi(sqlSession, currentPage,recordCountPerPage,naviCountPerPage,searchCount,searchType, keyword);
 	}//searchGetPageNavi
 	
 	//삭제 조회 - 삭제된 부서별 게시글 복원 (ajax)
@@ -126,6 +127,43 @@ public class AdminService {
 	public int deleteBoard(List<String> noList) {		
 		return aDAO.deleteBoard(sqlSession, noList);
 	}//deleteBoard
+	
+	//삭제 조회 - 삭제된 결재안 조회  - 삭제된 결재안 수
+	public int countDeleteApproval() {
+		return aDAO.countDeleteApproval(sqlSession);
+	}//countDeleteApproval
+
+	//삭제 조회 - 삭제된 결재안 조회
+	public ArrayList<Approval> selectDeleteApproval(int currentPage, int recordCountPerPage) {
+		return aDAO.selectDeleteApproval(sqlSession,currentPage,recordCountPerPage);
+	}//selectDeleteApproval
+
+	//삭제 조회 - 삭제된 결재안 조회 - 페이징 처리
+	public String getApprovalPageNavi(int currentPage, int recordCountPerPage, int naviCountPerPage) {
+		return aDAO.getApprovalPageNavi(sqlSession, currentPage,recordCountPerPage,naviCountPerPage);
+	}//getBoardPageNavi
+
+	//삭제 조회 - 삭제된 결재안 검색
+	public ArrayList<Approval> selectSearchDeleteApproval(String searchType, String keyword, int currentPage,
+			int recordCountPerPage) {
+		return  (ArrayList<Approval>)aDAO.selectSearchDeleteApproval(sqlSession,searchType,keyword,currentPage,recordCountPerPage);
+	}//selectSearchDeleteApproval
+
+	//삭제 조회 - 삭제된 결재안 검색 - 페이징 처리
+	public String searchGetApprovalPageNavi(int currentPage, int recordCountPerPage, int naviCountPerPage,
+			int searchCount, String searchType, String keyword) {
+		return aDAO.searchGetApprovalPageNavi(sqlSession, currentPage,recordCountPerPage,naviCountPerPage,searchCount,searchType, keyword);
+	}//searchGetApprovalPageNavi
+
+	//삭제 조회 - 삭제된 결재안 복원 (ajax)
+	public int deleteApprovalCancel(List<String> appNoList) {
+		return aDAO.deleteApprovalCancel(sqlSession, appNoList);
+	}//deleteApprovalCancel
+
+	//삭제 조회 - 삭제된 부서별 게시글 영구 삭제 (ajax)
+	public int deleteApproval(List<String> appNoList) {
+		return aDAO.deleteApproval(sqlSession, appNoList);
+	}//deleteApproval
 	
 	//데이터/문서 관리 - 경과된 사원 기록
 	public int expireDeleteMember() {
@@ -156,9 +194,5 @@ public class AdminService {
 	public int expireNotPaperCount() {
 		return aDAO.expireNotPaperCount(sqlSession);
 	}//expireNotPaperCount
-
-
-
-	
 
 }//AdminService

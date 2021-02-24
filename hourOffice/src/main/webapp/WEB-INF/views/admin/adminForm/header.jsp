@@ -19,8 +19,8 @@
 <body>
 	<div id="header">
 		<span id="headerClock"></span>
-		<div id="headerMember">
-			<i class="headerIcon fas fa-bell fa-2x"></i>
+		<div id="headerMember" >
+			<a href="/memberLoginPage.ho" class="aStyle" style="color:white;"><i class="headerIcon fas fa-door-open fa-2x"></i></a>
 			<i class="headerIcon fas fa-user-circle fa-2x"></i>
 			<span id="headerText">땡땡팀, 누구님 환영합니다.</span>
 		</div>

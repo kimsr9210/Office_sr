@@ -132,7 +132,7 @@
             DEPT_NAME as deptName
         FROM (SELECT ROW_NUMBER()OVER(ORDER BY M.MEM_RESIGN_DATE DESC) AS RNUM, M.*, D.DEPT_NAME
                 FROM MEMBER M
-                INNER JOIN DEPARTMENT D ON (M.DEPT_CODE=D.DEPT_CODE)
+                LEFT JOIN DEPARTMENT D ON (M.DEPT_CODE=D.DEPT_CODE)
                 WHERE (MEM_DEL_YN='Y' OR MEM_RESIGN_YN='Y'))
         WHERE RNUM BETWEEN ${start} AND ${end} 		
 	</select>
@@ -242,7 +242,7 @@
 		SET
 			PART_DEL_YN='N', PART_DEL_DATE=NULL
 		<foreach collection="list" item="item" open="WHERE (PART_DEL_YN='Y') AND (" close=")" separator="OR">
-			PART_NO=#{item}
+			
 		</foreach>
 	</update>
 	
@@ -254,6 +254,28 @@
 			PART_NO=#{item}
 		</foreach>
 	</delete>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 	<!-- 데이터/문서 관리 - 사원 기록 삭제 -->
 	<select id="expireDeleteMember" resultType="int">

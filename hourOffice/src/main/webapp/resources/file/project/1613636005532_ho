@@ -1,0 +1,512 @@
+--프로젝트 생성
+CREATE TABLE PROJECT(
+    PRO_NO NUMBER PRIMARY KEY,
+    MEM_NO NUMBER REFERENCES MEMBER(MEM_NO),
+    PRO_SUBJECT VARCHAR2(60),
+    PRO_EXP VARCHAR2(300),
+    PRO_DATE TIMESTAMP DEFAULT SYSTIMESTAMP,
+    PUBLIC_YN CHAR(1) CHECK(PUBLIC_YN IN ('Y','N')),
+    COMP_YN CHAR(1) CHECK(COMP_YN IN ('Y','N')),
+    FAVOR_YN CHAR(1) CHECK(FAVOR_YN IN ('Y','N')),
+    DEL_YN CHAR(1) CHECK(DEL_YN IN ('Y','N'))
+);
+
+-- 프로젝트 생성 시퀀스
+CREATE SEQUENCE  PROJECT_SEQ 
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+-- 요청 하기
+CREATE TABLE REQUEST(
+    REQUEST_MEM NUMBER REFERENCES MEMBER(MEM_NO),    -- 요청 보낸 사람
+    RESPONSE_MEM NUMBER REFERENCES MEMBER(MEM_NO),   -- 요청 받은 사람
+    PRO_NO NUMBER REFERENCES PROJECT(PRO_NO),   -- 해당 프로젝트 NO
+    REQUEST_DATE TIMESTAMP DEFAULT SYSTIMESTAMP,
+    READ_YN	CHAR(1) CHECK(READ_YN IN ('Y','N'))
+);
+
+--프로젝트 참가자 목록
+CREATE TABLE PRO_MEMBER(
+    PRO_NO NUMBER REFERENCES PROJECT(PRO_NO),
+    MEM_NO NUMBER REFERENCES MEMBER(MEM_NO),
+    MGR_YN CHAR(1) CHECK (MGR_YN IN ('Y','N')),
+    DEL_YN CHAR(1) CHECK (DEL_YN IN ('Y','N'))
+);
+
+-- 프로젝트-게시물
+CREATE TABLE PRO_BOARD(
+    BOARD_NO NUMBER PRIMARY KEY,
+    PRO_NO NUMBER REFERENCES PROJECT(PRO_NO),
+    MEM_NO NUMBER REFERENCES MEMBER(MEM_NO),
+    BOARD_DATE TIMESTAMP DEFAULT SYSTIMESTAMP,
+    DEL_YN CHAR(1) CHECK (DEL_YN IN ('Y','N'))
+);
+
+-- 프로젝트-게시물 시퀀스
+CREATE SEQUENCE  PRO_BOARD_SEQ 
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+-- 프로젝트- 코드
+CREATE TABLE PRO_CODE(
+    CODE_NO NUMBER PRIMARY KEY,
+    PRO_NO NUMBER REFERENCES PROJECT(PRO_NO),
+    MEM_NO NUMBER REFERENCES MEMBER(MEM_NO),
+    CODE_DATE TIMESTAMP DEFAULT SYSTIMESTAMP,
+    CODE_TEXT LONG,
+    BOARD_TEXT VARCHAR2(4000),
+    DEL_YN CHAR(1) CHECK (DEL_YN IN ('Y','N'))
+);
+
+COMMIT;
+
+-- 프로젝트-일정
+CREATE TABLE PRO_PLAN(
+    PLAN_NO NUMBER PRIMARY KEY,
+    PRO_NO NUMBER REFERENCES PROJECT(PRO_NO),
+    MEM_NO NUMBER REFERENCES MEMBER(MEM_NO),
+    SUBJECT VARCHAR2(300) NOT NULL,
+    MEMO VARCHAR2(600),
+    START_DATE DATE,
+    END_DATE DATE,
+    DEL_YN CHAR(1) CHECK (DEL_YN IN ('Y','N'))
+);
+
+-- 프로젝트-일정 시퀀스
+CREATE SEQUENCE  PRO_PLAN_SEQ 
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+-- 프로젝트-파일함
+CREATE TABLE PRO_FILE(
+    FILE_NO NUMBER,
+    PRO_NO NUMBER REFERENCES PROJECT(PRO_NO),
+    MEM_NO NUMBER REFERENCES MEMBER(MEM_NO),
+    ORIGINALFILENAME VARCHAR2(100),
+    CHANGEDFILENAME VARCHAR2(100),
+    FILEPATH	VARCHAR2(300),
+    FILESIZE	NUMBER,
+    UPLOADTIME	TIMESTAMP DEFAULT SYSTIMESTAMP,
+    DEL_YN	CHAR(1) CHECK (DEL_YN IN ('Y','N'))
+);
+
+-- 프로젝트-파일함 시퀀스
+CREATE SEQUENCE  PRO_FILE_SEQ 
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+-- 프로젝트-할일
+CREATE TABLE PRO_WORK(
+    WORK_NO NUMBER PRIMARY KEY,
+    PRO_NO NUMBER REFERENCES PROJECT(PRO_NO),
+    MEM_NO NUMBER REFERENCES MEMBER(MEM_NO),
+    TITLE VARCHAR2(300) NOT NULL,
+    WORK_CON NVARCHAR2(2000) NOT NULL,
+    WORK_DAY DATE,
+    WORK_DATE TIMESTAMP DEFAULT SYSTIMESTAMP,
+    WORK_COMP NUMBER,
+    DEL_YN CHAR(1) CHECK (DEL_YN IN ('Y','N'))
+);
+COMMIT;
+DROP TABLE PRO_WORK;
+DROP TABLE PRO_WORK_CONT;
+DROP TABLE PRO_POST;
+-- 프로젝트-할일 시퀀스
+CREATE SEQUENCE  PRO_WORK_SEQ 
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+-- 프로젝트 - 할일 갯수
+CREATE TABLE PRO_WORK_CONT(
+    WORK_NO NUMBER REFERENCES PRO_WORK(WORK_NO),
+    MEM_NO NUMBER REFERENCES MEMBER(MEM_NO),  -- 할일 대상이 되는 사람
+    SUB_TITLE VARCHAR2(300),
+    START_DATE DATE DEFAULT SYSDATE,
+    COMP_YN CHAR(1) CHECK(COMP_YN IN ('Y','N'))
+);
+
+-- 프로젝트-댓글
+CREATE TABLE PRO_COMMENT(
+    COMMENT_NO NUMBER PRIMARY KEY,
+    BOARD_NO NUMBER REFERENCES PRO_BOARD(BOARD_NO),
+    MEM_NO NUMBER REFERENCES MEMBER(MEM_NO),
+    COMMENT_CON VARCHAR2(4000),
+    COMMENT_DATE TIMESTAMP DEFAULT SYSTIMESTAMP,
+    DEL_YN CHAR(1) CHECK (DEL_YN IN ('Y','N'))
+);
+
+-- 프로젝트-댓글 시퀀스
+CREATE SEQUENCE  PRO_COMMENT_SEQ 
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+-- 자료실
+CREATE TABLE FILETBL(
+    FILE_NO NUMBER PRIMARY KEY,
+    MEM_NO NUMBER REFERENCES MEMBER(MEM_NO),
+    CATEGORY VARCHAR2(30),
+    ORIGINALFILENAME VARCHAR2(100),
+    CHANGEDFILENAME	VARCHAR2(100),
+    FILEPATH	VARCHAR2(300),
+    FILESIZE	NUMBER,
+    UPLOADTIME	TIMESTAMP DEFAULT SYSTIMESTAMP,
+    DEL_YN	CHAR(1) CHECK (DEL_YN IN ('Y','N'))
+);
+-- 자료실 시퀀스
+CREATE SEQUENCE  FILETBL_SEQ 
+START WITH 1
+INCREMENT BY 1
+NOMAXVALUE
+NOCYCLE
+NOCACHE;
+
+
+select * from member;
+select * from project
+WHERE DEL_YN = 'N'
+ORDER by PRO_NO desc;
+select * from PRO_MEMBER;
+
+COMMIT;
+
+CREATE TABLE PRO_FAVOR(
+    MEM_NO NUMBER REFERENCES MEMBER(MEM_NO),
+    PRO_NO NUMBER
+);
+
+select * 
+from member
+inner join project on (member.MEM_NO=project.MEM_NO);
+
+
+select *
+from member
+INNER join PRO_BOARD on (member.MEM_NO=PRO_BOARD.MEM_NO);
+
+ALTER TABLE PRO_BOARD ADD(BOARD_TEXT LONG);
+
+SELECT * FROM PRO_BOARD;
+
+		SELECT
+			PRO_NO as proNo,
+			MEM_NO as memNo,
+			PRO_SUBJECT as proSubject,
+			PRO_EXP as proExp,
+			PRO_DATE as proDate,
+			PUBLIC_YN as publicYN,
+			COMP_YN as compYN,
+			COMP_DATE as compDate,
+			MEM_COUNT as memCount
+		FROM PROJECT
+        INNER JOIN PRO_MEMBER ON(PROJECT.PRO_NO = PRO_MEMBER.PRO_NO)
+		WHERE MEM_NO ='2101002'  AND DEL_YN = 'N'
+		ORDER by PRO_NO DESC;
+        
+		SELECT
+			PRO_NO as proNo,
+			MEM_NO as memNo,
+			PRO_SUBJECT as proSubject,
+			PRO_EXP as proExp,
+			PRO_DATE as proDate,
+			PUBLIC_YN as publicYN,
+			COMP_YN as compYN,
+			COMP_DATE as compDate,
+			MEM_COUNT as memCount
+		FROM PROJECT
+		WHERE PRO_NO IN
+        (SELECT PRO_NO FROM PRO_MEMBER WHERE MEM_NO='2101002');
+        
+        --프로젝트 참여자 정보 가져오기
+        SELECT
+			MEM_NO as memNo,
+			MEM_PWD as memPwd,
+			MEM_POSITION as memPosition,
+			DEPT_CODE as deptCode,
+			MEM_NAME as memName,
+			MEM_BIRTH as memBirth,
+			MEM_GENDER as memGender,
+			MEM_ADDRESS as memAddress,
+			MEM_PHONE as memPhone,
+			MEM_TELL as memTell,
+			MEM_EMAIL as memEmail,
+			MEM_PROFILE as memProfile,
+			MEM_HOLIDAY_COUNT as memHolidayCount,
+			MEM_JOIN_DATE as memJoinDate,
+			MEM_RESIGN_YN as memResignYN,
+			MEM_RESIGN_DATE as memResigndate,
+			MEM_DEL_YN as memDelYN,
+			MEM_DEL_DATE as memDelDate,
+			MEM_RIGHT_CODE as memRightCode
+		FROM member
+		WHERE MEM_NO IN (SELECT MEM_NO FROM PRO_MEMBER WHERE PRO_NO=4);
+
+--프로젝트 게시물 작성자 정보 가져오기
+        SELECT
+			MEM_NO as memNo,
+			MEM_PWD as memPwd,
+			MEM_POSITION as memPosition,
+			DEPT_CODE as deptCode,
+			MEM_NAME as memName,
+			MEM_BIRTH as memBirth,
+			MEM_GENDER as memGender,
+			MEM_ADDRESS as memAddress,
+			MEM_PHONE as memPhone,
+			MEM_TELL as memTell,
+			MEM_EMAIL as memEmail,
+			MEM_PROFILE as memProfile,
+			MEM_HOLIDAY_COUNT as memHolidayCount,
+			MEM_JOIN_DATE as memJoinDate,
+			MEM_RESIGN_YN as memResignYN,
+			MEM_RESIGN_DATE as memResigndate,
+			MEM_DEL_YN as memDelYN,
+			MEM_DEL_DATE as memDelDate,
+			MEM_RIGHT_CODE as memRightCode
+		FROM member
+		WHERE MEM_NO IN (
+        SELECT
+			MEM_NO
+		FROM PRO_BOARD
+		WHERE DEL_YN='N' AND PRO_NO=7);
+    
+    --프로젝트 참가자 정보 가져오기
+    
+           SELECT
+			MEM_NO as memNo,
+			MEM_PWD as memPwd,
+			MEM_POSITION as memPosition,
+			DEPT_CODE as deptCode,
+			MEM_NAME as memName,
+			MEM_BIRTH as memBirth,
+			MEM_GENDER as memGender,
+			MEM_ADDRESS as memAddress,
+			MEM_PHONE as memPhone,
+			MEM_TELL as memTell,
+			MEM_EMAIL as memEmail,
+			MEM_PROFILE as memProfile,
+			MEM_HOLIDAY_COUNT as memHolidayCount,
+			MEM_JOIN_DATE as memJoinDate,
+			MEM_RESIGN_YN as memResignYN,
+			MEM_RESIGN_DATE as memResigndate,
+			MEM_DEL_YN as memDelYN,
+			MEM_DEL_DATE as memDelDate,
+			MEM_RIGHT_CODE as memRightCode
+		FROM member
+		WHERE MEM_NO IN (
+        SELECT
+			MEM_NO
+		FROM PRO_MEMBER
+		WHERE DEL_YN='N' AND PRO_NO=7);
+    
+    
+	   SELECT
+			MEM_NO as memNo,
+			MEM_PWD as memPwd,
+			MEM_POSITION as memPosition,
+			DEPT_CODE as deptCode,
+			MEM_NAME as memName,
+			MEM_BIRTH as memBirth,
+			MEM_GENDER as memGender,
+			MEM_ADDRESS as memAddress,
+			MEM_PHONE as memPhone,
+			MEM_TELL as memTell,
+			MEM_EMAIL as memEmail,
+			MEM_PROFILE as memProfile,
+			MEM_HOLIDAY_COUNT as memHolidayCount,
+			MEM_JOIN_DATE as memJoinDate,
+			MEM_RESIGN_YN as memResignYN,
+			MEM_RESIGN_DATE as memResigndate,
+			MEM_DEL_YN as memDelYN,
+			MEM_DEL_DATE as memDelDate,
+			MEM_RIGHT_CODE as memRightCode
+		FROM member
+		WHERE MEM_NO IN (
+        SELECT
+			MEM_NO
+		FROM PRO_MEMBER
+		WHERE DEL_YN='N' AND PRO_NO=7);
+        
+        SELECT
+			MEM_NO
+		FROM PRO_MEMBER
+		WHERE DEL_YN='N' AND PRO_NO=7;
+        
+select * from project;
+select * from pro_favor;
+delete from pro_favor where pro_no=4;
+commit;
+
+INSERT INTO PRO_FAVOR VALUES('2101002', '7');
+		SELECT
+			PRO_NO as proNo,
+			MEM_NO as memNo,
+			PRO_SUBJECT as proSubject,
+			PRO_EXP as proExp,
+			PRO_DATE as proDate,
+			PUBLIC_YN as publicYN,
+			COMP_YN as compYN,
+			COMP_DATE as compDate,
+			MEM_COUNT as memCount
+		FROM PROJECT
+		WHERE PRO_NO IN
+        (SELECT PRO_NO FROM PRO_FAVOR WHERE MEM_NO='2101002');
+
+SELECT * FROM PRO_COMMENT;
+
+-- 해당 프로젝트 안 모든 댓글 출력
+SELECT 
+    COMMENT_NO as commentNo,
+    BOARD_NO as boardNo,
+    MEM_NO as memNo,
+    COMMENT_CON as commentCon,
+    COMMENT_DATE as commentDate,
+    DEL_YN as delYN
+FROM PRO_COMMENT
+WHERE BOARD_NO IN (
+		SELECT
+			BOARD_NO
+		FROM PRO_BOARD
+		WHERE DEL_YN='N' AND PRO_NO=4
+		);
+        
+        
+        
+        SELECT 
+		    COMMENT_NO as commentNo,
+		    BOARD_NO as boardNo,
+		    MEM_NO as memNo,
+		    COMMENT_CON as commentCon,
+		    COMMENT_DATE as commentDate,
+		    DEL_YN as delYN
+		FROM PRO_COMMENT
+		WHERE BOARD_NO IN 
+		(SELECT BOARD_NO FROM PRO_BOARD WHERE DEL_YN='N' AND PRO_NO=4);
+        
+        
+SELECT * FROM PROJECT;
+SELECT * FROM PRO_BOARD;
+SELECT * FROM PRO_MEMBER;
+SELECT * FROM PRO_PLAN;
+SELECT * FROM MEMBER;
+INSERT INTO PRO_MEMBER VALUES('7', '2102003', 'Y','N');
+COMMIT;
+
+UPDATE PRO_MEMBER SET DEL_YN='N';
+SELECT * FROM USER_CONSTRAINTS
+WHERE TABLE_NAME='PRO_COMMENT';
+
+ALTER TABLE PRO_COMMENT DROP CONSTRAINT BOARD_NO;
+
+SELECT * FROM PRO_BOARD;
+SELECT * FROM PRO_FILE;
+SELECT * FROM PRO_CODE;
+SELECT * FROM PRO_COMMENT;
+SELECT * FROM PRO_PLAN;
+SELECT * FROM PRO_WORK;
+COMMIT;
+UPDATE PRO_WORK SET WORK_CON='세배하기,맛있는 거 먹기', WORK_COMP='0';
+ALTER TABLE PRO_CODE ADD (IMG_NAME VARCHAR2(100));
+COMMIT;
+ALTER TABLE PRO_BOARD DROP COLUMN FILE_NAME;
+
+
+SELECT 
+		    CODE_NO as codeNo,
+		    PRO_NO as proNo,
+		    MEM_NO as memNo,
+		    CODE_DATE as codeDate,
+		    CODE_TEXT as codeText,
+		    BOARD_TEXT as boardText,
+		    DEL_YN as delYN,
+		    IMG_NAME as imgName
+		FROM PRO_CODE
+		WHERE DEL_YN='N' AND PRO_NO=4
+		ORDER by CODE_NO DESC;
+        
+SELECT CODE_NO FROM PRO_CODE WHERE DEL_YN='N' AND PRO_NO=4;
+select * from pro_file;
+SELECT 
+		    FILE_NO as fileNo,
+		    PRO_NO as proNo,
+		    MEM_NO as memNo,
+		    ORIGINALFILENAME as originalFileName,
+		    CHANGEDFILENAME as changedFileName,
+		    FILEPATH as filePath,
+		    FILESIZE as fileSize,
+		    UPLOADTIME as uploadTime
+		FROM PRO_FILE
+		WHERE DEL_YN='N' AND PRO_NO=4
+        ORDER BY FILE_NO DESC;
+select * from project;
+select * from pro_file;
+select * from pro_member;
+select * from request;
+select * from pro_comment;
+SELECT * FROM PRO_BOARD;
+select * from member;
+SELECT
+			PRO_NO as proNo,
+			MEM_NO as memNo,
+			MGR_YN as mgrYN,
+			DEL_YN as delYN
+		FROM PRO_MEMBER
+		WHERE PRO_NO=12 AND DEL_YN='N';
+SELECT
+			MEM_NO as memNo,
+			MEM_PWD as memPwd,
+			MEM_POSITION as memPosition,
+			DEPT_CODE as deptCode,
+			MEM_NAME as memName,
+			MEM_BIRTH as memBirth,
+			MEM_GENDER as memGender,
+			MEM_ADDRESS as memAddress,
+			MEM_PHONE as memPhone,
+			MEM_TELL as memTell,
+			MEM_EMAIL as memEmail,
+			MEM_PROFILE as memProfile,
+			MEM_HOLIDAY_COUNT as memHolidayCount,
+			MEM_JOIN_DATE as memJoinDate,
+			MEM_RESIGN_YN as memResignYN,
+			MEM_RESIGN_DATE as memResigndate,
+			MEM_DEL_YN as memDelYN,
+			MEM_DEL_DATE as memDelDate,
+			MEM_RIGHT_CODE as memRightCode
+		FROM member
+		WHERE MEM_NO IN (
+        SELECT
+			MEM_NO
+		FROM PRO_MEMBER
+		WHERE DEL_YN='N' AND PRO_NO=12)
+        ORDER BY ROWID DESC;
+select * from filetbl;
+SELECT 
+            ROW_NUM,
+            FILE_NO as fileNo,
+			MEM_NO as memNo,
+			CATEGORY as category,
+			ORIGINALFILENAME as originalFileName,
+			CHANGEDFILENAME as changedFileName,
+			FILEPATH as filePath,
+			FILESIZE as fileSize,
+			UPLOADTIME as uploadTime,
+			DEL_YN as delYN
+            FROM (SELECT ROW_NUMBER() OVER(ORDER BY FILE_NO DESC) 
+		AS ROW_NUM, FILETBL.* FROM FILETBL WHERE DEL_YN='N' AND CATEGORY='pc')
+		WHERE ROW_NUM between 1 and 5;

@@ -59,17 +59,13 @@
 				</a>
 			</li>
 			<li>
-				<div class="aStyle">
+				<a href="/adminPasswordInitPage.ho" class="aStyle">
 					<div class="naviNo hoverColor" id="error">
 						<div class="naviIcon"><i class="fas fa-question"></i></div>
 						<span class="naviText">오류 관리</span>
 						<span class="naviClick"><i class="iArrow fa fa-angle-right"></i></span>
 					</div>
-					<div class="accordion" id="errorList">
-						<a href="/adminPasswordInitPage.ho" class="aStyle"><p class="accordionList hoverColor">비밀번호 초기화</p></a>
-						<a href="#" class="aStyle"><p class="accordionList hoverColor">문의 사항</p></a>
-					</div>
-				</div>
+				</a>
 			</li>
 		</ul>
 	</div>
@@ -86,8 +82,6 @@
                     
                     if($naviName=='삭제 조회'){
                         $naviState.animate({height:'110px'},300);
-                    }else if($naviName=='오류 관리'){
-                        $naviState.animate({height:'72px'},300);
                     }
                     
                 } else {

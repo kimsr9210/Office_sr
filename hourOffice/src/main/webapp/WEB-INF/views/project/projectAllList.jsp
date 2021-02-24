@@ -297,6 +297,8 @@
 							<%if(count==0){ %>
 								<div class="noneProject">완료된 프로젝트가 없습니다</div>
 							<%} %>
+						<%} else{%>
+								<div class="noneProject">완료된 프로젝트가 없습니다</div>
 						<%} %>
 							
 							

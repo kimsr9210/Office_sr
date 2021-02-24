@@ -65,7 +65,7 @@ public class TimeCardServiceImpl implements TimeCardService {
 		
 		ArrayList<Attendance> list = tDAO.selectWork(sqlSession, map);
 		
-		Map<String,Object> resultMap = new HashMap<>(); 
+		Map<String,Object> resultMap = new HashMap<String,Object>(); 
 		resultMap.put("list", list);
 		resultMap.put("time", hour+"시간 "+min+"분");
 		resultMap.put("overTime", overHour+"시간 "+overMin+"분");

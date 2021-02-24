@@ -266,6 +266,10 @@ public class AdminMemberDAO {
 	public int updateDepartmentDelete(SqlSessionTemplate sqlSession, String deptCode) {
 		return sqlSession.update("member.deleteDepartment",deptCode);
 	}
+	// 관리자탭 (인사관리) - 조직도 - 부서 삭제 update
+	public int updateMemberDeptCode(SqlSessionTemplate sqlSession, String deptCode) {
+		return sqlSession.update("member.updateMemDeptCode",deptCode);
+	}
 
 	//BY 진원   조직도 - 부서목록
 	public ArrayList<Department> selectAllDepartment(SqlSessionTemplate sqlSession) {
@@ -277,6 +281,8 @@ public class AdminMemberDAO {
 		List<Department> list = sqlSession.selectList("member.selectAllDeptCode");
 		return (ArrayList<Department>) list;
 	}
+
+	
 
 	
 

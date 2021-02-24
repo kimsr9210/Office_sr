@@ -46,6 +46,9 @@
     .in-pro-top:hover{
         opacity: 0.9;
     }
+    .in-pro-top>div{
+    	margin-top:6px;
+    }
 
     .in-pro-top>a{
         font-size: 16px;

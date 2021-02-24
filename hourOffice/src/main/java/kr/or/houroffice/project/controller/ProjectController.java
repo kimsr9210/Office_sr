@@ -770,11 +770,11 @@ public class ProjectController {
 		// 프로젝트 참가 수 감소
 		Project pro = pService.selectOneProject(pm.getProNo());
 		pro.setMemCount((pro.getMemCount() - 1));
-
+		
 		int result = pService.updateProjectMemberExit(pm);
 		Project p = pService.selectOneProject(pm.getProNo());
 		if (result > 0) {
-			int memCount = p.getMemCount();
+			int memCount = pro.getMemCount();
 			p.setMemCount(memCount);
 			pService.updateProjectMemberCount(p);
 			response.getWriter().print(true);

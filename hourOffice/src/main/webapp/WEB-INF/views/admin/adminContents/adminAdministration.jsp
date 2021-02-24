@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="kr.or.houroffice.member.model.vo.Member" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -130,7 +129,7 @@
 								<div class="searchStyle selectStyle formStyle">
 									<input placeholder="검색어를 입력하세요" type="text" id="keyword" name="keyword" style="padding-left:5px;"/>
 									<button><i class="fas fa-search"></i></button>
-								</div><br/><br/>		
+								</div><br/><br/>
 								<table class="modal-table">
 									<thead>
 										<tr>
@@ -155,7 +154,7 @@
 		
 	<script type='text/javascript'>	
 		$(function(){
-		
+			
 			// 전산관리자 checkbox 누르기
 			var adCheckMem = [];//체크한 사번 넣을 곳
 			$('#adminList tr td input[name=adCheckMem]').click(function(){				
@@ -189,13 +188,13 @@
 			$('#tbody').on('click','.mCheck',function(){
 				checkboxClick($(this));	
 			});
-			var rightData = "";
-			// 모달 열기 
-			$('.agreeButtonType').click(function(){
-				rightData+=$(this).parents('.adminSpace').children().first().text();
 			
-				<% ArrayList<Member> list = (ArrayList<Member>)request.getAttribute("list"); %>
+			// 모달 열기 
+			var rightData = "";
+			$('.agreeButtonType').click(function(){
+				rightData += $(this).parents('.adminSpace').children().first().text();//부서관리자 구별 넣기
 				var modatop = $(this).offset().top;
+				<% ArrayList<Member> list = (ArrayList<Member>)request.getAttribute("list"); %>
 				
 				if($(this).parents('.adminSpace').children().first().text()=='전산관리자') {
 					mCheck = [];
@@ -296,7 +295,6 @@
 						}
 					<%}%>
 
-					
 					$('#keyword').next().children().click(function(){
 						var keyword = $('#keyword').val();
 						$.ajax({
@@ -346,52 +344,51 @@
 		
 			//모달 권한 부여
 			$('#modal').children().children().last().click(function(){
-				alert(rightData);
 				if(mCheck.length==0){
-					alert('권한을 부여할 사원을 선택해주세요.');
+					alert('관리자 권한을 부여할 사원을 선택해주세요.');
 				} else {
-					if(rightData=='전산관리자'){			
-						if(confirm('해당 사원에게 전산관리자 권한을 부여하시겠습니까?')){
+					if(rightData=='전산관리자'){
+						if(confirm("전산관리자 권한을 부여하시겠습니까?")){
 							$.ajax({
 								url: '/adminUpdateAdRight.ho',
 								data : {'memNoList':mCheck},
 								type : 'post',
 								success : function(result){
-									alert('전산관리자 권한 부여를 성공하였습니다.');
+									alert("전산관리자 권한 부여를 성공하였습니다.");
 									history.go(0);
 								},
 								error : function(){
-									alert('전산관리자 권한 부여를 실패하였습니다.');
-								} // 하이 근데 뭐를 찾아야해요? 다빈님 행아웃오실수 있어요? 말로 빠른 설명ㄱ
+									alert("전산관리자 권한 부여를 실패하였습니다.");
+								}
 							});
 						}
 					} else if(rightData=='인사관리자'){
-						if(confirm('해당 사원에게 인사관리자 권한을 부여하시겠습니까?')){
+						if(confirm("인사관리자 권한을 부여하시겠습니까?")){
 							$.ajax({
 								url: '/adminUpdatePeRight.ho',
 								data : {'memNoList':mCheck},
 								type : 'post',
 								success : function(result){
-									alert('인사관리자 권한 부여를 성공하였습니다.');
+									alert("인사관리자 권한 부여를 성공하였습니다.");
 									history.go(0);
 								},
 								error : function(){
-									alert('인사관리자 권한 부여를 실패하였습니다.');
+									alert("인사관리자 권한 부여를 실패하였습니다.");
 								}
 							});
 						}
 					} else if(rightData=='총무관리자'){
-						if(confirm('해당 사원에게 총무관리자 권한을 부여하시겠습니까?')){
+						if(confirm("총무관리자 권한을 부여하시겠습니까?")){
 							$.ajax({
 								url: 'adminUpdateGeRight.ho',
 								data : {'memNoList':mCheck},
 								type : 'post',
 								success : function(result){
-									alert('총무관리자 권한 부여를 성공하였습니다.');
+									alert("총무관리자 권한 부여를 성공하였습니다.");
 									history.go(0);
 								},
 								error : function(){
-									alert('총무관리자 권한 부여를 실패하였습니다.');
+									alert("총무관리자 권한 부여를 실패하였습니다.");
 								}
 							});
 						}
@@ -404,57 +401,57 @@
 		$('.refuseButtonType').click(function(){
 			if($(this).parents('.adminSpace').children().first().text()=='전산관리자') {
 				if(adCheckMem.length==0){
-					alert('권한을 삭제할 사원을 선택해주세요.');
+					alert('전산관리자 권한을 삭제할 사원을 선택해주세요.');
 				} else {
-					if(confirm('해당 사원의 권한을 삭제하시겠습니까?')){
+					if(confirm("전산관리자 권한을 삭제하시겠습니까?")){
 						$.ajax({
 							url: '/adminDeleteRight.ho',
 							data : {'memNoList':adCheckMem},
 							type : 'post',
 							success : function(result){
-								alert('사원의 권한을 삭제하였습니다.');
+								alert("전산관리자 권한을 삭제하였습니다.");
 								history.go(0);
 							},
 							error : function(){
-								alert('사원의 권한 삭제를 실패하였습니다.');
+								alert("전산관리자 권한 삭제를 실패하였습니다.");
 							}
 						});
 					}
 				}
 			} else if ($(this).parents('.adminSpace').children().first().text()=='인사관리자') {
 				if(peCheckMem.length==0){
-					alert('권한을 삭제할 사원을 선택해주세요.');
+					alert('인사관리자 권한을 삭제할 사원을 선택해주세요.');
 				} else {
-					if(confirm('해당 사원의 권한을 삭제하시겠습니까?')){
+					if(confirm("인사관리자 권한을 삭제하시겠습니까?")){
 						$.ajax({
 							url: '/adminDeleteRight.ho',
 							data : {'memNoList':peCheckMem},
 							type : 'post',
 							success : function(result){
-								alert('사원의 권한을 삭제하였습니다.');
+								alert("인사관리자 권한을 삭제하였습니다.");
 								history.go(0);
 							},
 							error : function(){
-								alert('사원의 권한 삭제를 실패하였습니다.');
+								alert("인사관리자 권한 삭제를 실패하였습니다.");
 							}
 						});
 					}
 				}
 			} else if ($(this).parents('.adminSpace').children().first().text()=='총무관리자') {
 				if(geCheckMem.length==0){
-					alert('권한을 삭제할 사원을 선택해주세요.');
+					alert('총무관리자 권한을 삭제할 사원을 선택해주세요.');
 				} else {
-					if(confirm('해당 사원의 권한을 삭제하시겠습니까?')){
+					if(confirm("총무관리자 권한을 삭제하시겠습니까?")){
 						$.ajax({
 							url: '/adminDeleteRight.ho',
 							data : {'memNoList':geCheckMem},
 							type : 'post',
 							success : function(result){
-								alert('사원의 권한을 삭제하였습니다.');
+								alert("총무관리자 권한을 삭제하였습니다.");
 								history.go(0);
 							},
 							error : function(){
-								alert('사원의 권한 삭제를 실패하였습니다.');
+								alert("총무관리자 권한 삭제 실패하였습니다.");
 							}
 						});
 					}
